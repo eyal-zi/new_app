@@ -15,6 +15,10 @@ import { Layout } from '@/demo/layout/layout';
 import { SESSIONS_PATH } from '@/sessions/consts';
 import { SessionsPage } from '@/sessions/pages/sessions-page';
 import { ErrorState } from '@/shared/ui/states';
+import { SUMMARY_B_PATH, SUMMARY_C_PATH, SUMMARY_PATH } from '@/summary/consts';
+import { SummaryPage } from '@/summary/pages/summary-page';
+import { SummaryPageB } from '@/summary/pages/summary-page-b';
+import { SummaryPageC } from '@/summary/pages/summary-page-c';
 
 import { Root } from './root';
 
@@ -64,11 +68,29 @@ const sessions = createRoute({
   component: SessionsPage,
 });
 
+const summary = createRoute({
+  getParentRoute: () => layoutRoute,
+  path: SUMMARY_PATH,
+  component: SummaryPage,
+});
+
+const summaryB = createRoute({
+  getParentRoute: () => layoutRoute,
+  path: SUMMARY_B_PATH,
+  component: SummaryPageB,
+});
+
+const summaryC = createRoute({
+  getParentRoute: () => layoutRoute,
+  path: SUMMARY_C_PATH,
+  component: SummaryPageC,
+});
+
 export const createAppRouter = () =>
   createRouter({
     routeTree: root.addChildren([
       unauthorizedRoute,
-      layoutRoute.addChildren([index, sessions]),
+      layoutRoute.addChildren([index, sessions, summary, summaryB, summaryC]),
     ]),
     defaultPreload: false,
   });
