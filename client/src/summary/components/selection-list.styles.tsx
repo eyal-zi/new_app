@@ -1,5 +1,9 @@
-import { Stack } from '@mui/material';
+import { Chip, Stack } from '@mui/material';
 import { styled, type Theme } from '@mui/material/styles';
+
+export const SelectionChip = styled(Chip)(({ theme }) => ({
+  fontSize: theme.typography.body1.fontSize,
+}));
 
 const chipsStyles = ({ theme }: { theme: Theme }) => ({
   flexWrap: 'wrap' as const,

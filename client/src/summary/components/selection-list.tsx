@@ -1,8 +1,8 @@
-import { Chip, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 
 import { SELECTIONS_TITLE } from '../consts';
 import type { Selection } from '../types';
-import { Chips, Section } from './selection-list.styles';
+import { Chips, Section, SelectionChip } from './selection-list.styles';
 
 export type SelectionListProps = {
   selections: readonly Selection[];
@@ -16,7 +16,7 @@ export const SelectionList = ({ selections, onRemove }: SelectionListProps) => {
   const isRemovable = !!onRemove && selections.length > 1;
 
   const renderChip = ({ id, label }: Selection) => (
-    <Chip
+    <SelectionChip
       key={id}
       label={label}
       onDelete={isRemovable ? () => onRemove?.(id) : undefined}
