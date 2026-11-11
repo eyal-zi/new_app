@@ -4,15 +4,19 @@ import { Typography } from '@mui/material';
 import { ImageGalleryTile } from '@/shared/components/image-gallery/image-gallery-tile/image-gallery-tile';
 import type { GalleryImage } from '@/shared/components/image-gallery/types';
 
-import { COMPARE_IMAGES, FILE_SIZE_FALLBACK } from '../consts';
+import { COMPARE_TITLES, FILE_SIZE_FALLBACK } from '../consts';
 import { useImageFileSize } from '../hooks/use-image-file-size';
+import type { CompareImage } from '../types';
 import { formatFileSize } from '../utils/format-file-size';
 import { IconWrapper, Panel, Row } from './compare-row.styles';
 
-type CompareImageConfig = (typeof COMPARE_IMAGES)['a'];
+export type CompareRowProps = {
+  imageA?: CompareImage;
+  imageB?: CompareImage;
+};
 
 const getImage = (
-  { src, alt, name }: CompareImageConfig,
+  { src, alt, name }: CompareImage,
   bytes: number | undefined,
 ): GalleryImage => ({
   src,
@@ -20,26 +24,26 @@ const getImage = (
   caption: `${name} · ${bytes === undefined ? FILE_SIZE_FALLBACK : formatFileSize(bytes)}`,
 });
 
-export const CompareRow = () => {
-  const { data: bytesA } = useImageFileSize(COMPARE_IMAGES.a.src);
-  const { data: bytesB } = useImageFileSize(COMPARE_IMAGES.b.src);
+export const CompareRow = ({ imageA, imageB }: CompareRowProps) => {
+  const { data: bytesA } = useImageFileSize(imageA?.src);
+  const { data: bytesB } = useImageFileSize(imageB?.src);
 
-  const renderPanel = (config: CompareImageConfig, bytes?: number) => (
+  const renderPanel = (title: string, image?: CompareImage, bytes?: number) => (
     <Panel>
       <Typography variant="h6" gutterBottom>
-        {config.title}
+        {title}
       </Typography>
-      <ImageGalleryTile image={getImage(config, bytes)} />
+      {image && <ImageGalleryTile image={getImage(image, bytes)} />}
     </Panel>
   );
 
   return (
     <Row direction="row">
-      {renderPanel(COMPARE_IMAGES.a, bytesA)}
+      {renderPanel(COMPARE_TITLES.a, imageA, bytesA)}
       <IconWrapper>
         <CompareArrowsIcon fontSize="large" />
       </IconWrapper>
-      {renderPanel(COMPARE_IMAGES.b, bytesB)}
+      {renderPanel(COMPARE_TITLES.b, imageB, bytesB)}
     </Row>
   );
 };

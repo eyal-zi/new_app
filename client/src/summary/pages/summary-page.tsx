@@ -1,21 +1,29 @@
 import { Stack, Typography } from '@mui/material';
 
 import { ImageGallery } from '@/shared/components/image-gallery/image-gallery';
+import type { GalleryImage } from '@/shared/components/image-gallery/types';
 
-import { SUMMARY_GALLERY_COLUMNS, SUMMARY_IMAGES } from '../consts';
+import { SUMMARY_GALLERY_COLUMNS } from '../consts';
 
-const getId = (image: (typeof SUMMARY_IMAGES)[number]) => image.id;
-const getImage = (image: (typeof SUMMARY_IMAGES)[number]) => image;
+type SummaryImage = GalleryImage & { id: string };
 
-export const SummaryPage = () => (
-  <Stack spacing={3}>
-    <Typography variant="h4">Summary</Typography>
-    <ImageGallery
-      items={SUMMARY_IMAGES}
-      getId={getId}
-      getImage={getImage}
-      label="Summary images"
-      columns={SUMMARY_GALLERY_COLUMNS}
-    />
-  </Stack>
-);
+const getId = (image: SummaryImage) => image.id;
+const getImage = (image: SummaryImage) => image;
+
+export const SummaryPage = () => {
+  // TODO: get the images from the store.
+  const images: SummaryImage[] = [];
+
+  return (
+    <Stack spacing={3}>
+      <Typography variant="h4">Summary</Typography>
+      <ImageGallery
+        items={images}
+        getId={getId}
+        getImage={getImage}
+        label="Summary images"
+        columns={SUMMARY_GALLERY_COLUMNS}
+      />
+    </Stack>
+  );
+};

@@ -10,9 +10,10 @@ const fetchImageFileSize = async (src: string) => {
   return (await response.blob()).size;
 };
 
-export const useImageFileSize = (src: string) =>
+export const useImageFileSize = (src?: string) =>
   useQuery({
     queryKey: ['image-file-size', src],
-    queryFn: () => fetchImageFileSize(src),
+    queryFn: () => fetchImageFileSize(src as string),
+    enabled: !!src,
     staleTime: Infinity,
   });
