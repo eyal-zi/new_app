@@ -12,9 +12,13 @@ import { SigningIn } from '@/core/pages/signing-in';
 import { UnauthorizedRoute } from '@/core/pages/unauthorized-route';
 import { Dashboard } from '@/demo/dashboard/dashboard';
 import { Layout } from '@/demo/layout/layout';
+import { EvaluationPage } from '@/evaluation/pages/evaluation-page';
+import { InferencePage } from '@/inference/pages/inference-page';
 import { SESSIONS_PATH } from '@/sessions/consts';
 import { SessionsPage } from '@/sessions/pages/sessions-page';
+import { SESSION_TYPE_PATHS } from '@/shared/session-type-constants';
 import { ErrorState } from '@/shared/ui/states';
+import { TrainingPage } from '@/training/pages/training-page';
 
 import { Root } from './root';
 
@@ -63,12 +67,33 @@ const sessions = createRoute({
   path: SESSIONS_PATH,
   component: SessionsPage,
 });
+const training = createRoute({
+  getParentRoute: () => layoutRoute,
+  path: SESSION_TYPE_PATHS.training,
+  component: TrainingPage,
+});
+const inference = createRoute({
+  getParentRoute: () => layoutRoute,
+  path: SESSION_TYPE_PATHS.inference,
+  component: InferencePage,
+});
+const evaluation = createRoute({
+  getParentRoute: () => layoutRoute,
+  path: SESSION_TYPE_PATHS.evaluation,
+  component: EvaluationPage,
+});
 
 export const createAppRouter = () =>
   createRouter({
     routeTree: root.addChildren([
       unauthorizedRoute,
-      layoutRoute.addChildren([index, sessions]),
+      layoutRoute.addChildren([
+        index,
+        sessions,
+        training,
+        inference,
+        evaluation,
+      ]),
     ]),
     defaultPreload: false,
   });

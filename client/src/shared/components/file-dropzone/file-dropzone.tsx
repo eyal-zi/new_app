@@ -11,6 +11,7 @@ import {
   BrowseHint,
   DropArea,
   DropDescription,
+  DropText,
   DropTitle,
   DropzoneRoot,
   IconBadge,
@@ -29,9 +30,15 @@ export interface FileDropzoneProps extends Omit<
   dragActiveLabel?: string;
   dragRejectLabel?: string;
   description?: string;
+  className?: string;
 }
 
+/**
+ * A click-or-drop area for picking files. Has a default size; restyle it with
+ * `styled(FileDropzone)` to change it.
+ */
 export const FileDropzone = ({
+  className,
   value,
   onChange,
   label = DEFAULT_LABEL,
@@ -68,7 +75,7 @@ export const FileDropzone = ({
       : label;
 
   return (
-    <DropzoneRoot>
+    <DropzoneRoot className={className}>
       <DropArea
         {...getRootProps({ role: 'button' })}
         data-drag-active={isDragActive}
@@ -79,8 +86,10 @@ export const FileDropzone = ({
         <IconBadge>
           <UploadIcon />
         </IconBadge>
-        <DropTitle>{title}</DropTitle>
-        <BrowseHint>{BROWSE_HINT}</BrowseHint>
+        <DropText>
+          <DropTitle>{title}</DropTitle>
+          <BrowseHint>{BROWSE_HINT}</BrowseHint>
+        </DropText>
         {description && <DropDescription>{description}</DropDescription>}
       </DropArea>
 

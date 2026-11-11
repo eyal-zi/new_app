@@ -2,13 +2,17 @@ import CloudUploadRoundedIcon from '@mui/icons-material/CloudUploadRounded';
 import { Box, Typography } from '@mui/material';
 import { keyframes, styled } from '@mui/material/styles';
 
+import { UPLOAD_AREA_HEIGHT } from '@/shared/constants';
+
 import {
   DOT_GRID_SPACING,
   DOT_SIZE,
   DRAG_ACTIVE_SCALE,
-  DROP_AREA_MAX_WIDTH,
-  DROP_AREA_MIN_HEIGHT,
+  DROP_AREA_GAP,
+  DROP_AREA_PADDING,
+  HALO_INSET,
   HALO_PULSE_DURATION,
+  ICON_BADGE_HEIGHT,
   ICON_FLOAT_DISTANCE,
   ICON_FLOAT_DURATION,
   ICON_SIZE,
@@ -24,13 +28,14 @@ const pulse = keyframes`
   100% { transform: scale(1.35); opacity: 0; }
 `;
 
+// The default size. A parent that needs another size overrides it with
+// `styled(FileDropzone)`.
 export const DropzoneRoot = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   gap: theme.spacing(2),
   width: '100%',
-  maxWidth: DROP_AREA_MAX_WIDTH,
-  marginInline: 'auto',
+  height: UPLOAD_AREA_HEIGHT,
 }));
 
 export const IconBadge = styled(Box)(({ theme }) => {
@@ -40,9 +45,12 @@ export const IconBadge = styled(Box)(({ theme }) => {
     position: 'relative',
     display: 'grid',
     placeItems: 'center',
-    width: theme.spacing(12),
-    height: theme.spacing(12),
-    marginBottom: theme.spacing(3),
+    // Sized by the drop area's height, and the first to give way when the
+    // text needs the room.
+    height: ICON_BADGE_HEIGHT,
+    aspectRatio: '1',
+    minHeight: 0,
+    flexShrink: 1,
     borderRadius: '50%',
     color: palette.primary.contrastText,
     backgroundImage: `linear-gradient(135deg, ${palette.primary.main}, ${palette.secondary.main})`,
@@ -54,7 +62,7 @@ export const IconBadge = styled(Box)(({ theme }) => {
     '&::before': {
       content: '""',
       position: 'absolute',
-      inset: theme.spacing(-1.75),
+      inset: HALO_INSET,
       zIndex: -1,
       borderRadius: '50%',
       backgroundColor: theme.alpha(palette.primary.main, 0.16),
@@ -63,8 +71,17 @@ export const IconBadge = styled(Box)(({ theme }) => {
 });
 
 export const UploadIcon = styled(CloudUploadRoundedIcon)({
-  fontSize: ICON_SIZE,
+  width: ICON_SIZE,
+  height: ICON_SIZE,
 });
+
+// Keeps the title and hint together, closer than the drop area's own gap.
+export const DropText = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: theme.spacing(0.5),
+}));
 
 export const DropTitle = styled(Typography)(({ theme }) => {
   const { palette } = theme.vars ?? theme;
@@ -91,7 +108,6 @@ export const DropDescription = styled(Typography)(({ theme }) => {
 
   return {
     ...theme.typography.caption,
-    marginTop: theme.spacing(2.5),
     padding: theme.spacing(0.75, 1.75),
     borderRadius: theme.spacing(2),
     fontWeight: theme.typography.fontWeightMedium,
@@ -114,9 +130,11 @@ export const DropArea = styled(Box)(({ theme }) => {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: theme.spacing(0.5),
-    minHeight: DROP_AREA_MIN_HEIGHT,
-    padding: theme.spacing(6, 4),
+    gap: DROP_AREA_GAP,
+    // Takes the height the rejection alert leaves.
+    flex: '1 1 0',
+    minHeight: 0,
+    padding: DROP_AREA_PADDING,
     textAlign: 'center',
     cursor: 'pointer',
     outline: 'none',
