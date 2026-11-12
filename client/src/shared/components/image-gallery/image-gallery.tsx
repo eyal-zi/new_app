@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
+
+import { ImageTile } from '@/shared/components/image-tile/image-tile';
 
 import { DEFAULT_EMPTY_MESSAGE, DEFAULT_GALLERY_GAP } from './consts';
-import { EmptyMessage, GalleryGrid } from './image-gallery.styles';
-import { ImageGalleryTile } from './image-gallery-tile/image-gallery-tile';
+import { EmptyMessage, GalleryGrid, GalleryItem } from './image-gallery.styles';
 import { ImageLightbox } from './image-lightbox/image-lightbox';
 import { type GalleryImage } from './types';
 
@@ -16,10 +17,20 @@ export type ImageGalleryProps<T> = {
   getImage: (item: T) => GalleryImage;
   /** Called when a tile is activated, before the lightbox opens. */
   onItemClick?: (item: T, index: number) => void;
+  /**
+   * Overlaid on each tile's top-right corner, e.g. a remove button. Rendered
+   * outside the tile's click area, so using it doesn't open the lightbox.
+   */
+  renderAction?: (item: T, index: number) => ReactNode;
   /** Open a full-screen viewer when a tile is clicked. Defaults to `true`. */
   lightbox?: boolean;
   /** Space between tiles, in theme spacing units. Defaults to `1`. */
   gap?: number;
+  /**
+   * Maximum number of columns. Fewer are used when tiles would get narrower
+   * than the minimum width. Defaults to as many as fit.
+   */
+  columns?: number;
   emptyMessage?: string;
   /** Accessible name for the gallery list. */
   label?: string;
@@ -30,8 +41,10 @@ export const ImageGallery = <T,>({
   getId,
   getImage,
   onItemClick,
+  renderAction,
   lightbox = true,
   gap = DEFAULT_GALLERY_GAP,
+  columns,
   emptyMessage = DEFAULT_EMPTY_MESSAGE,
   label,
 }: ImageGalleryProps<T>) => {
@@ -77,17 +90,25 @@ export const ImageGallery = <T,>({
     }
   };
 
-  const renderTile = (item: T, index: number) => (
-    <ImageGalleryTile
-      key={getId(item)}
-      image={getImage(item)}
-      onClick={isInteractive ? () => select(item, index) : undefined}
-    />
-  );
+  const renderTile = (item: T, index: number) => {
+    const image = getImage(item);
+
+    return (
+      <GalleryItem key={getId(item)} role="listitem">
+        <ImageTile
+          src={image.thumbnailSrc ?? image.src}
+          alt={image.alt}
+          caption={image.caption}
+          onClick={isInteractive ? () => select(item, index) : undefined}
+          action={renderAction?.(item, index)}
+        />
+      </GalleryItem>
+    );
+  };
 
   return (
     <>
-      <GalleryGrid role="list" aria-label={label} gap={gap}>
+      <GalleryGrid role="list" aria-label={label} gap={gap} columns={columns}>
         {items.map(renderTile)}
       </GalleryGrid>
       {lightbox && activeItem && (
