@@ -3,7 +3,11 @@ import { Stack, Typography } from '@mui/material';
 import { ImageGallery } from '@/shared/components/image-gallery/image-gallery';
 import type { GalleryImage } from '@/shared/components/image-gallery/types';
 
-import { SUMMARY_GALLERY_COLUMNS } from '../consts';
+import {
+  SUMMARY_GALLERY_COLUMNS,
+  SUMMARY_IMAGES_LABEL,
+  SUMMARY_TITLE,
+} from '../consts';
 
 type SummaryImage = GalleryImage & { id: string };
 
@@ -16,12 +20,12 @@ export const SummaryPage = () => {
 
   return (
     <Stack spacing={3}>
-      <Typography variant="h4">Summary</Typography>
+      <Typography variant="h4">{SUMMARY_TITLE}</Typography>
       <ImageGallery
         items={images}
         getId={getId}
         getImage={getImage}
-        label="Summary images"
+        label={SUMMARY_IMAGES_LABEL}
         columns={SUMMARY_GALLERY_COLUMNS}
       />
     </Stack>

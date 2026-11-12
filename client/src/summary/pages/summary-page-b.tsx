@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { CompareRow } from '../components/compare-row';
 import { SelectionList } from '../components/selection-list';
+import { SUMMARY_TITLE } from '../consts';
 import type { CompareImage, Selection } from '../types';
 
 export const SummaryPageB = () => {
@@ -14,11 +15,14 @@ export const SummaryPageB = () => {
   const [selections, setSelections] = useState<Selection[]>([]);
 
   const removeSelection = (id: string) =>
-    setSelections((current) => current.filter((item) => item.id !== id));
+    setSelections((current) =>
+      // Never remove the last selection.
+      current.length > 1 ? current.filter((item) => item.id !== id) : current,
+    );
 
   return (
     <Stack spacing={3}>
-      <Typography variant="h4">Summary</Typography>
+      <Typography variant="h4">{SUMMARY_TITLE}</Typography>
       <CompareRow imageA={imageA} imageB={imageB} />
       <SelectionList selections={selections} onRemove={removeSelection} />
     </Stack>

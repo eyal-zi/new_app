@@ -3,11 +3,12 @@ import { Typography } from '@mui/material';
 
 import { ImageGalleryTile } from '@/shared/components/image-gallery/image-gallery-tile/image-gallery-tile';
 import type { GalleryImage } from '@/shared/components/image-gallery/types';
+import { FILE_SIZE_FALLBACK } from '@/shared/constants';
+import { useImageFileSize } from '@/shared/hooks/use-image-file-size';
+import { formatFileSize } from '@/shared/utils/format-file-size';
 
-import { COMPARE_TITLES, FILE_SIZE_FALLBACK } from '../consts';
-import { useImageFileSize } from '../hooks/use-image-file-size';
+import { COMPARE_TITLES } from '../consts';
 import type { CompareImage } from '../types';
-import { formatFileSize } from '../utils/format-file-size';
 import { IconWrapper, Panel, Row } from './compare-row.styles';
 
 export type CompareRowProps = {

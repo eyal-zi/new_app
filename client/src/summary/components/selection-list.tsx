@@ -11,7 +11,7 @@ export type SelectionListProps = {
 };
 
 // The last remaining selection can't be removed, so there is never a way to
-// cancel all of them.
+// cancel all of them. Callers should enforce the same rule on their state.
 export const SelectionList = ({ selections, onRemove }: SelectionListProps) => {
   const isRemovable = !!onRemove && selections.length > 1;
 

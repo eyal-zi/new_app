@@ -25,3 +25,9 @@ export const COLOR_SCHEME_BACKGROUNDS = {
   light: '#f6f7fb',
   dark: '#0f111a',
 } as const;
+
+export const FILE_SIZE_UNITS = ['B', 'KB', 'MB', 'GB'];
+export const FILE_SIZE_UNIT_STEP = 1024;
+export const FILE_SIZE_FALLBACK = '—';
+
+export const IMAGE_FILE_SIZE_QUERY_KEY = 'image-file-size';

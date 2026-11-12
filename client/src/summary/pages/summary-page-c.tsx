@@ -2,6 +2,7 @@ import { Stack, Typography } from '@mui/material';
 
 import { CompareRow } from '../components/compare-row';
 import { SelectionList } from '../components/selection-list';
+import { SUMMARY_TITLE } from '../consts';
 import type { CompareImage, Selection } from '../types';
 
 export const SummaryPageC = () => {
@@ -14,7 +15,7 @@ export const SummaryPageC = () => {
 
   return (
     <Stack spacing={3}>
-      <Typography variant="h4">Summary</Typography>
+      <Typography variant="h4">{SUMMARY_TITLE}</Typography>
       <CompareRow imageA={imageA} imageB={imageB} />
       <SelectionList selections={selections} />
     </Stack>
