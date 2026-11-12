@@ -15,7 +15,7 @@ export const formatFileSize = (bytes: number) => {
   const digits = unitIndex === 0 ? 0 : 1;
   let rounded = Number(value.toFixed(digits));
 
-  // Rounding can reach the next unit (1023.96 KB -> 1024.0 KB); promote it.
+  // Rounding can reach the next unit (1023.96 KiB -> 1024.0 KiB); promote it.
   if (
     rounded >= FILE_SIZE_UNIT_STEP &&
     unitIndex < FILE_SIZE_UNITS.length - 1
