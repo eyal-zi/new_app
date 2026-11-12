@@ -1,20 +1,18 @@
 import { Stack, Typography } from '@mui/material';
 
 import { ImageGallery } from '@/shared/components/image-gallery/image-gallery';
-import type { GalleryImage } from '@/shared/components/image-gallery/types';
 
 import {
   SUMMARY_GALLERY_COLUMNS,
   SUMMARY_IMAGES_LABEL,
   SUMMARY_TITLE,
 } from '../consts';
-
-type SummaryImage = GalleryImage & { id: string };
+import type { SummaryImage } from '../types';
 
 const getId = (image: SummaryImage) => image.id;
 const getImage = (image: SummaryImage) => image;
 
-export const SummaryPage = () => {
+export const EvaluationSummaryPage = () => {
   // TODO: get the images from the store.
   const images: SummaryImage[] = [];
 

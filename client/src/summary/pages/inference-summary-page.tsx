@@ -5,7 +5,7 @@ import { SelectionList } from '../components/selection-list';
 import { SUMMARY_TITLE } from '../consts';
 import type { CompareImage, Selection } from '../types';
 
-export const SummaryPageC = () => {
+export const InferenceSummaryPage = () => {
   // TODO: get the compared images from the store.
   const imageA: CompareImage | undefined = undefined;
   const imageB: CompareImage | undefined = undefined;

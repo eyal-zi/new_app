@@ -1,7 +1,11 @@
 import { Stack } from '@mui/material';
 import { styled, type Theme } from '@mui/material/styles';
 
-import { COMPARE_PANEL_MAX_WIDTH, COMPARE_ROW_GAP } from '../consts';
+import {
+  COMPARE_PANEL_MAX_WIDTH,
+  COMPARE_ROW_GAP,
+  COMPARE_TILE_ASPECT_RATIO,
+} from '../consts';
 
 const rowStyles = ({ theme }: { theme: Theme }) => ({
   alignItems: 'center',
@@ -23,3 +27,7 @@ const panelStyles = ({ theme }: { theme: Theme }) => ({
   maxWidth: theme.spacing(COMPARE_PANEL_MAX_WIDTH),
 });
 export const Panel = styled('div')(panelStyles);
+
+export const TileFrame = styled('div')({
+  aspectRatio: COMPARE_TILE_ASPECT_RATIO,
+});

@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { skipToken, useQuery } from '@tanstack/react-query';
 
 import { IMAGE_FILE_SIZE_QUERY_KEY } from '../constants';
 
@@ -23,8 +23,7 @@ const fetchImageFileSize = async (src: string) => {
 export const useImageFileSize = (src?: string) =>
   useQuery({
     queryKey: [IMAGE_FILE_SIZE_QUERY_KEY, src],
-    queryFn: () => fetchImageFileSize(src as string),
-    enabled: !!src,
+    queryFn: src ? () => fetchImageFileSize(src) : skipToken,
     staleTime: Infinity,
     retry: false,
   });

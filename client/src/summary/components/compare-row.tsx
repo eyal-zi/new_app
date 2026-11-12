@@ -1,29 +1,22 @@
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import { Typography } from '@mui/material';
 
-import { ImageGalleryTile } from '@/shared/components/image-gallery/image-gallery-tile/image-gallery-tile';
-import type { GalleryImage } from '@/shared/components/image-gallery/types';
+import { ImageTile } from '@/shared/components/image-tile/image-tile';
 import { FILE_SIZE_FALLBACK } from '@/shared/constants';
-import { useImageFileSize } from '@/shared/hooks/use-image-file-size';
+import { useImageFileSize } from '@/shared/queries/use-image-file-size';
 import { formatFileSize } from '@/shared/utils/format-file-size';
 
 import { COMPARE_TITLES } from '../consts';
 import type { CompareImage } from '../types';
-import { IconWrapper, Panel, Row } from './compare-row.styles';
+import { IconWrapper, Panel, Row, TileFrame } from './compare-row.styles';
 
 export type CompareRowProps = {
   imageA?: CompareImage;
   imageB?: CompareImage;
 };
 
-const getImage = (
-  { src, alt, name }: CompareImage,
-  bytes: number | undefined,
-): GalleryImage => ({
-  src,
-  alt,
-  caption: `${name} · ${bytes === undefined ? FILE_SIZE_FALLBACK : formatFileSize(bytes)}`,
-});
+const getCaption = (name: string, bytes: number | undefined) =>
+  `${name} · ${bytes === undefined ? FILE_SIZE_FALLBACK : formatFileSize(bytes)}`;
 
 export const CompareRow = ({ imageA, imageB }: CompareRowProps) => {
   const { data: bytesA } = useImageFileSize(imageA?.src);
@@ -34,7 +27,15 @@ export const CompareRow = ({ imageA, imageB }: CompareRowProps) => {
       <Typography variant="h6" gutterBottom>
         {title}
       </Typography>
-      {image && <ImageGalleryTile image={getImage(image, bytes)} />}
+      {image && (
+        <TileFrame>
+          <ImageTile
+            src={image.src}
+            alt={image.alt}
+            caption={getCaption(image.name, bytes)}
+          />
+        </TileFrame>
+      )}
     </Panel>
   );
 
