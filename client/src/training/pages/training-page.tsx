@@ -6,7 +6,8 @@ import { Steps } from '@/shared/components/steps/steps';
 import type { StepItem } from '@/shared/components/steps/types';
 import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
 
-import { SelectFiltersStep } from '../components/select-filters-step/select-filters-step';
+import { type RequiredType } from '../components/select-type-step/consts';
+import { SelectTypeStep } from '../components/select-type-step/select-type-step';
 import {
   FIRST_IMAGE_PICKER,
   SECOND_IMAGE_PICKER,
@@ -19,6 +20,7 @@ export const TrainingPage = () => {
   // Held here, not in the step, so the files survive moving between steps.
   const [firstImage, setFirstImage] = useState<File | null>(null);
   const [secondImage, setSecondImage] = useState<File | null>(null);
+  const [requiredType, setRequiredType] = useState<RequiredType | null>(null);
 
   // Not wired to the API yet.
   const finish = () => {};
@@ -47,10 +49,14 @@ export const TrainingPage = () => {
       isComplete: !!firstImage && !!secondImage,
     },
     {
-      ...TRAINING_STEPS.selectFilters,
-      content: <SelectFiltersStep />,
-      // Empty for now: derive from its state once it has content.
-      isComplete: true,
+      ...TRAINING_STEPS.selectType,
+      content: (
+        <SelectTypeStep
+          requiredType={requiredType}
+          onRequiredTypeChange={setRequiredType}
+        />
+      ),
+      isComplete: requiredType !== null,
     },
   ];
 
