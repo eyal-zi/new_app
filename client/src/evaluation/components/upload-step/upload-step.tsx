@@ -3,7 +3,6 @@ import { useRef, useState } from 'react';
 
 import { DeleteIcon } from '@/assets/icons/delete-icon';
 import { ImageGallery } from '@/shared/components/image-gallery/image-gallery';
-import { RemoveButton } from '@/shared/components/remove-button/remove-button';
 import { StepHeader } from '@/shared/components/step-header/step-header';
 import { IMAGE_ACCEPT } from '@/shared/constants';
 import { useObjectUrls } from '@/shared/hooks/use-object-urls';
@@ -14,7 +13,6 @@ import {
   GALLERY_LABEL,
   getGalleryCountLabel,
   getRemoveAllDescription,
-  getRemoveImageLabel,
   MAX_IMAGES,
   REMOVE_ALL_LABEL,
   REMOVE_ALL_TITLE,
@@ -79,14 +77,6 @@ export const UploadStep = ({ images, onImagesChange }: UploadStepProps) => {
       }
     };
 
-  const renderRemoveButton = ({ file }: UploadedImage, index: number) => (
-    <RemoveButton
-      ref={registerRemoveButton(file)}
-      label={getRemoveImageLabel(file.name)}
-      onClick={() => remove(file, index)}
-    />
-  );
-
   return (
     <UploadStepRoot>
       <StepHeader title={UPLOAD_TITLE} subtitle={UPLOAD_SUBTITLE} />
@@ -122,7 +112,8 @@ export const UploadStep = ({ images, onImagesChange }: UploadStepProps) => {
                 alt: file.name,
                 caption: file.name,
               })}
-              renderAction={renderRemoveButton}
+              onDelete={({ file }, index) => remove(file, index)}
+              getDeleteButtonRef={({ file }) => registerRemoveButton(file)}
               label={GALLERY_LABEL}
             />
           </GalleryScrollArea>

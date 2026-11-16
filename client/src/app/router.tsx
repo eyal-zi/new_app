@@ -14,6 +14,9 @@ import { UnauthorizedRoute } from '@/core/pages/unauthorized-route';
 import { Layout } from '@/demo/layout/layout';
 import { EvaluationPage } from '@/evaluation/pages/evaluation-page';
 import { InferencePage } from '@/inference/pages/inference-page';
+import { RESULTS_B_PATH, RESULTS_PATH } from '@/results/consts';
+import { ResultsBDemoPage } from '@/results/pages/results-b-demo-page';
+import { ResultsDemoPage } from '@/results/pages/results-demo-page';
 import { SESSIONS_PATH } from '@/sessions/consts';
 import { SessionsPage } from '@/sessions/pages/sessions-page';
 import { SESSION_TYPE_PATHS } from '@/shared/session-type-constants';
@@ -86,6 +89,18 @@ const evaluation = createRoute({
   component: EvaluationPage,
 });
 
+const results = createRoute({
+  getParentRoute: () => layoutRoute,
+  path: RESULTS_PATH,
+  component: ResultsDemoPage,
+});
+
+const resultsB = createRoute({
+  getParentRoute: () => layoutRoute,
+  path: RESULTS_B_PATH,
+  component: ResultsBDemoPage,
+});
+
 export const createAppRouter = () =>
   createRouter({
     routeTree: root.addChildren([
@@ -96,6 +111,8 @@ export const createAppRouter = () =>
         training,
         inference,
         evaluation,
+        results,
+        resultsB,
       ]),
     ]),
     defaultPreload: false,

@@ -1,6 +1,6 @@
-import { type ReactNode, useState } from 'react';
+import { type Ref, useState } from 'react';
 
-import { ImageTile } from '@/shared/components/image-tile/image-tile';
+import { ActionableImageTile } from '@/shared/components/actionable-image-tile/actionable-image-tile';
 
 import { DEFAULT_EMPTY_MESSAGE, DEFAULT_GALLERY_GAP } from './consts';
 import { EmptyMessage, GalleryGrid, GalleryItem } from './image-gallery.styles';
@@ -18,10 +18,12 @@ export type ImageGalleryProps<T> = {
   /** Called when a tile is activated, before the lightbox opens. */
   onItemClick?: (item: T, index: number) => void;
   /**
-   * Overlaid on each tile's top-right corner, e.g. a remove button. Rendered
-   * outside the tile's click area, so using it doesn't open the lightbox.
+   * Shows a delete button on each tile. It sits outside the tile's click area,
+   * so using it doesn't open the lightbox.
    */
-  renderAction?: (item: T, index: number) => ReactNode;
+  onDelete?: (item: T, index: number) => void;
+  /** Ref for an item's delete button, e.g. to move focus to it. */
+  getDeleteButtonRef?: (item: T) => Ref<HTMLButtonElement>;
   /** Open a full-screen viewer when a tile is clicked. Defaults to `true`. */
   lightbox?: boolean;
   /** Space between tiles, in theme spacing units. Defaults to `1`. */
@@ -41,7 +43,8 @@ export const ImageGallery = <T,>({
   getId,
   getImage,
   onItemClick,
-  renderAction,
+  onDelete,
+  getDeleteButtonRef,
   lightbox = true,
   gap = DEFAULT_GALLERY_GAP,
   columns,
@@ -95,12 +98,13 @@ export const ImageGallery = <T,>({
 
     return (
       <GalleryItem key={getId(item)} role="listitem">
-        <ImageTile
+        <ActionableImageTile
           src={image.thumbnailSrc ?? image.src}
           alt={image.alt}
           caption={image.caption}
           onClick={isInteractive ? () => select(item, index) : undefined}
-          action={renderAction?.(item, index)}
+          onDelete={onDelete && (() => onDelete(item, index))}
+          deleteButtonRef={getDeleteButtonRef?.(item)}
         />
       </GalleryItem>
     );
