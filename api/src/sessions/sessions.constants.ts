@@ -1,8 +1,4 @@
-export const SESSION_TYPES = [
-  'training',
-  'inference',
-  'evaluation',
-] as const;
+export const SESSION_TYPES = ['training', 'inference', 'evaluation'] as const;
 
 export const SESSION_STATUSES = [
   'pending',
