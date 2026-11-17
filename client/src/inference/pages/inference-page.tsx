@@ -24,8 +24,10 @@ export const InferencePage = () => {
   const [secondImage, setSecondImage] = useState<File | null>(null);
   const [algorithms, setAlgorithms] = useState<Algorithm[]>([]);
 
-  // TODO: derive from the select step once it has content.
-  const selections: Selection[] = [];
+  const selections: Selection[] = algorithms.map((algorithm) => ({
+    id: algorithm,
+    label: algorithm,
+  }));
 
   // Not wired to the API yet.
   const finish = () => {};
