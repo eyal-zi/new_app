@@ -36,6 +36,13 @@
       "when": 1794732326910,
       "tag": "0004_remove_calibration_sessions",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1794930190112,
+      "tag": "0005_sessions_details",
+      "breakpoints": true
     }
   ]
 }

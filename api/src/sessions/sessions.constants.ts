@@ -9,6 +9,8 @@ export const SESSION_STATUSES = [
   'canceled',
 ] as const;
 
+export const RECOMMENDATION_RESULT_TYPES = ['file', 'score'] as const;
+
 export const MAX_PROGRESS = 100;
 export const MAX_OWNER_LENGTH = 254;
 export const MAX_SEARCH_LENGTH = 200;

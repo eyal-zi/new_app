@@ -5,11 +5,13 @@
  * OpenAPI spec version: 1.0
  */
 import type { SessionStatus } from './sessionStatus';
-import type { SessionType } from './sessionType';
+import type { TrainingSessionDtoVariationaInfo } from './trainingSessionDtoVariationaInfo';
+import type { TrainingSessionDtoVariationbInfo } from './trainingSessionDtoVariationbInfo';
+import type { TrainingSessionType } from './trainingSessionType';
 
-export interface SessionDto {
+export interface TrainingSessionDto {
   session_id: string;
-  type: SessionType;
+  type: TrainingSessionType;
   session_owner: string;
   image_a_url: string;
   image_b_url: string;
@@ -27,4 +29,11 @@ export interface SessionDto {
   notes: string;
   /** @nullable */
   logs: string | null;
+  /** @nullable */
+  variationa_info: TrainingSessionDtoVariationaInfo;
+  /** @nullable */
+  variationb_info: TrainingSessionDtoVariationbInfo;
+  /** @nullable */
+  training_type: string | null;
+  s8_link: string;
 }

@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   HttpCode,
   HttpStatus,
   Param,
@@ -11,6 +12,7 @@ import {
 import {
   ApiBearerAuth,
   ApiExtension,
+  ApiExtraModels,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -20,18 +22,22 @@ import {
 
 import { READ_ONLY_EXTENSION } from './sessions.constants.js';
 import {
-  DeleteSessionParamDto,
   DeleteSessionQueryDto,
+  EvaluationSessionDto,
   GroupSessionsBodyDto,
   GroupSessionsQueryDto,
-  SessionDto,
+  InferenceSessionDto,
+  SESSION_DETAILS_SCHEMA,
+  SessionParamDto,
   SessionSearchValuesDto,
   SessionTypeParamDto,
+  TrainingSessionDto,
 } from './sessions.dto.js';
 import { SessionsService } from './sessions.service.js';
 
 @ApiTags('sessions')
 @ApiBearerAuth()
+@ApiExtraModels(InferenceSessionDto, TrainingSessionDto, EvaluationSessionDto)
 @Controller()
 export class SessionsController {
   constructor(private readonly sessions: SessionsService) {}
@@ -40,7 +46,9 @@ export class SessionsController {
   @HttpCode(HttpStatus.OK)
   @ApiExtension(READ_ONLY_EXTENSION, true)
   @ApiOperation({ summary: 'Get a group of sessions of any type' })
-  @ApiOkResponse({ type: SessionDto, isArray: true })
+  @ApiOkResponse({
+    schema: { type: 'array', items: SESSION_DETAILS_SCHEMA },
+  })
   groupSessions(
     @Query() query: GroupSessionsQueryDto,
     @Body() { search_values }: GroupSessionsBodyDto,
@@ -52,7 +60,9 @@ export class SessionsController {
   @HttpCode(HttpStatus.OK)
   @ApiExtension(READ_ONLY_EXTENSION, true)
   @ApiOperation({ summary: 'Get a group of sessions of a single type' })
-  @ApiOkResponse({ type: SessionDto, isArray: true })
+  @ApiOkResponse({
+    schema: { type: 'array', items: SESSION_DETAILS_SCHEMA },
+  })
   groupSessionsByType(
     @Param() { type }: SessionTypeParamDto,
     @Query() query: GroupSessionsQueryDto,
@@ -82,13 +92,21 @@ export class SessionsController {
     return this.sessions.count(searchValues, type);
   }
 
+  @Get(':type/:sessionId')
+  @ApiOperation({ summary: 'Get a session' })
+  @ApiOkResponse({ schema: SESSION_DETAILS_SCHEMA })
+  @ApiNotFoundResponse()
+  getSession(@Param() { type, sessionId }: SessionParamDto) {
+    return this.sessions.get(type, sessionId);
+  }
+
   @Delete(':type/:sessionId')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete a session' })
   @ApiNoContentResponse()
   @ApiNotFoundResponse()
   async deleteSession(
-    @Param() { type, sessionId }: DeleteSessionParamDto,
+    @Param() { type, sessionId }: SessionParamDto,
     @Query() { should_delete }: DeleteSessionQueryDto,
   ) {
     await this.sessions.delete(type, sessionId, should_delete);

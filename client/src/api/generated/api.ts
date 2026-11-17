@@ -25,13 +25,15 @@ import type {
 
 import type {
   DeleteSessionParams,
+  EvaluationSessionDto,
   GroupSessionsBodyDto,
   GroupSessionsByTypeParams,
   GroupSessionsParams,
+  InferenceSessionDto,
   LoginResponseDto,
-  SessionDto,
   SessionSearchValuesDto,
   SessionType,
+  TrainingSessionDto,
   UserDto
 } from './model';
 
@@ -213,7 +215,7 @@ export const groupSessions = (
 ) => {
 
 
-      return request<SessionDto[]>(
+      return request<(InferenceSessionDto | TrainingSessionDto | EvaluationSessionDto)[]>(
       {url: `/api/sessions/group`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: groupSessionsBodyDto,
@@ -317,7 +319,7 @@ export const groupSessionsByType = (
 ) => {
 
 
-      return request<SessionDto[]>(
+      return request<(InferenceSessionDto | TrainingSessionDto | EvaluationSessionDto)[]>(
       {url: `/api/${type}/sessions/group`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: groupSessionsBodyDto,
@@ -601,6 +603,106 @@ export function useCountSessionsByType<TData = Awaited<ReturnType<typeof countSe
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getCountSessionsByTypeQueryOptions(type,sessionSearchValuesDto,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+/**
+ * @summary Get a session
+ */
+export const getSession = (
+    type: SessionType,
+    sessionId: string,
+ options?: SecondParameter<typeof request>,signal?: AbortSignal
+) => {
+
+
+      return request<InferenceSessionDto | TrainingSessionDto | EvaluationSessionDto>(
+      {url: `/api/${type}/${sessionId}`, method: 'GET', signal
+    },
+      options);
+    }
+
+
+
+
+export const getGetSessionQueryKey = (type: SessionType,
+    sessionId: string,) => {
+    return [
+    `/api/${type}/${sessionId}`
+    ] as const;
+    }
+
+
+export const getGetSessionQueryOptions = <TData = Awaited<ReturnType<typeof getSession>>, TError = void>(type: SessionType,
+    sessionId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSession>>, TError, TData>>, request?: SecondParameter<typeof request>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetSessionQueryKey(type,sessionId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getSession>>> = ({ signal }) => getSession(type,sessionId, requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: type !== null && type !== undefined && sessionId !== null && sessionId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getSession>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetSessionQueryResult = NonNullable<Awaited<ReturnType<typeof getSession>>>
+export type GetSessionQueryError = void
+
+
+/** @summary Get a session */
+export function useGetSession<TData = Awaited<ReturnType<typeof getSession>>, TError = void>(
+ type: SessionType,
+    sessionId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSession>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getSession>>,
+          TError,
+          Awaited<ReturnType<typeof getSession>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof request>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/** @summary Get a session */
+export function useGetSession<TData = Awaited<ReturnType<typeof getSession>>, TError = void>(
+ type: SessionType,
+    sessionId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSession>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getSession>>,
+          TError,
+          Awaited<ReturnType<typeof getSession>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof request>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/** @summary Get a session */
+export function useGetSession<TData = Awaited<ReturnType<typeof getSession>>, TError = void>(
+ type: SessionType,
+    sessionId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSession>>, TError, TData>>, request?: SecondParameter<typeof request>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/** @summary Get a session */
+export function useGetSession<TData = Awaited<ReturnType<typeof getSession>>, TError = void>(
+ type: SessionType,
+    sessionId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSession>>, TError, TData>>, request?: SecondParameter<typeof request>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetSessionQueryOptions(type,sessionId,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

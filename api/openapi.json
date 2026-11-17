@@ -97,7 +97,25 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/SessionDto"
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/InferenceSessionDto"
+                      },
+                      {
+                        "$ref": "#/components/schemas/TrainingSessionDto"
+                      },
+                      {
+                        "$ref": "#/components/schemas/EvaluationSessionDto"
+                      }
+                    ],
+                    "discriminator": {
+                      "propertyName": "type",
+                      "mapping": {
+                        "inference": "#/components/schemas/InferenceSessionDto",
+                        "training": "#/components/schemas/TrainingSessionDto",
+                        "evaluation": "#/components/schemas/EvaluationSessionDto"
+                      }
+                    }
                   }
                 }
               }
@@ -168,7 +186,25 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/SessionDto"
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/InferenceSessionDto"
+                      },
+                      {
+                        "$ref": "#/components/schemas/TrainingSessionDto"
+                      },
+                      {
+                        "$ref": "#/components/schemas/EvaluationSessionDto"
+                      }
+                    ],
+                    "discriminator": {
+                      "propertyName": "type",
+                      "mapping": {
+                        "inference": "#/components/schemas/InferenceSessionDto",
+                        "training": "#/components/schemas/TrainingSessionDto",
+                        "evaluation": "#/components/schemas/EvaluationSessionDto"
+                      }
+                    }
                   }
                 }
               }
@@ -275,6 +311,70 @@
       }
     },
     "/api/{type}/{sessionId}": {
+      "get": {
+        "operationId": "getSession",
+        "parameters": [
+          {
+            "name": "type",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/SessionType"
+            }
+          },
+          {
+            "name": "sessionId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/InferenceSessionDto"
+                    },
+                    {
+                      "$ref": "#/components/schemas/TrainingSessionDto"
+                    },
+                    {
+                      "$ref": "#/components/schemas/EvaluationSessionDto"
+                    }
+                  ],
+                  "discriminator": {
+                    "propertyName": "type",
+                    "mapping": {
+                      "inference": "#/components/schemas/InferenceSessionDto",
+                      "training": "#/components/schemas/TrainingSessionDto",
+                      "evaluation": "#/components/schemas/EvaluationSessionDto"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get a session",
+        "tags": [
+          "sessions"
+        ]
+      },
       "delete": {
         "operationId": "deleteSession",
         "parameters": [
@@ -372,45 +472,10 @@
           "user"
         ]
       },
-      "SessionSearchValuesDto": {
-        "type": "object",
-        "properties": {
-          "session_id": {
-            "type": "string",
-            "description": "Case-insensitive text to look for in the session id",
-            "maxLength": 200
-          },
-          "session_owner": {
-            "type": "string",
-            "description": "Case-insensitive text to look for in the session owner",
-            "maxLength": 200
-          },
-          "status": {
-            "type": "string",
-            "description": "Case-insensitive text to look for in the session status",
-            "maxLength": 200
-          }
-        }
-      },
-      "GroupSessionsBodyDto": {
-        "type": "object",
-        "properties": {
-          "search_values": {
-            "description": "Sessions must match every provided value",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/SessionSearchValuesDto"
-              }
-            ]
-          }
-        }
-      },
-      "SessionType": {
+      "InferenceSessionType": {
         "type": "string",
         "enum": [
-          "training",
-          "inference",
-          "evaluation"
+          "inference"
         ]
       },
       "SessionStatus": {
@@ -424,7 +489,59 @@
           "canceled"
         ]
       },
-      "SessionDto": {
+      "RecommendationResultsDto": {
+        "type": "object",
+        "properties": {
+          "variationa": {
+            "type": "string",
+            "nullable": true
+          },
+          "variationb": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "file",
+              "score"
+            ]
+          }
+        },
+        "required": [
+          "variationa",
+          "variationb",
+          "type"
+        ]
+      },
+      "RecommendationsDto": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string"
+          },
+          "statistic": {
+            "type": "string"
+          },
+          "results": {
+            "$ref": "#/components/schemas/RecommendationResultsDto"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SessionStatus"
+              }
+            ]
+          }
+        },
+        "required": [
+          "session_id",
+          "statistic",
+          "results",
+          "status"
+        ]
+      },
+      "InferenceSessionDto": {
         "type": "object",
         "properties": {
           "session_id": {
@@ -433,7 +550,7 @@
           "type": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/SessionType"
+                "$ref": "#/components/schemas/InferenceSessionType"
               }
             ]
           },
@@ -475,6 +592,23 @@
           "logs": {
             "type": "string",
             "nullable": true
+          },
+          "variationa_info": {
+            "type": "object",
+            "nullable": true
+          },
+          "variationb_info": {
+            "type": "object",
+            "nullable": true
+          },
+          "recommendations": {
+            "$ref": "#/components/schemas/RecommendationsDto"
+          },
+          "statistics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         "required": [
@@ -488,7 +622,232 @@
           "progress",
           "status",
           "notes",
-          "logs"
+          "logs",
+          "variationa_info",
+          "variationb_info",
+          "recommendations",
+          "statistics"
+        ]
+      },
+      "TrainingSessionType": {
+        "type": "string",
+        "enum": [
+          "training"
+        ]
+      },
+      "TrainingSessionDto": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string"
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TrainingSessionType"
+              }
+            ]
+          },
+          "session_owner": {
+            "type": "string"
+          },
+          "image_a_url": {
+            "type": "string"
+          },
+          "image_b_url": {
+            "type": "string"
+          },
+          "creation_time": {
+            "type": "string",
+            "description": "Naive ISO-8601 timestamp in UTC (no timezone designator)",
+            "example": "2026-11-09T12:00:00.000"
+          },
+          "last_update": {
+            "type": "string",
+            "description": "Naive ISO-8601 timestamp in UTC (no timezone designator)",
+            "example": "2026-11-09T12:00:00.000"
+          },
+          "progress": {
+            "type": "number",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SessionStatus"
+              }
+            ]
+          },
+          "notes": {
+            "type": "string"
+          },
+          "logs": {
+            "type": "string",
+            "nullable": true
+          },
+          "variationa_info": {
+            "type": "object",
+            "nullable": true
+          },
+          "variationb_info": {
+            "type": "object",
+            "nullable": true
+          },
+          "training_type": {
+            "type": "string",
+            "nullable": true
+          },
+          "s8_link": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "session_id",
+          "type",
+          "session_owner",
+          "image_a_url",
+          "image_b_url",
+          "creation_time",
+          "last_update",
+          "progress",
+          "status",
+          "notes",
+          "logs",
+          "variationa_info",
+          "variationb_info",
+          "training_type",
+          "s8_link"
+        ]
+      },
+      "EvaluationSessionType": {
+        "type": "string",
+        "enum": [
+          "evaluation"
+        ]
+      },
+      "EvaluationSessionDto": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string"
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EvaluationSessionType"
+              }
+            ]
+          },
+          "session_owner": {
+            "type": "string"
+          },
+          "image_a_url": {
+            "type": "string"
+          },
+          "image_b_url": {
+            "type": "string"
+          },
+          "creation_time": {
+            "type": "string",
+            "description": "Naive ISO-8601 timestamp in UTC (no timezone designator)",
+            "example": "2026-11-09T12:00:00.000"
+          },
+          "last_update": {
+            "type": "string",
+            "description": "Naive ISO-8601 timestamp in UTC (no timezone designator)",
+            "example": "2026-11-09T12:00:00.000"
+          },
+          "progress": {
+            "type": "number",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SessionStatus"
+              }
+            ]
+          },
+          "notes": {
+            "type": "string"
+          },
+          "logs": {
+            "type": "string",
+            "nullable": true
+          },
+          "variationa_info": {
+            "type": "object",
+            "nullable": true
+          },
+          "variationb_info": {
+            "type": "object",
+            "nullable": true
+          },
+          "evaluated_image_url": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "session_id",
+          "type",
+          "session_owner",
+          "image_a_url",
+          "image_b_url",
+          "creation_time",
+          "last_update",
+          "progress",
+          "status",
+          "notes",
+          "logs",
+          "variationa_info",
+          "variationb_info",
+          "evaluated_image_url"
+        ]
+      },
+      "SessionSearchValuesDto": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "description": "Case-insensitive text to look for in the session id",
+            "maxLength": 200
+          },
+          "session_owner": {
+            "type": "string",
+            "description": "Case-insensitive text to look for in the session owner",
+            "maxLength": 200
+          },
+          "status": {
+            "type": "string",
+            "description": "Case-insensitive text to look for in the session status",
+            "maxLength": 200
+          }
+        }
+      },
+      "GroupSessionsBodyDto": {
+        "type": "object",
+        "properties": {
+          "search_values": {
+            "description": "Sessions must match every provided value",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SessionSearchValuesDto"
+              }
+            ]
+          }
+        }
+      },
+      "SessionType": {
+        "type": "string",
+        "enum": [
+          "training",
+          "inference",
+          "evaluation"
         ]
       }
     }

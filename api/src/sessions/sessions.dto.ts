@@ -1,4 +1,8 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  getSchemaPath,
+} from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
   IsBoolean,
@@ -17,6 +21,7 @@ import {
   DEFAULT_NUMBER_OF_SESSIONS,
   MAX_NUMBER_OF_SESSIONS,
   MAX_SEARCH_LENGTH,
+  RECOMMENDATION_RESULT_TYPES,
   SESSION_STATUSES,
   SESSION_TYPES,
 } from './sessions.constants.js';
@@ -54,7 +59,83 @@ export class SessionDto {
   @ApiProperty() notes!: string;
 
   @ApiProperty({ type: String, nullable: true }) logs!: string | null;
+
+  @ApiProperty({ type: Object, nullable: true })
+  variationa_info!: Record<string, unknown> | null;
+
+  @ApiProperty({ type: Object, nullable: true })
+  variationb_info!: Record<string, unknown> | null;
 }
+
+export class RecommendationResultsDto {
+  @ApiProperty({ type: String, nullable: true })
+  variationa!: string | number | null;
+
+  @ApiProperty({ type: String, nullable: true })
+  variationb!: string | number | null;
+
+  @ApiProperty({ enum: RECOMMENDATION_RESULT_TYPES })
+  type!: (typeof RECOMMENDATION_RESULT_TYPES)[number];
+}
+
+export class RecommendationsDto {
+  @ApiProperty() session_id!: string;
+
+  @ApiProperty() statistic!: string;
+
+  @ApiProperty({ type: RecommendationResultsDto })
+  results!: RecommendationResultsDto;
+
+  @ApiProperty({ enum: SESSION_STATUSES, enumName: 'SessionStatus' })
+  status!: (typeof SESSION_STATUSES)[number];
+}
+
+export class InferenceSessionDto extends SessionDto {
+  @ApiProperty({ enum: ['inference'], enumName: 'InferenceSessionType' })
+  declare type: 'inference';
+
+  @ApiProperty({ type: RecommendationsDto })
+  recommendations!: RecommendationsDto;
+
+  @ApiProperty({ type: [String] }) statistics!: string[];
+}
+
+export class TrainingSessionDto extends SessionDto {
+  @ApiProperty({ enum: ['training'], enumName: 'TrainingSessionType' })
+  declare type: 'training';
+
+  @ApiProperty({ type: String, nullable: true })
+  training_type!: string | null;
+
+  @ApiProperty() s8_link!: string;
+}
+
+export class EvaluationSessionDto extends SessionDto {
+  @ApiProperty({ enum: ['evaluation'], enumName: 'EvaluationSessionType' })
+  declare type: 'evaluation';
+
+  @ApiProperty({ type: String, nullable: true })
+  evaluated_image_url!: string | null;
+}
+
+export type SessionDetailsDto =
+  InferenceSessionDto | TrainingSessionDto | EvaluationSessionDto;
+
+export const SESSION_DETAILS_SCHEMA = {
+  oneOf: [
+    { $ref: getSchemaPath(InferenceSessionDto) },
+    { $ref: getSchemaPath(TrainingSessionDto) },
+    { $ref: getSchemaPath(EvaluationSessionDto) },
+  ],
+  discriminator: {
+    propertyName: 'type',
+    mapping: {
+      inference: getSchemaPath(InferenceSessionDto),
+      training: getSchemaPath(TrainingSessionDto),
+      evaluation: getSchemaPath(EvaluationSessionDto),
+    },
+  },
+};
 
 export class SessionSearchValuesDto {
   @ApiPropertyOptional({
@@ -91,7 +172,7 @@ export class SessionTypeParamDto {
   type!: (typeof SESSION_TYPES)[number];
 }
 
-export class DeleteSessionParamDto {
+export class SessionParamDto {
   @ApiProperty({ enum: SESSION_TYPES, enumName: 'SessionType' })
   @IsIn(SESSION_TYPES)
   type!: (typeof SESSION_TYPES)[number];

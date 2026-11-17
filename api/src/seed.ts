@@ -1,11 +1,14 @@
 import 'dotenv/config';
 
+import { randomUUID } from 'node:crypto';
+
 import { sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 
 import { ENV_KEYS } from './envKeys.constants.js';
 import {
+  RECOMMENDATION_RESULT_TYPES,
   SESSION_STATUSES,
   SESSION_TYPES,
 } from './sessions/sessions.constants.js';
@@ -26,6 +29,12 @@ const IMAGE_SIZES_PX: readonly (readonly [number, number])[] = [
   [64, 256],
   [400, 400],
 ];
+const TRAINING_TYPES = ['fine_tune', 'full', 'lora'];
+const STATISTICS = ['accuracy', 'precision', 'recall', 'f1', 'latency'];
+const MAX_SCORE = 100;
+const NULL_VARIATION_INFO_CHANCE = 0.3;
+const NULL_TRAINING_TYPE_CHANCE = 0.2;
+const NULL_EVALUATED_IMAGE_CHANCE = 0.3;
 const RANDOM_SEED = 20260101;
 const OWNERS = [
   'alice',
@@ -74,6 +83,57 @@ const imageUrl = (seed: string) => {
   return `https://picsum.photos/seed/${seed}/${width}/${height}`;
 };
 
+const variationInfo = (name: string) =>
+  random() < NULL_VARIATION_INFO_CHANCE
+    ? null
+    : { name, model_version: `v${between(1, 5)}`, seed: between(0, 9999) };
+
+const createTypeSpecificFields = (
+  type: (typeof SESSION_TYPES)[number],
+  id: string,
+  status: (typeof SESSION_STATUSES)[number],
+  index: number,
+) => {
+  switch (type) {
+    case 'inference': {
+      const resultType = pick(RECOMMENDATION_RESULT_TYPES);
+      const result = (variation: string) =>
+        resultType === 'score'
+          ? between(0, MAX_SCORE)
+          : `https://picsum.photos/seed/session-${index}-${variation}-result/200/200`;
+      const statistics = STATISTICS.slice(0, between(1, STATISTICS.length));
+
+      return {
+        recommendations: {
+          session_id: id,
+          statistic: statistics[0] as string,
+          results: {
+            variationa: result('a'),
+            variationb: result('b'),
+            type: resultType,
+          },
+          status,
+        },
+        statistics,
+      };
+    }
+
+    case 'training':
+      return {
+        trainingType:
+          random() < NULL_TRAINING_TYPE_CHANCE ? null : pick(TRAINING_TYPES),
+        s8Link: `https://s8.example.com/training/${id}`,
+      };
+    case 'evaluation':
+      return {
+        evaluatedImageUrl:
+          random() < NULL_EVALUATED_IMAGE_CHANCE
+            ? null
+            : imageUrl(`session-${index}-evaluated`),
+      };
+  }
+};
+
 const createMockSession = (index: number) => {
   const now = Date.now();
   const createdAt = new Date(now - random() * MAX_AGE_DAYS * MS_PER_DAY);
@@ -81,9 +141,12 @@ const createMockSession = (index: number) => {
     createdAt.getTime() + random() * (now - createdAt.getTime()),
   );
   const status = pick(SESSION_STATUSES);
+  const type = pick(SESSION_TYPES);
+  const id = randomUUID();
 
   return {
-    type: pick(SESSION_TYPES),
+    id,
+    type,
     owner: pick(OWNERS),
     imageAUrl: imageUrl(`session-${index}-a`),
     imageBUrl: imageUrl(`session-${index}-b`),
@@ -93,6 +156,9 @@ const createMockSession = (index: number) => {
     status,
     notes: '',
     logs: status === 'failed' ? 'Session failed unexpectedly' : null,
+    variationaInfo: variationInfo('variation a'),
+    variationbInfo: variationInfo('variation b'),
+    ...createTypeSpecificFields(type, id, status, index),
   };
 };
 

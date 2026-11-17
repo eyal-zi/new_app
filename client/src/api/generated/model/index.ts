@@ -6,12 +6,26 @@
  */
 
 export * from './deleteSessionParams';
+export * from './evaluationSessionDto';
+export * from './evaluationSessionDtoVariationaInfo';
+export * from './evaluationSessionDtoVariationbInfo';
+export * from './evaluationSessionType';
 export * from './groupSessionsBodyDto';
 export * from './groupSessionsByTypeParams';
 export * from './groupSessionsParams';
+export * from './inferenceSessionDto';
+export * from './inferenceSessionDtoVariationaInfo';
+export * from './inferenceSessionDtoVariationbInfo';
+export * from './inferenceSessionType';
 export * from './loginResponseDto';
-export * from './sessionDto';
+export * from './recommendationResultsDto';
+export * from './recommendationResultsDtoType';
+export * from './recommendationsDto';
 export * from './sessionSearchValuesDto';
 export * from './sessionStatus';
 export * from './sessionType';
+export * from './trainingSessionDto';
+export * from './trainingSessionDtoVariationaInfo';
+export * from './trainingSessionDtoVariationbInfo';
+export * from './trainingSessionType';
 export * from './userDto';

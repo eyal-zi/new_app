@@ -1,6 +1,7 @@
 import {
   index,
   integer,
+  jsonb,
   pgTable,
   text,
   timestamp,
@@ -9,6 +10,18 @@ import {
 } from 'drizzle-orm/pg-core';
 
 import { MAX_OWNER_LENGTH } from './sessions.constants.js';
+
+export type SessionInfo = Record<string, unknown>;
+export type SessionRecommendations = {
+  session_id: string;
+  statistic: string;
+  results: {
+    variationa: string | number | null;
+    variationb: string | number | null;
+    type: 'file' | 'score';
+  };
+  status: string;
+};
 
 export const sessions = pgTable(
   'sessions',
@@ -29,6 +42,16 @@ export const sessions = pgTable(
     status: varchar('status', { length: 32 }).notNull().default('pending'),
     notes: text('notes').notNull().default(''),
     logs: text('logs'),
+    variationaInfo: jsonb('variationa_info').$type<SessionInfo>(),
+    variationbInfo: jsonb('variationb_info').$type<SessionInfo>(),
+    // Inference-only
+    recommendations: jsonb('recommendations').$type<SessionRecommendations>(),
+    statistics: jsonb('statistics').$type<string[]>(),
+    // Training-only
+    trainingType: text('training_type'),
+    s8Link: text('s8_link'),
+    // Evaluation-only
+    evaluatedImageUrl: text('evaluated_image_url'),
   },
   (table) => [
     index('sessions_updated_at_idx').on(table.updatedAt.desc(), table.id),

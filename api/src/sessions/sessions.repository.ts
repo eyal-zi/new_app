@@ -55,6 +55,15 @@ export class SessionsRepository {
     return totals?.total ?? 0;
   }
 
+  async findOne(type: string, id: string) {
+    const [session] = await this.database.db
+      .select()
+      .from(sessions)
+      .where(and(eq(sessions.id, id), eq(sessions.type, type)))
+      .limit(1);
+    return session;
+  }
+
   async delete(type: string, id: string) {
     const deleted = await this.database.db
       .delete(sessions)
