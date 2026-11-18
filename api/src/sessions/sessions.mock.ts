@@ -4,6 +4,7 @@ import {
   MOCK_DEFAULT_STATISTIC,
   MOCK_EVALUATED_IMAGE_SIZE_PX,
   MOCK_IMAGE_BASE_URL,
+  MOCK_RESULT_FILE_SIZE_PX,
   MOCK_RESULT_KEYS,
   MOCK_SCORE_DECIMALS,
   type SESSION_TYPES,
@@ -37,22 +38,48 @@ export const buildMockResults = (
       };
 
     case 'inference': {
-      const result = (): SessionRecommendationResult => ({
-        variationa: mockScore(),
-        variationb: mockScore(),
-        type: 'score',
-      });
+      const requested = statistics?.length
+        ? statistics
+        : [MOCK_DEFAULT_STATISTIC];
+
+      // Every other statistic yields files instead of scores, so both result
+      // types show up in the mock data.
+      const result = (
+        statistic: string,
+        key: string,
+        asFile: boolean,
+      ): SessionRecommendationResult =>
+        asFile
+          ? {
+              variationa: mockImage(
+                `${id}-${statistic}${key}-a`,
+                MOCK_RESULT_FILE_SIZE_PX,
+              ),
+              variationb: mockImage(
+                `${id}-${statistic}${key}-b`,
+                MOCK_RESULT_FILE_SIZE_PX,
+              ),
+              type: 'file',
+            }
+          : {
+              variationa: mockScore(),
+              variationb: mockScore(),
+              type: 'score',
+            };
 
       return {
         ...base,
-        recommendations: {
+        recommendations: requested.map((statistic, index) => ({
           session_id: id,
-          statistic: statistics?.[0] ?? MOCK_DEFAULT_STATISTIC,
+          statistic,
           results: Object.fromEntries(
-            MOCK_RESULT_KEYS.map((key) => [key, result()]),
+            MOCK_RESULT_KEYS.map((key) => [
+              key,
+              result(statistic, key, index % 2 === 1),
+            ]),
           ),
           status: COMPLETED_STATUS,
-        },
+        })),
       };
     }
 

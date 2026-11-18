@@ -39,6 +39,7 @@ export const MOCK_PROCESSING_DELAY_MS = 5000;
 export const MOCK_RESULT_KEYS = ['_front_view', '_side_view', '_top_view'];
 export const MOCK_DEFAULT_STATISTIC = 'accuracy';
 export const MOCK_SCORE_DECIMALS = 2;
+export const MOCK_RESULT_FILE_SIZE_PX = 200;
 export const MOCK_IMAGE_BASE_URL = 'https://picsum.photos/seed';
 export const MOCK_EVALUATED_IMAGE_SIZE_PX = 400;
 export const COMPLETED_STATUS = 'completed';

@@ -96,29 +96,37 @@ const createTypeSpecificFields = (
 ) => {
   switch (type) {
     case 'inference': {
-      const resultType = pick(RECOMMENDATION_RESULT_TYPES);
-      const result = (variation: string, key: string) =>
+      const result = (
+        resultType: (typeof RECOMMENDATION_RESULT_TYPES)[number],
+        statistic: string,
+        variation: string,
+        key: string,
+      ) =>
         resultType === 'score'
           ? random().toFixed(SCORE_DECIMALS)
-          : `https://picsum.photos/seed/session-${index}-${variation}${key}-result/200/200`;
+          : `https://picsum.photos/seed/session-${index}-${statistic}-${variation}${key}-result/200/200`;
       const statistics = STATISTICS.slice(0, between(1, STATISTICS.length));
 
       return {
-        recommendations: {
-          session_id: id,
-          statistic: statistics[0] as string,
-          results: Object.fromEntries(
-            RESULT_KEYS.map((key) => [
-              key,
-              {
-                variationa: result('a', key),
-                variationb: result('b', key),
-                type: resultType,
-              },
-            ]),
-          ),
-          status,
-        },
+        recommendations: statistics.map((statistic) => {
+          const resultType = pick(RECOMMENDATION_RESULT_TYPES);
+
+          return {
+            session_id: id,
+            statistic,
+            results: Object.fromEntries(
+              RESULT_KEYS.map((key) => [
+                key,
+                {
+                  variationa: result(resultType, statistic, 'a', key),
+                  variationb: result(resultType, statistic, 'b', key),
+                  type: resultType,
+                },
+              ]),
+            ),
+            status,
+          };
+        }),
         statistics,
       };
     }

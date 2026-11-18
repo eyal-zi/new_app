@@ -47,7 +47,7 @@ export const sessions = pgTable(
     variationaInfo: jsonb('variationa_info').$type<SessionInfo>(),
     variationbInfo: jsonb('variationb_info').$type<SessionInfo>(),
     // Inference-only
-    recommendations: jsonb('recommendations').$type<SessionRecommendations>(),
+    recommendations: jsonb('recommendations').$type<SessionRecommendations[]>(),
     statistics: jsonb('statistics').$type<string[]>(),
     // Training-only
     trainingType: text('training_type'),

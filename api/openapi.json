@@ -704,7 +704,11 @@
             "nullable": true
           },
           "recommendations": {
-            "$ref": "#/components/schemas/RecommendationsDto"
+            "description": "One recommendation per requested statistic.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecommendationsDto"
+            }
           },
           "statistics": {
             "type": "array",

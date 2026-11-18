@@ -32,6 +32,7 @@ export interface InferenceSessionDto {
   variationa_info: InferenceSessionDtoVariationaInfo;
   /** @nullable */
   variationb_info: InferenceSessionDtoVariationbInfo;
-  recommendations: RecommendationsDto;
+  /** One recommendation per requested statistic. */
+  recommendations: RecommendationsDto[];
   statistics: string[];
 }

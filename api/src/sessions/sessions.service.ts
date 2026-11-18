@@ -68,8 +68,8 @@ const toSessionDetailsDto = (item: SessionRow): SessionDetailsDto => {
     case 'inference':
       return {
         ...base,
-        recommendations:
-          item.recommendations as InferenceSessionDto['recommendations'],
+        recommendations: (item.recommendations ??
+          []) as InferenceSessionDto['recommendations'],
         statistics: item.statistics ?? [],
       };
     case 'training':

@@ -105,8 +105,11 @@ export class RecommendationsDto {
 }
 
 export class InferenceSessionDto extends SessionDto {
-  @ApiProperty({ type: RecommendationsDto })
-  recommendations!: RecommendationsDto;
+  @ApiProperty({
+    type: [RecommendationsDto],
+    description: 'One recommendation per requested statistic.',
+  })
+  recommendations!: RecommendationsDto[];
 
   @ApiProperty({ type: [String] }) statistics!: string[];
 }
