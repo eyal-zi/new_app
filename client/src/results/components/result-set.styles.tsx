@@ -1,4 +1,4 @@
-import { Skeleton } from '@mui/material';
+import { Button, Skeleton } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 import { RESULT_COLUMNS, SKELETON_TILE_HEIGHT } from '../consts';
@@ -19,3 +19,5 @@ export const SkeletonTile = styled(Skeleton)(({ theme }) => ({
   height: theme.spacing(SKELETON_TILE_HEIGHT),
   transform: 'none',
 }));
+
+export const CancelButton = styled(Button)({ alignSelf: 'flex-start' });

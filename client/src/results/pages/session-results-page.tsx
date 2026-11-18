@@ -1,9 +1,11 @@
 import { Stack, Typography } from '@mui/material';
-import { useParams } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
+import { enqueueSnackbar } from 'notistack';
 import { useEffect } from 'react';
 
-import { useGetSession } from '@/api/generated/api';
+import { useDeleteSession, useGetSession } from '@/api/generated/api';
 import { SessionStatus, SessionType } from '@/api/generated/model';
+import { SESSIONS_PATH } from '@/sessions/consts';
 import {
   isEvaluationSession,
   isTrainingSession,
@@ -12,6 +14,8 @@ import { isHttpUrl } from '@/sessions/utils/is-http-url';
 import { SESSION_TYPES } from '@/shared/session-type-constants';
 import { ErrorState, LoadingState } from '@/shared/ui/states';
 
+import { PendingSession } from '../components/pending-session';
+import { PENDING_POLL_INTERVAL_MS, SESSION_CANCELED_MESSAGE } from '../consts';
 import { toResultSet } from '../utils/to-result-set';
 import { toSelectionResults } from '../utils/to-selection-results';
 import { EvaluationResultsPage } from './evaluation-results-page';
@@ -53,8 +57,26 @@ export const SessionResultsPage = () => {
   const { data, isPending, isError, refetch } = useGetSession(
     validType,
     sessionId,
-    { query: { enabled: isSessionType(type) } },
+    {
+      query: {
+        enabled: isSessionType(type),
+        // Keep checking until the session leaves the pending state.
+        refetchInterval: ({ state }) =>
+          state.data?.status === SessionStatus.pending
+            ? PENDING_POLL_INTERVAL_MS
+            : false,
+      },
+    },
   );
+  const navigate = useNavigate();
+  const cancellation = useDeleteSession({
+    mutation: {
+      onSuccess: () => {
+        enqueueSnackbar(SESSION_CANCELED_MESSAGE, { variant: 'info' });
+        void navigate({ to: SESSIONS_PATH });
+      },
+    },
+  });
 
   if (!isSessionType(type)) {
     return <ErrorState message={`Unknown session type "${type}".`} />;
@@ -66,6 +88,22 @@ export const SessionResultsPage = () => {
 
   if (isError || !data) {
     return <ErrorState message="Couldn't load the session." retry={refetch} />;
+  }
+
+  if (data.status === SessionStatus.pending) {
+    return (
+      <PendingSession
+        isCanceling={cancellation.isPending}
+        // Not deleted: the session stays in the db, marked as canceled.
+        onCancel={() =>
+          cancellation.mutate({
+            type,
+            sessionId,
+            params: { should_delete: false },
+          })
+        }
+      />
+    );
   }
 
   if (isTrainingSession(data)) {

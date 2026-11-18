@@ -1,18 +1,25 @@
+import { useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 
+import { useCreateTrainingSession } from '@/api/generated/api';
+import { SessionType } from '@/api/generated/model';
+import { RESULTS_ROUTE_PATH } from '@/sessions/consts';
 import { CompareSummaryStep } from '@/shared/components/compare-summary-step/compare-summary-step';
 import { ImagePickersStep } from '@/shared/components/image-pickers-step/image-pickers-step';
 import { PageLayout } from '@/shared/components/page-layout/page-layout';
 import type { Selection } from '@/shared/components/selection-list/types';
 import { Steps } from '@/shared/components/steps/steps';
 import type { StepItem } from '@/shared/components/steps/types';
+import { useSessionOwner } from '@/shared/hooks/use-session-owner';
 import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
 
-import { type RequiredType } from '../components/select-type-step/consts';
+import {
+  REQUIRED_TYPE_OPTIONS,
+  type RequiredType,
+} from '../components/select-type-step/consts';
 import { SelectTypeStep } from '../components/select-type-step/select-type-step';
 import {
   FIRST_IMAGE_PICKER,
-  REMOVE_LAST_SELECTION_REASON,
   SECOND_IMAGE_PICKER,
   TRAINING_STEPS,
   UPLOAD_SUBTITLE,
@@ -25,14 +32,33 @@ export const TrainingPage = () => {
   const [secondImage, setSecondImage] = useState<File | null>(null);
   const [requiredType, setRequiredType] = useState<RequiredType | null>(null);
 
-  // TODO: derive from the select step once it has content.
-  const selections: Selection[] = [];
+  const owner = useSessionOwner();
+  const navigate = useNavigate();
+  const { mutateAsync, isPending } = useCreateTrainingSession();
 
-  // TODO: dispatch the removal to the selections state.
-  const removeSelection = () => {};
+  const selections: Selection[] = REQUIRED_TYPE_OPTIONS.filter(
+    ({ value }) => value === requiredType,
+  ).map(({ value, label }) => ({ id: value, label }));
 
-  // Not wired to the API yet.
-  const finish = () => {};
+  const finish = async () => {
+    if (!owner || !firstImage || !secondImage) {
+      return;
+    }
+
+    const { session_id } = await mutateAsync({
+      data: {
+        session_owner: owner,
+        training_type: requiredType,
+        variationa_file: firstImage,
+        variationb_file: secondImage,
+      },
+    });
+
+    await navigate({
+      to: RESULTS_ROUTE_PATH,
+      params: { type: SessionType.training, sessionId: session_id },
+    });
+  };
 
   const steps: StepItem[] = [
     {
@@ -76,21 +102,15 @@ export const TrainingPage = () => {
           firstImage={firstImage}
           secondImage={secondImage}
           selections={selections}
-          onRemoveSelection={removeSelection}
-          // The last remaining selection can't be removed, so there is never
-          // a way to cancel all of them.
-          removeDisabledReason={
-            selections.length > 1 ? undefined : REMOVE_LAST_SELECTION_REASON
-          }
         />
       ),
-      isComplete: true,
+      isComplete: !!owner,
     },
   ];
 
   return (
     <PageLayout title={SESSION_TYPE_LABELS.training}>
-      <Steps steps={steps} onFinish={finish} />
+      <Steps steps={steps} onFinish={finish} isFinishing={isPending} />
     </PageLayout>
   );
 };

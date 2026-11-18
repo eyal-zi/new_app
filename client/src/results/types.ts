@@ -1,5 +1,7 @@
 export type ResultSet =
   | { id: string; title: string; status: 'loading' }
+  /** Waiting to start: the only state in which it can still be canceled. */
+  | { id: string; title: string; status: 'pending' }
   | {
       id: string;
       title: string;

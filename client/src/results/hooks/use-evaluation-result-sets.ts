@@ -4,6 +4,7 @@ import { getGetSessionQueryOptions } from '@/api/generated/api';
 import { SessionStatus, SessionType } from '@/api/generated/model';
 import { isEvaluationSession } from '@/sessions/utils/get-session-type';
 
+import { PENDING_POLL_INTERVAL_MS } from '../consts';
 import type { ResultSet } from '../types';
 import { toResultSet } from '../utils/to-result-set';
 
@@ -20,7 +21,15 @@ const FAILED_STATUSES: readonly SessionStatus[] = [
 export const useEvaluationResultSets = (ids: readonly string[]) => {
   const extras = useQueries({
     queries: ids.map((id) =>
-      getGetSessionQueryOptions(SessionType.evaluation, id),
+      getGetSessionQueryOptions(SessionType.evaluation, id, {
+        query: {
+          // Keep checking until the session leaves the pending state.
+          refetchInterval: ({ state }) =>
+            state.data?.status === SessionStatus.pending
+              ? PENDING_POLL_INTERVAL_MS
+              : false,
+        },
+      }),
     ),
   });
 

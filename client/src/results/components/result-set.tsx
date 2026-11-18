@@ -3,12 +3,18 @@ import { Typography } from '@mui/material';
 import { ImageGallery } from '@/shared/components/image-gallery/image-gallery';
 
 import {
+  CANCEL_SESSION_LABEL,
   RESULT_COLUMNS,
   RESULT_IMAGE_LABELS,
   SKELETON_TILE_COUNT,
 } from '../consts';
 import type { ResultImage, ResultSet as ResultSetData } from '../types';
-import { ResultSetRoot, SkeletonGrid, SkeletonTile } from './result-set.styles';
+import {
+  CancelButton,
+  ResultSetRoot,
+  SkeletonGrid,
+  SkeletonTile,
+} from './result-set.styles';
 
 const getImageId = (image: ResultImage) => image.id;
 const getGalleryImage = ({ src, alt }: ResultImage) => ({
@@ -21,8 +27,37 @@ const renderSkeleton = (_: unknown, index: number) => (
   <SkeletonTile key={index} variant="rectangular" />
 );
 
-export const ResultSet = ({ set }: { set: ResultSetData }) => {
+type ResultSetProps = {
+  set: ResultSetData;
+  /** Called with the set's id; pending sets show a cancel button when given. */
+  onCancel?: (id: string) => void;
+  /** Id of the set currently being canceled, if any. */
+  cancelingId?: string;
+};
+
+export const ResultSet = ({ set, onCancel, cancelingId }: ResultSetProps) => {
   const heading = <Typography variant="h6">{set.title}</Typography>;
+
+  if (set.status === 'pending') {
+    return (
+      <ResultSetRoot aria-busy="true" aria-label={set.title}>
+        {heading}
+        <SkeletonGrid role="status" aria-label={`Loading ${set.title}`}>
+          {Array.from({ length: SKELETON_TILE_COUNT }, renderSkeleton)}
+        </SkeletonGrid>
+        {onCancel && (
+          <CancelButton
+            variant="outlined"
+            color="warning"
+            loading={cancelingId === set.id}
+            onClick={() => onCancel(set.id)}
+          >
+            {CANCEL_SESSION_LABEL}
+          </CancelButton>
+        )}
+      </ResultSetRoot>
+    );
+  }
 
   if (set.status === 'loading') {
     return (

@@ -1,14 +1,22 @@
+import { useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 
+import { useCreateInferenceSession } from '@/api/generated/api';
+import { SessionType } from '@/api/generated/model';
+import { RESULTS_ROUTE_PATH } from '@/sessions/consts';
 import { CompareSummaryStep } from '@/shared/components/compare-summary-step/compare-summary-step';
 import { ImagePickersStep } from '@/shared/components/image-pickers-step/image-pickers-step';
 import { PageLayout } from '@/shared/components/page-layout/page-layout';
 import type { Selection } from '@/shared/components/selection-list/types';
 import { Steps } from '@/shared/components/steps/steps';
 import type { StepItem } from '@/shared/components/steps/types';
+import { useSessionOwner } from '@/shared/hooks/use-session-owner';
 import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
 
-import { type Algorithm } from '../components/select-algorithms-step/consts';
+import {
+  type Algorithm,
+  ALGORITHM_OPTIONS,
+} from '../components/select-algorithms-step/consts';
 import { SelectAlgorithmsStep } from '../components/select-algorithms-step/select-algorithms-step';
 import {
   FIRST_IMAGE_PICKER,
@@ -24,11 +32,33 @@ export const InferencePage = () => {
   const [secondImage, setSecondImage] = useState<File | null>(null);
   const [algorithms, setAlgorithms] = useState<Algorithm[]>([]);
 
-  // TODO: derive from the select step once it has content.
-  const selections: Selection[] = [];
+  const owner = useSessionOwner();
+  const navigate = useNavigate();
+  const { mutateAsync, isPending } = useCreateInferenceSession();
 
-  // Not wired to the API yet.
-  const finish = () => {};
+  const selections: Selection[] = ALGORITHM_OPTIONS.filter(({ value }) =>
+    algorithms.includes(value),
+  ).map(({ value, label }) => ({ id: value, label }));
+
+  const finish = async () => {
+    if (!owner || !firstImage || !secondImage) {
+      return;
+    }
+
+    const { session_id } = await mutateAsync({
+      data: {
+        session_owner: owner,
+        statistics: algorithms,
+        variationa_file: firstImage,
+        variationb_file: secondImage,
+      },
+    });
+
+    await navigate({
+      to: RESULTS_ROUTE_PATH,
+      params: { type: SessionType.inference, sessionId: session_id },
+    });
+  };
 
   const steps: StepItem[] = [
     {
@@ -74,13 +104,13 @@ export const InferencePage = () => {
           selections={selections}
         />
       ),
-      isComplete: true,
+      isComplete: !!owner,
     },
   ];
 
   return (
     <PageLayout title={SESSION_TYPE_LABELS.inference}>
-      <Steps steps={steps} onFinish={finish} />
+      <Steps steps={steps} onFinish={finish} isFinishing={isPending} />
     </PageLayout>
   );
 };

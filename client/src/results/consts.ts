@@ -36,3 +36,9 @@ export const SELECTABLE_IMAGE_ASPECT_RATIO = '1 / 1';
 /** Search param listing the evaluation session ids to compare, comma-separated. */
 export const SESSION_IDS_PARAM = 'ids';
 export const SESSION_IDS_SEPARATOR = ',';
+
+/** How often a pending session is re-fetched to see whether it has started. */
+export const PENDING_POLL_INTERVAL_MS = 3000;
+export const PENDING_MESSAGE = 'Your session is pending…';
+export const CANCEL_SESSION_LABEL = 'Cancel session';
+export const SESSION_CANCELED_MESSAGE = 'Session canceled';
