@@ -1,8 +1,11 @@
 import { Button, Tooltip, Typography } from '@mui/material';
 
 import {
+  CLEAR_SELECTION_LABEL,
   COMPARE_HINT,
+  COMPARE_LABEL,
   COMPARE_MIN_IMAGES,
+  getSelectedCountLabel,
   SELECTION_BAR_ELEVATION,
 } from '../consts';
 import { SelectionBarRoot } from './selection-bar.styles';
@@ -26,8 +29,8 @@ export const SelectionBar = ({
 
   return (
     <SelectionBarRoot elevation={SELECTION_BAR_ELEVATION}>
-      <Typography aria-live="polite">{count} selected</Typography>
-      <Button onClick={onClear}>Clear</Button>
+      <Typography aria-live="polite">{getSelectedCountLabel(count)}</Typography>
+      <Button onClick={onClear}>{CLEAR_SELECTION_LABEL}</Button>
       <Tooltip title={canCompare ? '' : COMPARE_HINT}>
         <span>
           <Button
@@ -35,7 +38,7 @@ export const SelectionBar = ({
             disabled={!canCompare}
             onClick={onCompare}
           >
-            Compare
+            {COMPARE_LABEL}
           </Button>
         </span>
       </Tooltip>

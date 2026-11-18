@@ -1,6 +1,6 @@
 import {
+  doublePrecision,
   index,
-  integer,
   jsonb,
   pgTable,
   text,
@@ -40,7 +40,8 @@ export const sessions = pgTable(
       .notNull()
       .defaultNow()
       .$onUpdate(() => new Date()),
-    progress: integer('progress'),
+    // A fraction from 0 to 1.
+    progress: doublePrecision('progress'),
     status: varchar('status', { length: 32 }).notNull().default('running'),
     notes: text('notes').notNull().default(''),
     logs: text('logs'),

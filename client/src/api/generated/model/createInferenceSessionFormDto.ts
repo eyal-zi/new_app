@@ -8,7 +8,11 @@
 export interface CreateInferenceSessionFormDto {
   /** @maxLength 254 */
   session_owner: string;
-  /** @items.maxLength 100 */
+  /**
+     * @minItems 1
+     * @maxItems 50
+     * @items.maxLength 100
+     */
   statistics: string[];
   /** Image file */
   variationa_file: Blob | File;

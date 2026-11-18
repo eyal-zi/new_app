@@ -2,11 +2,12 @@ import { Box, Stack, Typography } from '@mui/material';
 import { useState } from 'react';
 
 import { CompareDialog } from '../components/compare-dialog';
+import { ResultsContent } from '../components/results-content';
 import { SelectionBar } from '../components/selection-bar';
 import { SelectionItem } from '../components/selection-item';
+import { INFERENCE_RESULTS_SUBTITLE, INFERENCE_RESULTS_TITLE } from '../consts';
 import { useImageSelection } from '../hooks/use-image-selection';
 import type { ResultSelection } from '../types';
-import { ResultsContent } from './results-page.styles';
 
 /** Results of a completed inference session: one selection per statistic. */
 export const InferenceResultsPage = ({
@@ -32,10 +33,9 @@ export const InferenceResultsPage = ({
   return (
     <Stack spacing={3}>
       <Box>
-        <Typography variant="h4">Inference results</Typography>
+        <Typography variant="h4">{INFERENCE_RESULTS_TITLE}</Typography>
         <Typography color="text.secondary">
-          Expand a selection to compare its images. Ctrl/Cmd + click an image,
-          or use its checkbox, to select it.
+          {INFERENCE_RESULTS_SUBTITLE}
         </Typography>
       </Box>
       <ResultsContent spacing={1}>

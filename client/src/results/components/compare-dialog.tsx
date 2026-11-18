@@ -1,7 +1,7 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { IconButton, Typography } from '@mui/material';
 
-import { COMPARE_CLOSE_LABEL } from '../consts';
+import { COMPARE_CLOSE_LABEL, getCompareTitle } from '../consts';
 import type { SelectedImage } from '../types';
 import { getCompareColumns } from '../utils/get-compare-columns';
 import {
@@ -28,7 +28,7 @@ export const CompareDialog = ({
 }: CompareDialogProps) => (
   <CompareDialogRoot fullScreen open={open} onClose={onClose}>
     <CompareHeader>
-      <Typography variant="h6">Comparing {images.length} images</Typography>
+      <Typography variant="h6">{getCompareTitle(images.length)}</Typography>
       <IconButton aria-label={COMPARE_CLOSE_LABEL} onClick={onClose}>
         <CloseIcon />
       </IconButton>

@@ -1,0 +1,1 @@
+ALTER TABLE "sessions" ALTER COLUMN "progress" SET DATA TYPE double precision USING "progress"::double precision / 100;

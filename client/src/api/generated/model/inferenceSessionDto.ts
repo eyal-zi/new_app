@@ -19,8 +19,9 @@ export interface InferenceSessionDto {
   /** Naive ISO-8601 timestamp in UTC (no timezone designator) */
   last_update: string;
   /**
+     * A fraction from 0 to 1
      * @minimum 0
-     * @maximum 100
+     * @maximum 1
      * @nullable
      */
   progress: number | null;

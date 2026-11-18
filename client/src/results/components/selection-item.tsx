@@ -6,7 +6,11 @@ import {
   Typography,
 } from '@mui/material';
 
-import { SELECTION_LOADING_SPINNER_SIZE } from '../consts';
+import {
+  getLoadingLabel,
+  LOADING_LABEL,
+  SELECTION_LOADING_SPINNER_SIZE,
+} from '../consts';
 import type { ResultSelection, SelectedImage } from '../types';
 import { SelectionGrid } from './selection-grid';
 import { GridSkeleton } from './selection-grid.styles';
@@ -37,7 +41,7 @@ export const SelectionItem = ({
           {isLoading && (
             <CircularProgress
               size={SELECTION_LOADING_SPINNER_SIZE}
-              aria-label="Loading"
+              aria-label={LOADING_LABEL}
             />
           )}
         </SummaryContent>
@@ -47,7 +51,7 @@ export const SelectionItem = ({
           <GridSkeleton
             variant="rectangular"
             role="status"
-            aria-label={`Loading ${selection.title}`}
+            aria-label={getLoadingLabel(selection.title)}
           />
         ) : (
           <SelectionGrid

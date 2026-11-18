@@ -18,7 +18,9 @@ export const GridRoot = styled('div', {
 
 export const ColumnTitle = styled(Typography)({ textAlign: 'center' });
 
-export const RowTitle = styled(Typography)({ fontWeight: 500 });
+export const RowTitle = styled(Typography)(({ theme }) => ({
+  fontWeight: theme.typography.fontWeightMedium,
+}));
 
 export const GridSkeleton = styled(Skeleton)(({ theme }) => ({
   height: theme.spacing(SELECTION_SKELETON_HEIGHT),

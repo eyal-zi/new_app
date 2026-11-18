@@ -4,7 +4,13 @@ import { getGetSessionQueryOptions } from '@/api/generated/api';
 import { SessionType } from '@/api/generated/model';
 import { isEvaluationSession } from '@/sessions/utils/get-session-type';
 
-import { FAILED_STATUSES } from '../consts';
+import {
+  FAILED_STATUSES,
+  getFailedProblem,
+  getLoadProblem,
+  getNoEvaluatedImageProblem,
+  getNotEvaluationProblem,
+} from '../consts';
 import type { ResultSet } from '../types';
 import { describeFailedStatus } from '../utils/describe-failed-status';
 import { refetchWhileInProgress } from '../utils/refetch-while-in-progress';
@@ -32,15 +38,21 @@ export const useEvaluationResultSets = (ids: readonly string[]) => {
     const id = ids[index] as string;
 
     if (isError) {
-      problems.push(`Couldn't load session ${id}.`);
+      problems.push(getLoadProblem(id));
     } else if (isPending) {
       sets.push({ id, title: id, status: 'loading' });
     } else if (!data || !isEvaluationSession(data)) {
-      problems.push(`Session ${id} is not an evaluation session.`);
+      problems.push(getNotEvaluationProblem(id));
     } else if (FAILED_STATUSES.includes(data.status)) {
-      problems.push(`Session ${id} ${describeFailedStatus(data.status)}.`);
+      problems.push(getFailedProblem(id, describeFailedStatus(data.status)));
     } else {
-      sets.push(toResultSet(data));
+      const set = toResultSet(data);
+
+      if (set) {
+        sets.push(set);
+      } else {
+        problems.push(getNoEvaluatedImageProblem(id));
+      }
     }
   });
 

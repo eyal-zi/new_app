@@ -1,4 +1,5 @@
 import { useNavigate } from '@tanstack/react-router';
+import { enqueueSnackbar } from 'notistack';
 import { useState } from 'react';
 
 import { useCreateEvaluationSession } from '@/api/generated/api';
@@ -12,38 +13,55 @@ import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
 
 import { EvaluationSummaryStep } from '../components/summary-step/summary-step';
 import { UploadStep } from '../components/upload-step/upload-step';
-import { EVALUATION_STEPS } from '../consts';
+import { EVALUATION_STEPS, getPartialFailureMessage } from '../consts';
 
 export const EvaluationPage = () => {
   // Held here, not in the step, so the files survive moving between steps.
   const [images, setImages] = useState<File[]>([]);
   const owner = useSessionOwner();
   const navigate = useNavigate();
-  const { mutateAsync, isPending } = useCreateEvaluationSession();
+  // One flag for the whole batch: `isPending` only follows the last request.
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { mutateAsync } = useCreateEvaluationSession();
 
   // A session evaluates a single image, so each image gets its own session.
-  // Failures are reported by the query client; the sessions that were created
-  // still open in the compare view.
+  // Each failure is reported by the query client; the sessions that were
+  // created still open in the compare view, with a summary of what failed.
   const finish = async () => {
-    // `isPending` also blocks a second click while the first request is out.
-    if (!owner || isPending) {
+    // Also blocks a second click while the first batch is out.
+    if (!owner || isSubmitting) {
       return;
     }
 
-    const results = await Promise.allSettled(
-      images.map((image) =>
-        mutateAsync({ data: { session_owner: owner, variationa_file: image } }),
-      ),
-    );
-    const ids = results.flatMap((result) =>
-      result.status === 'fulfilled' ? [result.value.session_id] : [],
-    );
+    setIsSubmitting(true);
 
-    if (ids.length > 0) {
-      await navigate({
-        to: EVALUATION_RESULTS_ROUTE_PATH,
-        search: { [SESSION_IDS_PARAM]: ids },
-      });
+    try {
+      const results = await Promise.allSettled(
+        images.map((image) =>
+          mutateAsync({
+            data: { session_owner: owner, variationa_file: image },
+          }),
+        ),
+      );
+      const ids = results.flatMap((result) =>
+        result.status === 'fulfilled' ? [result.value.session_id] : [],
+      );
+      const failed = results.length - ids.length;
+
+      if (failed > 0) {
+        enqueueSnackbar(getPartialFailureMessage(failed, results.length), {
+          variant: 'warning',
+        });
+      }
+
+      if (ids.length > 0) {
+        await navigate({
+          to: EVALUATION_RESULTS_ROUTE_PATH,
+          search: { [SESSION_IDS_PARAM]: ids },
+        });
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -62,7 +80,7 @@ export const EvaluationPage = () => {
 
   return (
     <PageLayout title={SESSION_TYPE_LABELS.evaluation}>
-      <Steps steps={steps} onFinish={finish} isFinishing={isPending} />
+      <Steps steps={steps} onFinish={finish} isFinishing={isSubmitting} />
     </PageLayout>
   );
 };

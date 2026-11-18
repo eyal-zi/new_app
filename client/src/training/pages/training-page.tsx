@@ -46,21 +46,25 @@ export const TrainingPage = () => {
       return;
     }
 
-    const { session_id } = await mutateAsync({
-      data: {
-        session_owner: owner,
-        // The default type is the API's fallback, so it's omitted entirely.
-        training_type:
-          requiredType === REQUIRED_TYPES.default ? undefined : requiredType,
-        variationa_file: firstImage,
-        variationb_file: secondImage,
-      },
-    });
+    try {
+      const { session_id } = await mutateAsync({
+        data: {
+          session_owner: owner,
+          // The default type is the API's fallback, so it's omitted entirely.
+          training_type:
+            requiredType === REQUIRED_TYPES.default ? undefined : requiredType,
+          variationa_file: firstImage,
+          variationb_file: secondImage,
+        },
+      });
 
-    await navigate({
-      to: RESULTS_ROUTE_PATH,
-      params: { type: SessionType.training, sessionId: session_id },
-    });
+      await navigate({
+        to: RESULTS_ROUTE_PATH,
+        params: { type: SessionType.training, sessionId: session_id },
+      });
+    } catch {
+      // Already reported by the query client; stay here so the user can retry.
+    }
   };
 
   const steps: StepItem[] = [

@@ -7,7 +7,11 @@ import { getGetSessionQueryKey, useDeleteSession } from '@/api/generated/api';
 import { SessionType } from '@/api/generated/model';
 import { ErrorState } from '@/shared/ui/states';
 
-import { SESSION_CANCELED_MESSAGE, SESSION_IDS_PARAM } from '../consts';
+import {
+  NO_SESSIONS_MESSAGE,
+  SESSION_CANCELED_MESSAGE,
+  SESSION_IDS_PARAM,
+} from '../consts';
 import { useEvaluationResultSets } from '../hooks/use-evaluation-result-sets';
 import { EvaluationResultsPage } from './evaluation-results-page';
 
@@ -26,6 +30,11 @@ export const EvaluationSessionsResultsPage = () => {
           queryKey: getGetSessionQueryKey(SessionType.evaluation, sessionId),
         });
       },
+      // Most likely the session ended before the cancel went through.
+      onError: (_, { sessionId }) =>
+        void queryClient.invalidateQueries({
+          queryKey: getGetSessionQueryKey(SessionType.evaluation, sessionId),
+        }),
     },
   });
 
@@ -38,7 +47,7 @@ export const EvaluationSessionsResultsPage = () => {
     });
 
   if (ids.length === 0) {
-    return <ErrorState message="No sessions selected." />;
+    return <ErrorState message={NO_SESSIONS_MESSAGE} />;
   }
 
   return (

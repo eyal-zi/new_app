@@ -21,6 +21,7 @@ import { SelectStatisticsStep } from '../components/select-statistics-step/selec
 import {
   FIRST_IMAGE_PICKER,
   INFERENCE_STEPS,
+  MIN_STATISTICS,
   SECOND_IMAGE_PICKER,
   UPLOAD_SUBTITLE,
   UPLOAD_TITLE,
@@ -48,19 +49,23 @@ export const InferencePage = () => {
       return;
     }
 
-    const { session_id } = await mutateAsync({
-      data: {
-        session_owner: owner,
-        statistics,
-        variationa_file: firstImage,
-        variationb_file: secondImage,
-      },
-    });
+    try {
+      const { session_id } = await mutateAsync({
+        data: {
+          session_owner: owner,
+          statistics,
+          variationa_file: firstImage,
+          variationb_file: secondImage,
+        },
+      });
 
-    await navigate({
-      to: RESULTS_ROUTE_PATH,
-      params: { type: SessionType.inference, sessionId: session_id },
-    });
+      await navigate({
+        to: RESULTS_ROUTE_PATH,
+        params: { type: SessionType.inference, sessionId: session_id },
+      });
+    } catch {
+      // Already reported by the query client; stay here so the user can retry.
+    }
   };
 
   const steps: StepItem[] = [
@@ -106,7 +111,7 @@ export const InferencePage = () => {
           secondImage={secondImage}
           selections={selections}
           onRemoveSelection={
-            statistics.length > 1 ? removeStatistic : undefined
+            statistics.length > MIN_STATISTICS ? removeStatistic : undefined
           }
         />
       ),

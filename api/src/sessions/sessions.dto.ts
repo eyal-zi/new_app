@@ -7,6 +7,8 @@ import {
 import { Transform, Type } from 'class-transformer';
 import {
   ArrayMaxSize,
+  ArrayNotEmpty,
+  ArrayUnique,
   IsArray,
   IsBoolean,
   IsIn,
@@ -25,10 +27,12 @@ import {
   DEFAULT_NUMBER_OF_SESSIONS,
   MAX_NUMBER_OF_SESSIONS,
   MAX_OWNER_LENGTH,
+  MAX_PROGRESS,
   MAX_SEARCH_LENGTH,
   MAX_STATISTIC_LENGTH,
   MAX_STATISTICS,
   MAX_TRAINING_TYPE_LENGTH,
+  MIN_PROGRESS,
   RECOMMENDATION_RESULT_TYPES,
   SESSION_STATUSES,
   SESSION_TYPES,
@@ -55,7 +59,13 @@ export class SessionDto {
   })
   last_update!: string;
 
-  @ApiProperty({ type: Number, nullable: true, minimum: 0, maximum: 100 })
+  @ApiProperty({
+    type: Number,
+    nullable: true,
+    minimum: MIN_PROGRESS,
+    maximum: MAX_PROGRESS,
+    description: 'A fraction from 0 to 1',
+  })
   progress!: number | null;
 
   @ApiProperty({ enum: SESSION_STATUSES, enumName: 'SessionStatus' })
@@ -185,7 +195,7 @@ export class SessionParamDto {
 export class DeleteSessionQueryDto {
   @ApiProperty({
     description:
-      'When true the session is deleted; otherwise it is canceled (status set to failed)',
+      'When true the session is deleted; otherwise it is canceled (status set to canceled)',
   })
   @Transform(({ value }: { value: unknown }) =>
     value === 'true' ? true : value === 'false' ? false : value,
@@ -238,9 +248,17 @@ export class CreateSessionBodyDto {
 }
 
 export class CreateInferenceSessionBodyDto extends CreateSessionBodyDto {
-  @ApiProperty({ type: [String], maxLength: MAX_STATISTIC_LENGTH })
+  @ApiProperty({
+    type: 'array',
+    items: { type: 'string', maxLength: MAX_STATISTIC_LENGTH },
+    minItems: 1,
+    maxItems: MAX_STATISTICS,
+    uniqueItems: true,
+  })
   @Transform(toArray)
   @IsArray()
+  @ArrayNotEmpty()
+  @ArrayUnique()
   @ArrayMaxSize(MAX_STATISTICS)
   @IsString({ each: true })
   @MaxLength(MAX_STATISTIC_LENGTH, { each: true })
@@ -304,7 +322,13 @@ export class CreatedSessionDto {
 }
 
 export class CreatedTrainingSessionDto extends CreatedSessionDto {
-  @ApiProperty({ type: Number, format: 'float', minimum: 0, maximum: 1 })
+  @ApiProperty({
+    type: Number,
+    format: 'float',
+    minimum: MIN_PROGRESS,
+    maximum: MAX_PROGRESS,
+    description: 'A fraction from 0 to 1',
+  })
   progress!: number;
 
   @ApiProperty() s8_link!: string;

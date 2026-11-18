@@ -12,6 +12,7 @@ export interface CreatedTrainingSessionDto {
   /** @nullable */
   logs: string | null;
   /**
+     * A fraction from 0 to 1
      * @minimum 0
      * @maximum 1
      */

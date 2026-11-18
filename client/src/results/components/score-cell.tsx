@@ -1,8 +1,9 @@
 import { Typography } from '@mui/material';
 
 import {
+  getScoreLabel,
+  PERCENT,
   SCORE_DECIMALS,
-  SCORE_PERCENT,
   SCORE_RING_SIZE,
   SCORE_RING_THICKNESS,
 } from '../consts';
@@ -29,12 +30,12 @@ export const ScoreCell = ({ score }: ScoreCellProps) => {
   return (
     <ScoreFrame role="listitem">
       <RingWrapper>
-        <RingTrack {...ringProps} value={SCORE_PERCENT} aria-hidden />
+        <RingTrack {...ringProps} value={PERCENT} aria-hidden />
         <RingValue
           {...ringProps}
-          value={clamped * SCORE_PERCENT}
+          value={clamped * PERCENT}
           ringColor={getScoreColor(clamped)}
-          aria-label={`Score ${clamped.toFixed(SCORE_DECIMALS)}`}
+          aria-label={getScoreLabel(clamped.toFixed(SCORE_DECIMALS))}
         />
         <RingLabel>
           <Typography variant="subtitle1">

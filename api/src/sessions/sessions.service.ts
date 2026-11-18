@@ -1,6 +1,11 @@
 import { randomUUID } from 'node:crypto';
 
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 
 import { toNaiveUtc } from '../common/naive-utc.js';
 import { IMAGE_TYPES } from '../files/files.constants.js';
@@ -11,7 +16,6 @@ import {
   CANCELED_STATUS,
   INITIAL_PROGRESS,
   MOCK_PROCESSING_DELAY_MS,
-  PERCENT,
   S8_TRAINING_LINK_BASE_URL,
   SESSION_TYPES,
   UPLOAD_FIELDS,
@@ -88,6 +92,8 @@ const toSessionDetailsDto = (item: SessionRow): SessionDetailsDto => {
 
 @Injectable()
 export class SessionsService {
+  private readonly logger = new Logger(SessionsService.name);
+
   constructor(
     private readonly sessions: SessionsRepository,
     private readonly files: FilesService,
@@ -108,7 +114,9 @@ export class SessionsService {
   }
 
   // Stand-in for a real worker: completes the session with mock results after
-  // a delay, unless it was canceled in the meantime.
+  // a delay, unless it was canceled in the meantime. The timer lives in
+  // memory, so a session still running when the API restarts stays running.
+  // That is acceptable for a mock; real workers replace this.
   private scheduleMockCompletion(session: SessionRow) {
     const type = session.type as SessionTypeValue;
     const timer = setTimeout(() => {
@@ -119,7 +127,12 @@ export class SessionsService {
           ACTIVE_STATUSES,
           buildMockResults(type, session.id, session.statistics),
         )
-        .catch(() => undefined);
+        .catch((error: unknown) =>
+          this.logger.error(
+            `Mock completion of session ${session.id} failed`,
+            error instanceof Error ? error.stack : String(error),
+          ),
+        );
     }, MOCK_PROCESSING_DELAY_MS);
 
     timer.unref();
@@ -189,7 +202,7 @@ export class SessionsService {
 
     return {
       ...toCreatedSessionDto(created),
-      progress: (created.progress ?? INITIAL_PROGRESS) / PERCENT,
+      progress: created.progress ?? INITIAL_PROGRESS,
       s8_link: created.s8Link ?? '',
     };
   }
@@ -243,7 +256,7 @@ export class SessionsService {
   }
 
   // `shouldDelete` removes the row; otherwise the session stays in the db,
-  // marked as canceled.
+  // marked as canceled (only possible while it is still active).
   async delete(type: SessionTypeValue, id: string, shouldDelete: boolean) {
     if (shouldDelete) {
       if (!(await this.sessions.delete(type, id))) {
@@ -260,8 +273,19 @@ export class SessionsService {
       { status: CANCELED_STATUS, logs: CANCELED_LOGS },
     );
 
-    if (!canceled && !(await this.sessions.findOne(type, id))) {
+    if (canceled) {
+      return;
+    }
+
+    const existing = await this.sessions.findOne(type, id);
+
+    if (!existing) {
       throw new NotFoundException();
+    }
+
+    // Canceling twice is fine; canceling a session that ended otherwise isn't.
+    if (existing.status !== CANCELED_STATUS) {
+      throw new ConflictException(`Session is already ${existing.status}`);
     }
   }
 }

@@ -50,6 +50,13 @@
       "when": 1795004798941,
       "tag": "0006_sessions_running_default",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1795012770011,
+      "tag": "0007_sessions_progress_fraction",
+      "breakpoints": true
     }
   ]
 }

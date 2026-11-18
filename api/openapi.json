@@ -81,6 +81,9 @@
           "400": {
             "description": ""
           },
+          "413": {
+            "description": "An image is over the size limit"
+          },
           "415": {
             "description": ""
           }
@@ -124,6 +127,9 @@
           "400": {
             "description": ""
           },
+          "413": {
+            "description": "An image is over the size limit"
+          },
           "415": {
             "description": ""
           }
@@ -166,6 +172,9 @@
           },
           "400": {
             "description": ""
+          },
+          "413": {
+            "description": "An image is over the size limit"
           },
           "415": {
             "description": ""
@@ -504,7 +513,7 @@
             "name": "should_delete",
             "required": true,
             "in": "query",
-            "description": "When true the session is deleted; otherwise it is canceled (status set to failed)",
+            "description": "When true the session is deleted; otherwise it is canceled (status set to canceled)",
             "schema": {
               "type": "boolean"
             }
@@ -516,6 +525,9 @@
           },
           "404": {
             "description": ""
+          },
+          "409": {
+            "description": "The session can no longer be canceled (it already ended)"
           }
         },
         "security": [
@@ -679,7 +691,8 @@
             "type": "number",
             "nullable": true,
             "minimum": 0,
-            "maximum": 100
+            "maximum": 1,
+            "description": "A fraction from 0 to 1"
           },
           "status": {
             "allOf": [
@@ -763,7 +776,8 @@
             "type": "number",
             "nullable": true,
             "minimum": 0,
-            "maximum": 100
+            "maximum": 1,
+            "description": "A fraction from 0 to 1"
           },
           "status": {
             "allOf": [
@@ -841,7 +855,8 @@
             "type": "number",
             "nullable": true,
             "minimum": 0,
-            "maximum": 100
+            "maximum": 1,
+            "description": "A fraction from 0 to 1"
           },
           "status": {
             "allOf": [
@@ -898,7 +913,10 @@
             "items": {
               "type": "string",
               "maxLength": 100
-            }
+            },
+            "minItems": 1,
+            "maxItems": 50,
+            "uniqueItems": true
           },
           "variationa_file": {
             "type": "string",
@@ -992,7 +1010,8 @@
             "type": "number",
             "format": "float",
             "minimum": 0,
-            "maximum": 1
+            "maximum": 1,
+            "description": "A fraction from 0 to 1"
           },
           "s8_link": {
             "type": "string"

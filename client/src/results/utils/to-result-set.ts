@@ -7,11 +7,11 @@ import { isTerminalStatus } from './is-terminal-status';
 /**
  * One result set per evaluation session, titled by its session id: image A
  * next to the evaluated image. It is `active` until the session reaches a
- * terminal status, and `loading` if the session completed but the evaluated
- * image isn't there yet. Callers filter out failed and canceled sessions
- * before calling this.
+ * terminal status. Returns null if the session completed without an
+ * evaluated image. Callers filter out failed and canceled sessions before
+ * calling this.
  */
-export const toResultSet = (dto: EvaluationSessionDto): ResultSet => {
+export const toResultSet = (dto: EvaluationSessionDto): ResultSet | null => {
   const base = {
     id: dto.session_id,
     title: dto.session_id,
@@ -25,7 +25,7 @@ export const toResultSet = (dto: EvaluationSessionDto): ResultSet => {
     dto.status !== SessionStatus.completed ||
     dto.evaluated_image_url === null
   ) {
-    return { ...base, status: 'loading' };
+    return null;
   }
 
   return {

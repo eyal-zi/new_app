@@ -16,6 +16,7 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
+  ApiConflictResponse,
   ApiConsumes,
   ApiCreatedResponse,
   ApiExtension,
@@ -24,6 +25,7 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiPayloadTooLargeResponse,
   ApiTags,
   ApiUnsupportedMediaTypeResponse,
 } from '@nestjs/swagger';
@@ -78,6 +80,9 @@ export class SessionsController {
   @ApiCreatedResponse({ type: CreatedSessionDto })
   @ApiBadRequestResponse()
   @ApiUnsupportedMediaTypeResponse()
+  @ApiPayloadTooLargeResponse({
+    description: 'An image is over the size limit',
+  })
   createInferenceSession(
     @Body() body: CreateInferenceSessionBodyDto,
     @UploadedFiles() files: UploadedFilesByField,
@@ -99,6 +104,9 @@ export class SessionsController {
   @ApiCreatedResponse({ type: CreatedTrainingSessionDto })
   @ApiBadRequestResponse()
   @ApiUnsupportedMediaTypeResponse()
+  @ApiPayloadTooLargeResponse({
+    description: 'An image is over the size limit',
+  })
   createTrainingSession(
     @Body() body: CreateTrainingSessionBodyDto,
     @UploadedFiles() files: UploadedFilesByField,
@@ -118,6 +126,9 @@ export class SessionsController {
   @ApiCreatedResponse({ type: CreatedSessionDto })
   @ApiBadRequestResponse()
   @ApiUnsupportedMediaTypeResponse()
+  @ApiPayloadTooLargeResponse({
+    description: 'An image is over the size limit',
+  })
   createEvaluationSession(
     @Body() body: CreateEvaluationSessionBodyDto,
     @UploadedFiles() files: UploadedFilesByField,
@@ -191,6 +202,9 @@ export class SessionsController {
   @ApiOperation({ summary: 'Delete a session' })
   @ApiNoContentResponse()
   @ApiNotFoundResponse()
+  @ApiConflictResponse({
+    description: 'The session can no longer be canceled (it already ended)',
+  })
   async deleteSession(
     @Param() { type, sessionId }: SessionParamDto,
     @Query() { should_delete }: DeleteSessionQueryDto,

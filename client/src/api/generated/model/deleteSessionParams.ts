@@ -6,6 +6,6 @@
  */
 
 export type DeleteSessionParams = {
-  /** When true the session is deleted; otherwise it is canceled (status set to failed) */
+  /** When true the session is deleted; otherwise it is canceled (status set to canceled) */
   should_delete: boolean;
 };

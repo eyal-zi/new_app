@@ -1,9 +1,14 @@
 import { Stack, Typography } from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { enqueueSnackbar } from 'notistack';
 import { useEffect } from 'react';
 
-import { useDeleteSession, useGetSession } from '@/api/generated/api';
+import {
+  getGetSessionQueryKey,
+  useDeleteSession,
+  useGetSession,
+} from '@/api/generated/api';
 import { SessionType } from '@/api/generated/model';
 import { SESSIONS_PATH } from '@/sessions/consts';
 import {
@@ -15,7 +20,16 @@ import { SESSION_TYPES } from '@/shared/session-type-constants';
 import { ErrorState, LoadingState } from '@/shared/ui/states';
 
 import { RunningSession } from '../components/running-session';
-import { FAILED_STATUSES, SESSION_CANCELED_MESSAGE } from '../consts';
+import {
+  FAILED_STATUSES,
+  getFailedSessionMessage,
+  getUnknownTypeMessage,
+  INVALID_RESULTS_LINK_MESSAGE,
+  LOAD_SESSION_ERROR_MESSAGE,
+  NO_EVALUATED_IMAGE_MESSAGE,
+  REDIRECTING_MESSAGE,
+  SESSION_CANCELED_MESSAGE,
+} from '../consts';
 import { describeFailedStatus } from '../utils/describe-failed-status';
 import { isTerminalStatus } from '../utils/is-terminal-status';
 import { refetchWhileInProgress } from '../utils/refetch-while-in-progress';
@@ -39,12 +53,10 @@ const TrainingRedirect = ({ link }: { link: string }) => {
   return isValid ? (
     <Stack spacing={2} alignItems="center">
       <LoadingState />
-      <Typography color="text.secondary">
-        Redirecting to the training results…
-      </Typography>
+      <Typography color="text.secondary">{REDIRECTING_MESSAGE}</Typography>
     </Stack>
   ) : (
-    <ErrorState message="This session has an invalid results link." />
+    <ErrorState message={INVALID_RESULTS_LINK_MESSAGE} />
   );
 };
 
@@ -63,17 +75,23 @@ export const SessionResultsPage = () => {
     },
   );
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const cancellation = useDeleteSession({
     mutation: {
       onSuccess: () => {
         enqueueSnackbar(SESSION_CANCELED_MESSAGE, { variant: 'info' });
         void navigate({ to: SESSIONS_PATH });
       },
+      // Most likely the session ended before the cancel went through.
+      onError: () =>
+        void queryClient.invalidateQueries({
+          queryKey: getGetSessionQueryKey(validType, sessionId),
+        }),
     },
   });
 
   if (!isSessionType(type)) {
-    return <ErrorState message={`Unknown session type "${type}".`} />;
+    return <ErrorState message={getUnknownTypeMessage(type)} />;
   }
 
   if (isPending && !isError) {
@@ -81,7 +99,7 @@ export const SessionResultsPage = () => {
   }
 
   if (isError || !data) {
-    return <ErrorState message="Couldn't load the session." retry={refetch} />;
+    return <ErrorState message={LOAD_SESSION_ERROR_MESSAGE} retry={refetch} />;
   }
 
   // Any non-terminal status (started or running), whatever the session type.
@@ -102,22 +120,31 @@ export const SessionResultsPage = () => {
     );
   }
 
-  if (isTrainingSession(data)) {
-    return <TrainingRedirect link={data.s8_link} />;
-  }
-
+  // Before the training redirect: failed and canceled sessions have no results.
   if (FAILED_STATUSES.includes(data.status)) {
     return (
       <ErrorState
-        message={`This session ${describeFailedStatus(data.status)}.`}
+        message={getFailedSessionMessage(describeFailedStatus(data.status))}
       />
     );
   }
 
+  if (isTrainingSession(data)) {
+    return <TrainingRedirect link={data.s8_link} />;
+  }
+
+  if (isEvaluationSession(data)) {
+    const set = toResultSet(data);
+
+    return set ? (
+      <EvaluationResultsPage sets={[set]} />
+    ) : (
+      <ErrorState message={NO_EVALUATED_IMAGE_MESSAGE} />
+    );
+  }
+
   // Only completed sessions get here, so inference results are all available.
-  return isEvaluationSession(data) ? (
-    <EvaluationResultsPage sets={[toResultSet(data)]} />
-  ) : (
+  return (
     <InferenceResultsPage selections={data.recommendations.map(toSelection)} />
   );
 };

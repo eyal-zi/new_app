@@ -45,11 +45,7 @@ export const SelectableImage = ({
         open={lightboxOpen}
         image={{ ...galleryImage, caption: image.label }}
         imageId={image.id}
-        index={0}
-        total={1}
         onClose={closeLightbox}
-        onNext={closeLightbox}
-        onPrevious={closeLightbox}
       />
     </>
   );

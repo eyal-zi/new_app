@@ -3,7 +3,7 @@ import { styled } from '@mui/material/styles';
 
 import { RESULTS_CONTENT_MAX_WIDTH } from '../consts';
 
-export const ResultsContent = styled(Stack)(({ theme }) => ({
+export const ResultsContentRoot = styled(Stack)(({ theme }) => ({
   width: '100%',
   maxWidth: RESULTS_CONTENT_MAX_WIDTH,
   alignSelf: 'center',

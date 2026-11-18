@@ -3,6 +3,7 @@ import {
   MAX_PROGRESS,
   MOCK_DEFAULT_STATISTIC,
   MOCK_EVALUATED_IMAGE_SIZE_PX,
+  MOCK_FILE_RESULT_STEP,
   MOCK_IMAGE_BASE_URL,
   MOCK_RESULT_FILE_SIZE_PX,
   MOCK_RESULT_KEYS,
@@ -42,8 +43,8 @@ export const buildMockResults = (
         ? statistics
         : [MOCK_DEFAULT_STATISTIC];
 
-      // Every other statistic yields files instead of scores, so both result
-      // types show up in the mock data.
+      // Some statistics yield files instead of scores, so both result types
+      // show up in the mock data.
       const result = (
         statistic: string,
         key: string,
@@ -75,7 +76,11 @@ export const buildMockResults = (
           results: Object.fromEntries(
             MOCK_RESULT_KEYS.map((key) => [
               key,
-              result(statistic, key, index % 2 === 1),
+              result(
+                statistic,
+                key,
+                index % MOCK_FILE_RESULT_STEP === MOCK_FILE_RESULT_STEP - 1,
+              ),
             ]),
           ),
           status: COMPLETED_STATUS,

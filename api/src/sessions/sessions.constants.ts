@@ -10,7 +10,9 @@ export const SESSION_STATUSES = [
 
 export const RECOMMENDATION_RESULT_TYPES = ['file', 'score'] as const;
 
-export const MAX_PROGRESS = 100;
+/** Progress is a fraction from 0 to 1 everywhere: db, API and client. */
+export const MIN_PROGRESS = 0;
+export const MAX_PROGRESS = 1;
 export const MAX_OWNER_LENGTH = 254;
 export const MAX_SEARCH_LENGTH = 200;
 export const DEFAULT_NUMBER_OF_SESSIONS = 10;
@@ -23,8 +25,7 @@ export const READ_ONLY_EXTENSION = 'x-query';
 export const MAX_TRAINING_TYPE_LENGTH = 100;
 export const MAX_STATISTIC_LENGTH = 100;
 export const MAX_STATISTICS = 50;
-export const PERCENT = 100;
-export const INITIAL_PROGRESS = 0;
+export const INITIAL_PROGRESS = MIN_PROGRESS;
 // Placeholder base for the s8 link until the real s8 integration exists.
 export const S8_TRAINING_LINK_BASE_URL = 'https://s8.example.com/training';
 
@@ -39,11 +40,14 @@ export const MOCK_PROCESSING_DELAY_MS = 5000;
 export const MOCK_RESULT_KEYS = ['_front_view', '_side_view', '_top_view'];
 export const MOCK_DEFAULT_STATISTIC = 'accuracy';
 export const MOCK_SCORE_DECIMALS = 2;
+// Every MOCK_FILE_RESULT_STEP-th statistic (the last of each group) yields
+// files instead of scores.
+export const MOCK_FILE_RESULT_STEP = 2;
 export const MOCK_RESULT_FILE_SIZE_PX = 200;
 export const MOCK_IMAGE_BASE_URL = 'https://picsum.photos/seed';
 export const MOCK_EVALUATED_IMAGE_SIZE_PX = 400;
-export const COMPLETED_STATUS = 'completed';
-export const CANCELED_STATUS = 'canceled';
+export const COMPLETED_STATUS = SESSION_STATUSES[2];
+export const CANCELED_STATUS = SESSION_STATUSES[4];
 export const CANCELED_LOGS = 'Session was canceled';
 // Statuses a session can still be moved out of by the mock processor.
 export const ACTIVE_STATUSES = ['started', 'running'] as const;

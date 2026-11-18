@@ -5,7 +5,7 @@ import { ResultsProgress } from './results-progress';
 import { RunningSessionRoot } from './running-session.styles';
 
 type RunningSessionProps = {
-  /** 0-100, or null when the progress is not known yet. */
+  /** A fraction from 0 to 1, or null when the progress is not known yet. */
   progress: number | null;
   isCanceling: boolean;
   onCancel: () => void;

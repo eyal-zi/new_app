@@ -21,3 +21,6 @@ export const SECOND_IMAGE_PICKER: ImagePickerConfig = {
   description: IMAGE_ACCEPT_DESCRIPTION,
   accept: IMAGE_ACCEPT,
 };
+
+/** The summary step lets statistics be removed only above this count. */
+export const MIN_STATISTICS = 1;

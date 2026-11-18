@@ -56,7 +56,7 @@ export const SCORE_GREEN_HUE = 120;
 export const SCORE_RING_SIZE = 96;
 export const SCORE_RING_THICKNESS = 5;
 export const SCORE_RING_TRACK_OPACITY = 0.15;
-export const SCORE_PERCENT = 100;
+export const PERCENT = 100;
 export const SCORE_MIN = 0;
 export const SCORE_MAX = 1;
 export const SCORE_COLOR_SATURATION = 75;
@@ -75,3 +75,39 @@ export const ACTIVE_POLL_INTERVAL_MS = 3000;
 export const RUNNING_MESSAGE = 'Your session is running…';
 export const CANCEL_SESSION_LABEL = 'Cancel session';
 export const SESSION_CANCELED_MESSAGE = 'Session canceled';
+
+export const INFERENCE_RESULTS_TITLE = 'Inference results';
+export const INFERENCE_RESULTS_SUBTITLE =
+  'Expand a selection to compare its images. Ctrl/Cmd + click an image, or use its checkbox, to select it.';
+export const EVALUATION_RESULTS_TITLE = 'Evaluation results';
+export const EVALUATION_RESULTS_SUBTITLE =
+  'Compare image A and the evaluated image for each session.';
+
+export const getCompareTitle = (count: number) => `Comparing ${count} images`;
+export const getSelectedCountLabel = (count: number) => `${count} selected`;
+export const CLEAR_SELECTION_LABEL = 'Clear';
+export const COMPARE_LABEL = 'Compare';
+
+export const PROGRESS_LABEL = 'Results progress';
+export const LOADING_LABEL = 'Loading';
+export const getLoadingLabel = (title: string) => `Loading ${title}`;
+export const getScoreLabel = (score: string) => `Score ${score}`;
+
+export const NO_SESSIONS_MESSAGE = 'No sessions selected.';
+export const LOAD_SESSION_ERROR_MESSAGE = "Couldn't load the session.";
+export const INVALID_RESULTS_LINK_MESSAGE =
+  'This session has an invalid results link.';
+export const REDIRECTING_MESSAGE = 'Redirecting to the training results…';
+export const getUnknownTypeMessage = (type: string) =>
+  `Unknown session type "${type}".`;
+export const getFailedSessionMessage = (description: string) =>
+  `This session ${description}.`;
+export const NO_EVALUATED_IMAGE_MESSAGE =
+  'The evaluated image is not available for this session.';
+export const getLoadProblem = (id: string) => `Couldn't load session ${id}.`;
+export const getNotEvaluationProblem = (id: string) =>
+  `Session ${id} is not an evaluation session.`;
+export const getFailedProblem = (id: string, description: string) =>
+  `Session ${id} ${description}.`;
+export const getNoEvaluatedImageProblem = (id: string) =>
+  `Session ${id} has no evaluated image.`;

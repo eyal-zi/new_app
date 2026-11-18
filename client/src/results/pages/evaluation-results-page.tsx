@@ -1,8 +1,12 @@
 import { Box, Stack, Typography } from '@mui/material';
 
 import { ResultSet } from '../components/result-set';
+import { ResultsContent } from '../components/results-content';
+import {
+  EVALUATION_RESULTS_SUBTITLE,
+  EVALUATION_RESULTS_TITLE,
+} from '../consts';
 import type { ResultSet as ResultSetData } from '../types';
-import { ResultsContent } from './results-page.styles';
 
 type EvaluationResultsPageProps = {
   sets: readonly ResultSetData[];
@@ -19,9 +23,9 @@ export const EvaluationResultsPage = ({
 }: EvaluationResultsPageProps) => (
   <Stack spacing={3}>
     <Box>
-      <Typography variant="h4">Evaluation results</Typography>
+      <Typography variant="h4">{EVALUATION_RESULTS_TITLE}</Typography>
       <Typography color="text.secondary">
-        Compare image A and the evaluated image for each session.
+        {EVALUATION_RESULTS_SUBTITLE}
       </Typography>
     </Box>
     <ResultsContent spacing={4}>

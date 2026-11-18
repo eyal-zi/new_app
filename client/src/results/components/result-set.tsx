@@ -4,6 +4,7 @@ import { ImageGallery } from '@/shared/components/image-gallery/image-gallery';
 
 import {
   CANCEL_SESSION_LABEL,
+  getLoadingLabel,
   RESULT_COLUMNS,
   RESULT_IMAGE_LABELS,
   SKELETON_TILE_COUNT,
@@ -43,7 +44,7 @@ export const ResultSet = ({ set, onCancel, cancelingId }: ResultSetProps) => {
     return (
       <ResultSetRoot aria-busy="true" aria-label={set.title}>
         {heading}
-        <SkeletonGrid role="status" aria-label={`Loading ${set.title}`}>
+        <SkeletonGrid role="status" aria-label={getLoadingLabel(set.title)}>
           {Array.from({ length: SKELETON_TILE_COUNT }, renderSkeleton)}
         </SkeletonGrid>
         {set.status === 'active' && onCancel && (
