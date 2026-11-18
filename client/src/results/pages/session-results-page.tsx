@@ -14,8 +14,8 @@ import { isHttpUrl } from '@/sessions/utils/is-http-url';
 import { SESSION_TYPES } from '@/shared/session-type-constants';
 import { ErrorState, LoadingState } from '@/shared/ui/states';
 
-import { PendingSession } from '../components/pending-session';
-import { PENDING_POLL_INTERVAL_MS, SESSION_CANCELED_MESSAGE } from '../consts';
+import { RunningSession } from '../components/running-session';
+import { RUNNING_POLL_INTERVAL_MS, SESSION_CANCELED_MESSAGE } from '../consts';
 import { toResultSet } from '../utils/to-result-set';
 import { toSelectionResults } from '../utils/to-selection-results';
 import { EvaluationResultsPage } from './evaluation-results-page';
@@ -60,10 +60,10 @@ export const SessionResultsPage = () => {
     {
       query: {
         enabled: isSessionType(type),
-        // Keep checking until the session leaves the pending state.
+        // Keep checking until the session leaves the running state.
         refetchInterval: ({ state }) =>
-          state.data?.status === SessionStatus.pending
-            ? PENDING_POLL_INTERVAL_MS
+          state.data?.status === SessionStatus.running
+            ? RUNNING_POLL_INTERVAL_MS
             : false,
       },
     },
@@ -90,9 +90,9 @@ export const SessionResultsPage = () => {
     return <ErrorState message="Couldn't load the session." retry={refetch} />;
   }
 
-  if (data.status === SessionStatus.pending) {
+  if (data.status === SessionStatus.running) {
     return (
-      <PendingSession
+      <RunningSession
         isCanceling={cancellation.isPending}
         // Not deleted: the session stays in the db, marked as canceled.
         onCancel={() =>

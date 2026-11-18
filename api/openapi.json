@@ -504,7 +504,7 @@
             "name": "should_delete",
             "required": true,
             "in": "query",
-            "description": "The session is deleted only when true",
+            "description": "When true the session is deleted; otherwise it is canceled (status set to failed)",
             "schema": {
               "type": "boolean"
             }
@@ -580,8 +580,7 @@
       "SessionStatus": {
         "type": "string",
         "enum": [
-          "pending",
-          "in_progress",
+          "started",
           "running",
           "completed",
           "failed",

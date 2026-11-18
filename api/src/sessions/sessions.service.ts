@@ -6,7 +6,11 @@ import { toNaiveUtc } from '../common/naive-utc.js';
 import { IMAGE_TYPES } from '../files/files.constants.js';
 import { FilesService, type UploadedImage } from '../files/files.service.js';
 import {
+  ACTIVE_STATUSES,
+  CANCELED_LOGS,
+  CANCELED_STATUS,
   INITIAL_PROGRESS,
+  MOCK_PROCESSING_DELAY_MS,
   PERCENT,
   S8_TRAINING_LINK_BASE_URL,
   SESSION_TYPES,
@@ -24,6 +28,7 @@ import type {
   SessionDto,
   SessionSearchValuesDto,
 } from './sessions.dto.js';
+import { buildMockResults } from './sessions.mock.js';
 import { SessionsRepository } from './sessions.repository.js';
 import type { sessions } from './sessions.schema.js';
 
@@ -102,6 +107,24 @@ export class SessionsService {
     }
   }
 
+  // Stand-in for a real worker: completes the session with mock results after
+  // a delay, unless it was canceled in the meantime.
+  private scheduleMockCompletion(session: SessionRow) {
+    const type = session.type as SessionTypeValue;
+    const timer = setTimeout(() => {
+      this.sessions
+        .updateIfStatus(
+          type,
+          session.id,
+          ACTIVE_STATUSES,
+          buildMockResults(type, session.id, session.statistics),
+        )
+        .catch(() => undefined);
+    }, MOCK_PROCESSING_DELAY_MS);
+
+    timer.unref();
+  }
+
   async createInference(
     body: CreateInferenceSessionBodyDto,
     variationa: UploadedImage | undefined,
@@ -127,6 +150,8 @@ export class SessionsService {
       progress: INITIAL_PROGRESS,
       statistics: body.statistics,
     });
+
+    this.scheduleMockCompletion(created);
 
     return toCreatedSessionDto(created);
   }
@@ -160,6 +185,8 @@ export class SessionsService {
       s8Link: `${S8_TRAINING_LINK_BASE_URL}/${id}`,
     });
 
+    this.scheduleMockCompletion(created);
+
     return {
       ...toCreatedSessionDto(created),
       progress: (created.progress ?? INITIAL_PROGRESS) / PERCENT,
@@ -187,6 +214,8 @@ export class SessionsService {
       progress: INITIAL_PROGRESS,
     });
 
+    this.scheduleMockCompletion(created);
+
     return toCreatedSessionDto(created);
   }
 
@@ -213,8 +242,25 @@ export class SessionsService {
     return this.sessions.count(searchValues, type);
   }
 
+  // `shouldDelete` removes the row; otherwise the session stays in the db,
+  // marked as canceled.
   async delete(type: SessionTypeValue, id: string, shouldDelete: boolean) {
-    if (shouldDelete && !(await this.sessions.delete(type, id))) {
+    if (shouldDelete) {
+      if (!(await this.sessions.delete(type, id))) {
+        throw new NotFoundException();
+      }
+
+      return;
+    }
+
+    const canceled = await this.sessions.updateIfStatus(
+      type,
+      id,
+      ACTIVE_STATUSES,
+      { status: CANCELED_STATUS, logs: CANCELED_LOGS },
+    );
+
+    if (!canceled && !(await this.sessions.findOne(type, id))) {
       throw new NotFoundException();
     }
   }

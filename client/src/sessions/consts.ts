@@ -20,8 +20,7 @@ export const TAG_FONT_SIZE = '1rem';
 export const SESSION_STATUSES = Object.values(SessionStatus);
 
 export const SESSION_STATUS_LABELS: Record<SessionStatus, string> = {
-  pending: 'Pending',
-  in_progress: 'In progress',
+  started: 'Started',
   running: 'Running',
   completed: 'Completed',
   failed: 'Failed',
@@ -32,8 +31,7 @@ export const SESSION_STATUS_COLORS: Record<
   SessionStatus,
   'default' | 'info' | 'primary' | 'success' | 'error' | 'warning'
 > = {
-  pending: 'default',
-  in_progress: 'info',
+  started: 'info',
   running: 'primary',
   completed: 'success',
   failed: 'error',

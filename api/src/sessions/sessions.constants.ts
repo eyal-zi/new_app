@@ -1,8 +1,7 @@
 export const SESSION_TYPES = ['training', 'inference', 'evaluation'] as const;
 
 export const SESSION_STATUSES = [
-  'pending',
-  'in_progress',
+  'started',
   'running',
   'completed',
   'failed',
@@ -33,3 +32,17 @@ export const UPLOAD_FIELDS = {
   VARIATION_A: 'variationa_file',
   VARIATION_B: 'variationb_file',
 } as const;
+
+// Mock processing: until real workers exist, new sessions are completed with
+// generated results after this delay.
+export const MOCK_PROCESSING_DELAY_MS = 5000;
+export const MOCK_RESULT_KEYS = ['_front_view', '_side_view', '_top_view'];
+export const MOCK_DEFAULT_STATISTIC = 'accuracy';
+export const MOCK_SCORE_DECIMALS = 2;
+export const MOCK_IMAGE_BASE_URL = 'https://picsum.photos/seed';
+export const MOCK_EVALUATED_IMAGE_SIZE_PX = 400;
+export const COMPLETED_STATUS = 'completed';
+export const CANCELED_STATUS = 'canceled';
+export const CANCELED_LOGS = 'Session was canceled';
+// Statuses a session can still be moved out of by the mock processor.
+export const ACTIVE_STATUSES = ['started', 'running'] as const;

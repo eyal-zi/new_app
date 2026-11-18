@@ -1,5 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { and, asc, count, desc, eq, ilike, type SQL, sql } from 'drizzle-orm';
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  ilike,
+  inArray,
+  type SQL,
+  sql,
+} from 'drizzle-orm';
 
 import { Database } from '../database/database.module.js';
 import type {
@@ -78,5 +88,27 @@ export class SessionsRepository {
       .where(and(eq(sessions.id, id), eq(sessions.type, type)))
       .returning({ id: sessions.id });
     return deleted.length > 0;
+  }
+
+  // Updates only while the session is in one of `fromStatuses`, so a session
+  // canceled in the meantime is not resurrected. Returns whether a row changed.
+  async updateIfStatus(
+    type: string,
+    id: string,
+    fromStatuses: readonly string[],
+    values: Partial<typeof sessions.$inferInsert>,
+  ) {
+    const updated = await this.database.db
+      .update(sessions)
+      .set(values)
+      .where(
+        and(
+          eq(sessions.id, id),
+          eq(sessions.type, type),
+          inArray(sessions.status, [...fromStatuses]),
+        ),
+      )
+      .returning({ id: sessions.id });
+    return updated.length > 0;
   }
 }

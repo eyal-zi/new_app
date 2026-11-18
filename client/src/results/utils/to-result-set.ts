@@ -6,7 +6,7 @@ import { toSessionTitle } from './to-session-title';
 
 /**
  * One result set per evaluation session, titled by its id and sent image file name: image A next to the
- * evaluated image. Is pending until it starts, then stays loading until the session is completed and the
+ * evaluated image. Is running until it starts, then stays loading until the session is completed and the
  * evaluated image exists.
  */
 export const toResultSet = (dto: EvaluationSessionDto): ResultSet => {
@@ -15,8 +15,8 @@ export const toResultSet = (dto: EvaluationSessionDto): ResultSet => {
     title: toSessionTitle(dto.session_id, dto.image_a_url),
   };
 
-  if (dto.status === SessionStatus.pending) {
-    return { ...base, status: 'pending' };
+  if (dto.status === SessionStatus.running) {
+    return { ...base, status: 'running' };
   }
 
   if (

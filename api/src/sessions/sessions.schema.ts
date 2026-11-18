@@ -41,7 +41,7 @@ export const sessions = pgTable(
       .defaultNow()
       .$onUpdate(() => new Date()),
     progress: integer('progress'),
-    status: varchar('status', { length: 32 }).notNull().default('pending'),
+    status: varchar('status', { length: 32 }).notNull().default('running'),
     notes: text('notes').notNull().default(''),
     logs: text('logs'),
     variationaInfo: jsonb('variationa_info').$type<SessionInfo>(),

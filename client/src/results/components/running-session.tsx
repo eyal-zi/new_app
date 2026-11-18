@@ -2,22 +2,22 @@ import { Button, Typography } from '@mui/material';
 
 import { LoadingState } from '@/shared/ui/states';
 
-import { CANCEL_SESSION_LABEL, PENDING_MESSAGE } from '../consts';
-import { PendingSessionRoot } from './pending-session.styles';
+import { CANCEL_SESSION_LABEL, RUNNING_MESSAGE } from '../consts';
+import { RunningSessionRoot } from './running-session.styles';
 
-type PendingSessionProps = {
+type RunningSessionProps = {
   isCanceling: boolean;
   onCancel: () => void;
 };
 
 /** Shown while a session waits to start, with a way to cancel it. */
-export const PendingSession = ({
+export const RunningSession = ({
   isCanceling,
   onCancel,
-}: PendingSessionProps) => (
-  <PendingSessionRoot>
+}: RunningSessionProps) => (
+  <RunningSessionRoot>
     <LoadingState />
-    <Typography color="text.secondary">{PENDING_MESSAGE}</Typography>
+    <Typography color="text.secondary">{RUNNING_MESSAGE}</Typography>
     <Button
       variant="outlined"
       color="warning"
@@ -26,5 +26,5 @@ export const PendingSession = ({
     >
       {CANCEL_SESSION_LABEL}
     </Button>
-  </PendingSessionRoot>
+  </RunningSessionRoot>
 );

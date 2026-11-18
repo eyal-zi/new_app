@@ -43,6 +43,13 @@
       "when": 1794930190112,
       "tag": "0005_sessions_details",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1795004798941,
+      "tag": "0006_sessions_running_default",
+      "breakpoints": true
     }
   ]
 }

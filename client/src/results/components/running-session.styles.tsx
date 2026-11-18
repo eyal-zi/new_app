@@ -1,6 +1,6 @@
 import { styled } from '@mui/material/styles';
 
-export const PendingSessionRoot = styled('div')(({ theme }) => ({
+export const RunningSessionRoot = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',

@@ -10,4 +10,4 @@ export const toSelectionResults = (
 ): SelectionResultsData =>
   dto.status === SessionStatus.completed
     ? { status: 'ready', selections: [toSelection(dto.recommendations)] }
-    : { status: 'in_progress', progress: dto.progress };
+    : { status: 'started', progress: dto.progress };

@@ -38,7 +38,7 @@ export const InferenceResultsPage = ({
           or use its checkbox, to select it.
         </Typography>
       </Box>
-      {data.status === 'in_progress' ? (
+      {data.status === 'started' ? (
         <ResultsProgress progress={data.progress} />
       ) : (
         <ResultsContent spacing={1}>

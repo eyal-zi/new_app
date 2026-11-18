@@ -29,7 +29,7 @@ const renderSkeleton = (_: unknown, index: number) => (
 
 type ResultSetProps = {
   set: ResultSetData;
-  /** Called with the set's id; pending sets show a cancel button when given. */
+  /** Called with the set's id; running sets show a cancel button when given. */
   onCancel?: (id: string) => void;
   /** Id of the set currently being canceled, if any. */
   cancelingId?: string;
@@ -38,7 +38,7 @@ type ResultSetProps = {
 export const ResultSet = ({ set, onCancel, cancelingId }: ResultSetProps) => {
   const heading = <Typography variant="h6">{set.title}</Typography>;
 
-  if (set.status === 'pending') {
+  if (set.status === 'running') {
     return (
       <ResultSetRoot aria-busy="true" aria-label={set.title}>
         {heading}

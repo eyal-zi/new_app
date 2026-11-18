@@ -1,7 +1,7 @@
 export type ResultSet =
   | { id: string; title: string; status: 'loading' }
   /** Waiting to start: the only state in which it can still be canceled. */
-  | { id: string; title: string; status: 'pending' }
+  | { id: string; title: string; status: 'running' }
   | {
       id: string;
       title: string;
@@ -35,7 +35,7 @@ export type ResultSelection =
 
 export type SelectionResultsData =
   | {
-      status: 'in_progress';
+      status: 'started';
       /** 0-100, or null when the progress is not known yet. */
       progress: number | null;
     }

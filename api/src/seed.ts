@@ -35,7 +35,6 @@ const STATISTICS = ['accuracy', 'precision', 'recall', 'f1', 'latency'];
 const SCORE_DECIMALS = 2;
 const NULL_VARIATION_INFO_CHANCE = 0.3;
 const NULL_TRAINING_TYPE_CHANCE = 0.2;
-const NULL_EVALUATED_IMAGE_CHANCE = 0.3;
 const RANDOM_SEED = 20260101;
 const OWNERS = [
   'alice',
@@ -69,7 +68,7 @@ const between = (min: number, max: number) =>
 
 const progressFor = (status: (typeof SESSION_STATUSES)[number]) => {
   switch (status) {
-    case 'pending':
+    case 'running':
       return 0;
     case 'completed':
       return 100;
@@ -132,10 +131,11 @@ const createTypeSpecificFields = (
       };
     case 'evaluation':
       return {
+        // Completed evaluations always have a result image.
         evaluatedImageUrl:
-          random() < NULL_EVALUATED_IMAGE_CHANCE
-            ? null
-            : imageUrl(`session-${index}-evaluated`),
+          status === 'completed'
+            ? imageUrl(`session-${index}-evaluated`)
+            : null,
       };
   }
 };

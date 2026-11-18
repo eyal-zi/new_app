@@ -180,7 +180,10 @@ export class SessionParamDto {
 }
 
 export class DeleteSessionQueryDto {
-  @ApiProperty({ description: 'The session is deleted only when true' })
+  @ApiProperty({
+    description:
+      'When true the session is deleted; otherwise it is canceled (status set to failed)',
+  })
   @Transform(({ value }: { value: unknown }) =>
     value === 'true' ? true : value === 'false' ? false : value,
   )

@@ -6,7 +6,7 @@ import { ResultsContent } from './results-page.styles';
 
 type EvaluationResultsPageProps = {
   sets: readonly ResultSetData[];
-  /** Makes pending sets cancelable. */
+  /** Makes running sets cancelable. */
   onCancelSet?: (id: string) => void;
   cancelingId?: string;
 };
