@@ -1,9 +1,15 @@
 import { Fragment } from 'react';
 
+import { EMPTY_CELL_LABEL } from '../consts';
 import type { GridCell, SelectedImage, SelectionGridRow } from '../types';
 import { ScoreCell } from './score-cell';
 import { SelectableImage } from './selectable-image';
-import { ColumnTitle, GridRoot, RowTitle } from './selection-grid.styles';
+import {
+  ColumnTitle,
+  EmptyCell,
+  GridRoot,
+  RowTitle,
+} from './selection-grid.styles';
 
 type SelectionGridProps = {
   selectionId: string;
@@ -28,6 +34,14 @@ export const SelectionGrid = ({
 
   const renderCell = (row: SelectionGridRow, cell: GridCell, index: number) => {
     const id = `${selectionId}:${row.id}:${index}`;
+
+    if (cell.type === 'empty') {
+      return (
+        <EmptyCell key={id} role="listitem">
+          {EMPTY_CELL_LABEL}
+        </EmptyCell>
+      );
+    }
 
     if (cell.type === 'score') {
       return <ScoreCell key={id} score={cell.score} />;

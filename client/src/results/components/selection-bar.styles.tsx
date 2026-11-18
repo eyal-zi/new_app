@@ -6,6 +6,8 @@ export const SelectionBarRoot = styled(Paper)(({ theme }) => ({
   bottom: theme.spacing(3),
   left: '50%',
   transform: 'translateX(-50%)',
+  // Keep below theme.zIndex.modal so dialogs (the compare view, the lightbox,
+  // confirmations) always cover the bar. Don't raise it above that.
   zIndex: theme.zIndex.speedDial,
   display: 'flex',
   alignItems: 'center',

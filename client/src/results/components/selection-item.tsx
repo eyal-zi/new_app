@@ -6,6 +6,7 @@ import {
   Typography,
 } from '@mui/material';
 
+import { SELECTION_LOADING_SPINNER_SIZE } from '../consts';
 import type { ResultSelection, SelectedImage } from '../types';
 import { SelectionGrid } from './selection-grid';
 import { GridSkeleton } from './selection-grid.styles';
@@ -33,7 +34,12 @@ export const SelectionItem = ({
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <SummaryContent>
           <Typography variant="h6">{selection.title}</Typography>
-          {isLoading && <CircularProgress size={18} aria-label="Loading" />}
+          {isLoading && (
+            <CircularProgress
+              size={SELECTION_LOADING_SPINNER_SIZE}
+              aria-label="Loading"
+            />
+          )}
         </SummaryContent>
       </AccordionSummary>
       <AccordionDetails>

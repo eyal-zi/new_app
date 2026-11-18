@@ -34,10 +34,19 @@ export const RESULTS_CONTENT_MAX_WIDTH = 1000;
 /** Result fields shown as grid rows; titled by capitalizing the field name. */
 export const VARIATION_KEYS = ['variationa', 'variationb'] as const;
 
+/** Shown in a grid cell whose result has no value. */
+export const EMPTY_CELL_LABEL = '—';
+
 export const SELECTION_GRID_ROW_TITLE_WIDTH = 14;
+/** In px. */
+export const SELECTION_LOADING_SPINNER_SIZE = 18;
+/** Index into `theme.shadows`. */
+export const SELECTION_BAR_ELEVATION = 6;
 /** In theme spacing units. */
 export const SELECTION_SKELETON_HEIGHT = 20;
 
+/** Up to this many compared images share one row. */
+export const COMPARE_MAX_SINGLE_ROW = 3;
 export const COMPARE_MIN_IMAGES = 2;
 export const COMPARE_HINT = 'Select at least 2 images to compare';
 export const COMPARE_CLOSE_LABEL = 'Close comparison';
@@ -48,6 +57,10 @@ export const SCORE_RING_SIZE = 96;
 export const SCORE_RING_THICKNESS = 5;
 export const SCORE_RING_TRACK_OPACITY = 0.15;
 export const SCORE_PERCENT = 100;
+export const SCORE_MIN = 0;
+export const SCORE_MAX = 1;
+export const SCORE_COLOR_SATURATION = 75;
+export const SCORE_COLOR_LIGHTNESS = 45;
 export const SCORE_DECIMALS = 2;
 
 /** Shape of each cell in the selection grid. */

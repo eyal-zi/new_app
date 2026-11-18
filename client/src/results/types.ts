@@ -12,9 +12,14 @@ export type ResultSet =
 
 export type ResultImage = { id: 'a' | 'evaluated'; src: string; alt: string };
 
-/** A grid cell: an image when the statistic type is `file`, otherwise a 0-1 score. */
+/**
+ * A grid cell: an image when the statistic type is `file`, a 0-1 score when it
+ * is `score`, and `empty` when the result has no usable value.
+ */
 export type GridCell =
-  { type: 'file'; url: string } | { type: 'score'; score: number };
+  | { type: 'file'; url: string }
+  | { type: 'score'; score: number }
+  | { type: 'empty' };
 
 export type SelectionGridRow = {
   id: string;

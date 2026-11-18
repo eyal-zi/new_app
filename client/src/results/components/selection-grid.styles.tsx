@@ -2,6 +2,7 @@ import { Skeleton, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 import {
+  SELECTABLE_IMAGE_ASPECT_RATIO,
   SELECTION_GRID_ROW_TITLE_WIDTH,
   SELECTION_SKELETON_HEIGHT,
 } from '../consts';
@@ -22,4 +23,12 @@ export const RowTitle = styled(Typography)({ fontWeight: 500 });
 export const GridSkeleton = styled(Skeleton)(({ theme }) => ({
   height: theme.spacing(SELECTION_SKELETON_HEIGHT),
   transform: 'none',
+}));
+
+export const EmptyCell = styled('div')(({ theme }) => ({
+  aspectRatio: SELECTABLE_IMAGE_ASPECT_RATIO,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: (theme.vars ?? theme).palette.text.disabled,
 }));
