@@ -30,8 +30,9 @@ const IMAGE_SIZES_PX: readonly (readonly [number, number])[] = [
   [400, 400],
 ];
 const TRAINING_TYPES = ['fine_tune', 'full', 'lora'];
+const RESULT_KEYS = ['_front_view', '_side_view', '_top_view'];
 const STATISTICS = ['accuracy', 'precision', 'recall', 'f1', 'latency'];
-const MAX_SCORE = 100;
+const SCORE_DECIMALS = 2;
 const NULL_VARIATION_INFO_CHANCE = 0.3;
 const NULL_TRAINING_TYPE_CHANCE = 0.2;
 const NULL_EVALUATED_IMAGE_CHANCE = 0.3;
@@ -97,21 +98,26 @@ const createTypeSpecificFields = (
   switch (type) {
     case 'inference': {
       const resultType = pick(RECOMMENDATION_RESULT_TYPES);
-      const result = (variation: string) =>
+      const result = (variation: string, key: string) =>
         resultType === 'score'
-          ? between(0, MAX_SCORE)
-          : `https://picsum.photos/seed/session-${index}-${variation}-result/200/200`;
+          ? random().toFixed(SCORE_DECIMALS)
+          : `https://picsum.photos/seed/session-${index}-${variation}${key}-result/200/200`;
       const statistics = STATISTICS.slice(0, between(1, STATISTICS.length));
 
       return {
         recommendations: {
           session_id: id,
           statistic: statistics[0] as string,
-          results: {
-            variationa: result('a'),
-            variationb: result('b'),
-            type: resultType,
-          },
+          results: Object.fromEntries(
+            RESULT_KEYS.map((key) => [
+              key,
+              {
+                variationa: result('a', key),
+                variationb: result('b', key),
+                type: resultType,
+              },
+            ]),
+          ),
           status,
         },
         statistics,

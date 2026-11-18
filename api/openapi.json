@@ -618,7 +618,7 @@
           "canceled"
         ]
       },
-      "RecommendationResultsDto": {
+      "RecommendationResultDto": {
         "type": "object",
         "properties": {
           "variationa": {
@@ -653,7 +653,18 @@
             "type": "string"
           },
           "results": {
-            "$ref": "#/components/schemas/RecommendationResultsDto"
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/RecommendationResultDto"
+            },
+            "description": "Results keyed by column. Keys are formatted like \"_this_is_key\"; the client turns them into display names.",
+            "example": {
+              "_front_view": {
+                "variationa": "0.2",
+                "variationb": "0.7",
+                "type": "score"
+              }
+            }
           },
           "status": {
             "allOf": [

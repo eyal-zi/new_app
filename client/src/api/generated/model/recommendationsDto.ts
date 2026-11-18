@@ -4,12 +4,13 @@
  * API
  * OpenAPI spec version: 1.0
  */
-import type { RecommendationResultsDto } from './recommendationResultsDto';
+import type { RecommendationsDtoResults } from './recommendationsDtoResults';
 import type { SessionStatus } from './sessionStatus';
 
 export interface RecommendationsDto {
   session_id: string;
   statistic: string;
-  results: RecommendationResultsDto;
+  /** Results keyed by column. Keys are formatted like "_this_is_key"; the client turns them into display names. */
+  results: RecommendationsDtoResults;
   status: SessionStatus;
 }

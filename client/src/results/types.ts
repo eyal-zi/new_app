@@ -18,11 +18,15 @@ export type ResultsData =
 
 export type ResultImage = { id: 'a' | 'b'; src: string; alt: string };
 
+/** A grid cell: an image when the statistic type is `file`, otherwise a 0-1 score. */
+export type GridCell =
+  { type: 'file'; url: string } | { type: 'score'; score: number };
+
 export type SelectionGridRow = {
   id: string;
   title: string;
-  /** One image url per grid column, in column order. */
-  imageUrls: readonly string[];
+  /** One cell per grid column, in column order. */
+  cells: readonly GridCell[];
 };
 
 export type ResultSelection =

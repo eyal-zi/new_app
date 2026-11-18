@@ -4,12 +4,12 @@
  * API
  * OpenAPI spec version: 1.0
  */
-import type { RecommendationResultsDtoType } from './recommendationResultsDtoType';
+import type { RecommendationResultDtoType } from './recommendationResultDtoType';
 
-export interface RecommendationResultsDto {
+export interface RecommendationResultDto {
   /** @nullable */
   variationa: string | null;
   /** @nullable */
   variationb: string | null;
-  type: RecommendationResultsDtoType;
+  type: RecommendationResultDtoType;
 }

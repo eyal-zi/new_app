@@ -1,6 +1,7 @@
 import { Fragment } from 'react';
 
-import type { SelectedImage, SelectionGridRow } from '../types';
+import type { GridCell, SelectedImage, SelectionGridRow } from '../types';
+import { ScoreCell } from './score-cell';
 import { SelectableImage } from './selectable-image';
 import { ColumnTitle, GridRoot, RowTitle } from './selection-grid.styles';
 
@@ -27,26 +28,33 @@ export const SelectionGrid = ({
     </ColumnTitle>
   );
 
+  const renderCell = (row: SelectionGridRow, cell: GridCell, index: number) => {
+    const id = `${selectionId}:${row.id}:${index}`;
+
+    if (cell.type === 'score') {
+      return <ScoreCell key={id} score={cell.score} />;
+    }
+
+    const image: SelectedImage = {
+      id,
+      src: cell.url,
+      label: `${selectionTitle} · ${row.title} · ${columnTitles[index]}`,
+    };
+
+    return (
+      <SelectableImage
+        key={id}
+        image={image}
+        selected={selectedIds.has(id)}
+        onToggle={onToggleImage}
+      />
+    );
+  };
+
   const renderRow = (row: SelectionGridRow) => (
     <Fragment key={row.id}>
       <RowTitle variant="body2">{row.title}</RowTitle>
-      {row.imageUrls.map((src, index) => {
-        const id = `${selectionId}:${row.id}:${index}`;
-        const image: SelectedImage = {
-          id,
-          src,
-          label: `${selectionTitle} · ${row.title} · ${columnTitles[index]}`,
-        };
-
-        return (
-          <SelectableImage
-            key={id}
-            image={image}
-            selected={selectedIds.has(id)}
-            onToggle={onToggleImage}
-          />
-        );
-      })}
+      {row.cells.map((cell, index) => renderCell(row, cell, index))}
     </Fragment>
   );
 

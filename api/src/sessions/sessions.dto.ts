@@ -1,4 +1,5 @@
 import {
+  ApiExtraModels,
   ApiProperty,
   ApiPropertyOptional,
   getSchemaPath,
@@ -74,7 +75,7 @@ export class SessionDto {
   variationb_info!: Record<string, unknown> | null;
 }
 
-export class RecommendationResultsDto {
+export class RecommendationResultDto {
   @ApiProperty({ type: String, nullable: true })
   variationa!: string | number | null;
 
@@ -85,13 +86,22 @@ export class RecommendationResultsDto {
   type!: (typeof RECOMMENDATION_RESULT_TYPES)[number];
 }
 
+@ApiExtraModels(RecommendationResultDto)
 export class RecommendationsDto {
   @ApiProperty() session_id!: string;
 
   @ApiProperty() statistic!: string;
 
-  @ApiProperty({ type: RecommendationResultsDto })
-  results!: RecommendationResultsDto;
+  @ApiProperty({
+    type: 'object',
+    additionalProperties: { $ref: getSchemaPath(RecommendationResultDto) },
+    description:
+      'Results keyed by column. Keys are formatted like "_this_is_key"; the client turns them into display names.',
+    example: {
+      _front_view: { variationa: '0.2', variationb: '0.7', type: 'score' },
+    },
+  })
+  results!: Record<string, RecommendationResultDto>;
 
   @ApiProperty({ enum: SESSION_STATUSES, enumName: 'SessionStatus' })
   status!: (typeof SESSION_STATUSES)[number];

@@ -12,14 +12,16 @@ import {
 import { MAX_OWNER_LENGTH } from './sessions.constants.js';
 
 export type SessionInfo = Record<string, unknown>;
+export type SessionRecommendationResult = {
+  variationa: string | number | null;
+  variationb: string | number | null;
+  type: 'file' | 'score';
+};
 export type SessionRecommendations = {
   session_id: string;
   statistic: string;
-  results: {
-    variationa: string | number | null;
-    variationb: string | number | null;
-    type: 'file' | 'score';
-  };
+  /** Keyed by column, formatted like `_this_is_key`. */
+  results: Record<string, SessionRecommendationResult>;
   status: string;
 };
 
