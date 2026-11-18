@@ -42,9 +42,9 @@ export const ResultSet = ({ set }: { set: ResultSetData }) => {
       alt: `${set.title} – ${RESULT_IMAGE_LABELS.a}`,
     },
     {
-      id: 'b',
-      src: set.imageBUrl,
-      alt: `${set.title} – ${RESULT_IMAGE_LABELS.b}`,
+      id: 'evaluated',
+      src: set.evaluatedImageUrl,
+      alt: `${set.title} – ${RESULT_IMAGE_LABELS.evaluated}`,
     },
   ];
 

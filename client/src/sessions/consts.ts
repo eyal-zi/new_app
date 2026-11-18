@@ -1,4 +1,4 @@
-import { SessionStatus } from '@/api/generated/model';
+import { SessionStatus, SessionType } from '@/api/generated/model';
 
 import type {
   ColumnFilter,
@@ -7,7 +7,13 @@ import type {
 } from './types';
 
 export const SESSIONS_PATH = '/sessions';
-export const getResultsPath = (id: string) => `${SESSIONS_PATH}/${id}/results`;
+export const RESULTS_ROUTE_PATH =
+  `${SESSIONS_PATH}/$type/$sessionId/results` as const;
+/** Compare view: `?ids=a,b,c` lists the evaluation sessions to show. */
+export const EVALUATION_RESULTS_ROUTE_PATH =
+  `${SESSIONS_PATH}/${SessionType.evaluation}/results` as const;
+export const getResultsPath = (type: SessionType, id: string) =>
+  `${SESSIONS_PATH}/${type}/${id}/results`;
 
 export const TAG_FONT_SIZE = '1rem';
 

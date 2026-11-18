@@ -56,7 +56,7 @@ export const SessionRow = ({
       <TableCell>
         <Link
           component={RouterLink}
-          to={getResultsPath(session.id) as LinkProps['to']}
+          to={getResultsPath(session.type, session.id) as LinkProps['to']}
         >
           Results
         </Link>

@@ -14,10 +14,14 @@ import { UnauthorizedRoute } from '@/core/pages/unauthorized-route';
 import { Layout } from '@/demo/layout/layout';
 import { EvaluationPage } from '@/evaluation/pages/evaluation-page';
 import { InferencePage } from '@/inference/pages/inference-page';
-import { RESULTS_B_PATH, RESULTS_PATH } from '@/results/consts';
-import { ResultsBDemoPage } from '@/results/pages/results-b-demo-page';
-import { ResultsDemoPage } from '@/results/pages/results-demo-page';
-import { SESSIONS_PATH } from '@/sessions/consts';
+import { EvaluationSessionsResultsPage } from '@/results/pages/evaluation-sessions-results-page';
+import { SessionResultsPage } from '@/results/pages/session-results-page';
+import { validateResultsSearch } from '@/results/utils/validate-results-search';
+import {
+  EVALUATION_RESULTS_ROUTE_PATH,
+  RESULTS_ROUTE_PATH,
+  SESSIONS_PATH,
+} from '@/sessions/consts';
 import { SessionsPage } from '@/sessions/pages/sessions-page';
 import { SESSION_TYPE_PATHS } from '@/shared/session-type-constants';
 import { ErrorState } from '@/shared/ui/states';
@@ -89,16 +93,17 @@ const evaluation = createRoute({
   component: EvaluationPage,
 });
 
-const results = createRoute({
+const evaluationResults = createRoute({
   getParentRoute: () => layoutRoute,
-  path: RESULTS_PATH,
-  component: ResultsDemoPage,
+  path: EVALUATION_RESULTS_ROUTE_PATH,
+  validateSearch: validateResultsSearch,
+  component: EvaluationSessionsResultsPage,
 });
 
-const resultsB = createRoute({
+const results = createRoute({
   getParentRoute: () => layoutRoute,
-  path: RESULTS_B_PATH,
-  component: ResultsBDemoPage,
+  path: RESULTS_ROUTE_PATH,
+  component: SessionResultsPage,
 });
 
 export const createAppRouter = () =>
@@ -111,8 +116,8 @@ export const createAppRouter = () =>
         training,
         inference,
         evaluation,
+        evaluationResults,
         results,
-        resultsB,
       ]),
     ]),
     defaultPreload: false,

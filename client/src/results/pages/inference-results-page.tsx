@@ -9,7 +9,11 @@ import { useImageSelection } from '../hooks/use-image-selection';
 import type { ResultSelection, SelectionResultsData } from '../types';
 import { ResultsContent } from './results-page.styles';
 
-export const ResultsBPage = ({ data }: { data: SelectionResultsData }) => {
+export const InferenceResultsPage = ({
+  data,
+}: {
+  data: SelectionResultsData;
+}) => {
   const selection = useImageSelection();
   const [compareOpen, setCompareOpen] = useState(false);
 
@@ -28,7 +32,7 @@ export const ResultsBPage = ({ data }: { data: SelectionResultsData }) => {
   return (
     <Stack spacing={3}>
       <Box>
-        <Typography variant="h4">Results</Typography>
+        <Typography variant="h4">Inference results</Typography>
         <Typography color="text.secondary">
           Expand a selection to compare its images. Ctrl/Cmd + click an image,
           or use its checkbox, to select it.

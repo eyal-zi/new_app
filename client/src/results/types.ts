@@ -5,18 +5,10 @@ export type ResultSet =
       title: string;
       status: 'ready';
       imageAUrl: string;
-      imageBUrl: string;
+      evaluatedImageUrl: string;
     };
 
-export type ResultsData =
-  | {
-      status: 'in_progress';
-      /** 0-100, or null when the progress is not known yet. */
-      progress: number | null;
-    }
-  | { status: 'ready'; sets: readonly ResultSet[] };
-
-export type ResultImage = { id: 'a' | 'b'; src: string; alt: string };
+export type ResultImage = { id: 'a' | 'evaluated'; src: string; alt: string };
 
 /** A grid cell: an image when the statistic type is `file`, otherwise a 0-1 score. */
 export type GridCell =
@@ -40,7 +32,11 @@ export type ResultSelection =
     };
 
 export type SelectionResultsData =
-  | { status: 'in_progress'; progress: number | null }
+  | {
+      status: 'in_progress';
+      /** 0-100, or null when the progress is not known yet. */
+      progress: number | null;
+    }
   | { status: 'ready'; selections: readonly ResultSelection[] };
 
 export type SelectedImage = { id: string; src: string; label: string };
