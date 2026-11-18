@@ -15,7 +15,9 @@ export const ALGORITHMS = {
 
 export type Algorithm = (typeof ALGORITHMS)[keyof typeof ALGORITHMS];
 
-export const ALGORITHM_OPTIONS: readonly ChoiceOption<Algorithm>[] = [
+export const ALGORITHM_OPTIONS: readonly (ChoiceOption<Algorithm> & {
+  label: string;
+})[] = [
   { value: ALGORITHMS.a, label: 'A' },
   { value: ALGORITHMS.b, label: 'B' },
   { value: ALGORITHMS.c, label: 'C' },

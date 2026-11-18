@@ -40,6 +40,9 @@ export const InferencePage = () => {
     algorithms.includes(value),
   ).map(({ value, label }) => ({ id: value, label }));
 
+  const removeAlgorithm = (id: string) =>
+    setAlgorithms((current) => current.filter((value) => value !== id));
+
   const finish = async () => {
     if (!owner || !firstImage || !secondImage) {
       return;
@@ -102,6 +105,9 @@ export const InferencePage = () => {
           firstImage={firstImage}
           secondImage={secondImage}
           selections={selections}
+          onRemoveSelection={
+            algorithms.length > 1 ? removeAlgorithm : undefined
+          }
         />
       ),
       isComplete: !!owner,
