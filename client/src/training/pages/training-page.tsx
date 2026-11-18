@@ -15,6 +15,7 @@ import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
 
 import {
   REQUIRED_TYPE_OPTIONS,
+  REQUIRED_TYPES,
   type RequiredType,
 } from '../components/select-type-step/consts';
 import { SelectTypeStep } from '../components/select-type-step/select-type-step';
@@ -48,7 +49,9 @@ export const TrainingPage = () => {
     const { session_id } = await mutateAsync({
       data: {
         session_owner: owner,
-        training_type: requiredType,
+        // The default type is the API's fallback, so it's omitted entirely.
+        training_type:
+          requiredType === REQUIRED_TYPES.default ? undefined : requiredType,
         variationa_file: firstImage,
         variationb_file: secondImage,
       },
