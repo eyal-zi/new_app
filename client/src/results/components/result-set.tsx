@@ -74,12 +74,12 @@ export const ResultSet = ({ set, onCancel, cancelingId }: ResultSetProps) => {
     {
       id: 'a',
       src: set.imageAUrl,
-      alt: `${set.title} – ${RESULT_IMAGE_LABELS.a}`,
+      alt: RESULT_IMAGE_LABELS.a,
     },
     {
       id: 'evaluated',
       src: set.evaluatedImageUrl,
-      alt: `${set.title} – ${RESULT_IMAGE_LABELS.evaluated}`,
+      alt: RESULT_IMAGE_LABELS.evaluated,
     },
   ];
 

@@ -7,11 +7,12 @@ export type DownloadFileOptions = {
   fallbackName?: string;
 };
 
-const NON_FILE_NAME_CHARS = /[^a-z0-9.]+/gi;
-const EDGE_DASHES = /^-+|-+$/g;
+const NON_FILE_NAME_CHARS = /[^a-z0-9. -]+/gi;
+const EDGE_SEPARATORS = /^[\s-]+|[\s-]+$/g;
 
+/** Keeps letters, digits, dots, spaces and dashes, so `id - name` stays readable. */
 const toFileName = (text: string) =>
-  text.replace(NON_FILE_NAME_CHARS, '-').replace(EDGE_DASHES, '').toLowerCase();
+  text.replace(NON_FILE_NAME_CHARS, '-').replace(EDGE_SEPARATORS, '');
 
 const hasExtension = (name: string) => name.includes('.');
 

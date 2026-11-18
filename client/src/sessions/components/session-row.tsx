@@ -1,7 +1,7 @@
 import { Link, TableCell, TableRow } from '@mui/material';
 import { Link as RouterLink, type LinkProps } from '@tanstack/react-router';
 
-import { getResultsPath } from '../consts';
+import { getResultsPath, SESSION_IMAGE_NAMES } from '../consts';
 import type { ImageOpener, Session } from '../types';
 import { formatDateTime } from '../utils/format';
 import { ProgressCell } from './progress-cell';
@@ -34,14 +34,14 @@ export const SessionRow = ({
       <TableCell>
         <SessionImage
           src={session.imageAUrl}
-          alt="Image A"
+          alt={`${session.id} - ${SESSION_IMAGE_NAMES.a}`}
           onOpen={onOpenImage}
         />
       </TableCell>
       <TableCell>
         <SessionImage
           src={session.imageBUrl}
-          alt="Image B"
+          alt={`${session.id} - ${SESSION_IMAGE_NAMES.b}`}
           onOpen={onOpenImage}
         />
       </TableCell>

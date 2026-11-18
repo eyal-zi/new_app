@@ -1,6 +1,6 @@
 export const RESULT_IMAGE_LABELS = {
-  a: 'Image A',
-  evaluated: 'Evaluated image',
+  a: 'original',
+  evaluated: 'evaluated',
 } as const;
 
 export const RESULT_COLUMNS = 2;

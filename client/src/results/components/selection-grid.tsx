@@ -7,7 +7,6 @@ import { ColumnTitle, GridRoot, RowTitle } from './selection-grid.styles';
 
 type SelectionGridProps = {
   selectionId: string;
-  selectionTitle: string;
   columnTitles: readonly string[];
   rows: readonly SelectionGridRow[];
   selectedIds: ReadonlySet<string>;
@@ -16,7 +15,6 @@ type SelectionGridProps = {
 
 export const SelectionGrid = ({
   selectionId,
-  selectionTitle,
   columnTitles,
   rows,
   selectedIds,
@@ -38,7 +36,7 @@ export const SelectionGrid = ({
     const image: SelectedImage = {
       id,
       src: cell.url,
-      label: `${selectionTitle} · ${row.title} · ${columnTitles[index]}`,
+      label: `${row.title} - ${columnTitles[index]}`,
     };
 
     return (

@@ -46,7 +46,6 @@ export const SelectionItem = ({
         ) : (
           <SelectionGrid
             selectionId={selection.id}
-            selectionTitle={selection.title}
             selectedIds={selectedIds}
             onToggleImage={onToggleImage}
             columnTitles={selection.columnTitles}

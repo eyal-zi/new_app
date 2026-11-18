@@ -63,3 +63,9 @@ export const COLUMN_FILTERS: Partial<Record<SessionColumnId, ColumnFilter>> = {
   owner: { kind: 'text', field: 'session_owner' },
   status: { kind: 'status' },
 };
+
+/** Image names in the sessions table, shown as `{sessionId} - {name}`. */
+export const SESSION_IMAGE_NAMES = {
+  a: 'variationa',
+  b: 'variationb',
+} as const;
