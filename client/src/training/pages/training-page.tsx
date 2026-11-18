@@ -42,7 +42,7 @@ export const TrainingPage = () => {
   ).map(({ value, label }) => ({ id: value, label }));
 
   const finish = async () => {
-    if (!owner || !firstImage || !secondImage) {
+    if (!owner || !firstImage || !secondImage || isPending) {
       return;
     }
 

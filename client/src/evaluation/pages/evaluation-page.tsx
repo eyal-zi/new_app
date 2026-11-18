@@ -25,7 +25,8 @@ export const EvaluationPage = () => {
   // Failures are reported by the query client; the sessions that were created
   // still open in the compare view.
   const finish = async () => {
-    if (!owner) {
+    // `isPending` also blocks a second click while the first request is out.
+    if (!owner || isPending) {
       return;
     }
 

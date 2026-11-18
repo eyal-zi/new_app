@@ -44,7 +44,7 @@ export const InferencePage = () => {
     setStatistics((current) => current.filter((value) => value !== id));
 
   const finish = async () => {
-    if (!owner || !firstImage || !secondImage) {
+    if (!owner || !firstImage || !secondImage || isPending) {
       return;
     }
 
