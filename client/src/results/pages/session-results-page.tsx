@@ -4,7 +4,7 @@ import { enqueueSnackbar } from 'notistack';
 import { useEffect } from 'react';
 
 import { useDeleteSession, useGetSession } from '@/api/generated/api';
-import { SessionStatus, SessionType } from '@/api/generated/model';
+import { SessionType } from '@/api/generated/model';
 import { SESSIONS_PATH } from '@/sessions/consts';
 import {
   isEvaluationSession,
@@ -15,16 +15,14 @@ import { SESSION_TYPES } from '@/shared/session-type-constants';
 import { ErrorState, LoadingState } from '@/shared/ui/states';
 
 import { RunningSession } from '../components/running-session';
-import { RUNNING_POLL_INTERVAL_MS, SESSION_CANCELED_MESSAGE } from '../consts';
+import { FAILED_STATUSES, SESSION_CANCELED_MESSAGE } from '../consts';
+import { describeFailedStatus } from '../utils/describe-failed-status';
+import { isTerminalStatus } from '../utils/is-terminal-status';
+import { refetchWhileInProgress } from '../utils/refetch-while-in-progress';
 import { toResultSet } from '../utils/to-result-set';
-import { toSelectionResults } from '../utils/to-selection-results';
+import { toSelection } from '../utils/to-selection';
 import { EvaluationResultsPage } from './evaluation-results-page';
 import { InferenceResultsPage } from './inference-results-page';
-
-const FAILED_STATUSES: readonly SessionStatus[] = [
-  SessionStatus.failed,
-  SessionStatus.canceled,
-];
 
 const isSessionType = (value: string): value is SessionType =>
   (SESSION_TYPES as readonly string[]).includes(value);
@@ -60,11 +58,7 @@ export const SessionResultsPage = () => {
     {
       query: {
         enabled: isSessionType(type),
-        // Keep checking until the session leaves the running state.
-        refetchInterval: ({ state }) =>
-          state.data?.status === SessionStatus.running
-            ? RUNNING_POLL_INTERVAL_MS
-            : false,
+        refetchInterval: refetchWhileInProgress,
       },
     },
   );
@@ -90,9 +84,11 @@ export const SessionResultsPage = () => {
     return <ErrorState message="Couldn't load the session." retry={refetch} />;
   }
 
-  if (data.status === SessionStatus.running) {
+  // Any non-terminal status (started or running), whatever the session type.
+  if (!isTerminalStatus(data.status)) {
     return (
       <RunningSession
+        progress={data.progress}
         isCanceling={cancellation.isPending}
         // Not deleted: the session stays in the db, marked as canceled.
         onCancel={() =>
@@ -111,12 +107,17 @@ export const SessionResultsPage = () => {
   }
 
   if (FAILED_STATUSES.includes(data.status)) {
-    return <ErrorState message={`This session ${data.status}.`} />;
+    return (
+      <ErrorState
+        message={`This session ${describeFailedStatus(data.status)}.`}
+      />
+    );
   }
 
+  // Only completed sessions get here, so inference results are all available.
   return isEvaluationSession(data) ? (
     <EvaluationResultsPage sets={[toResultSet(data)]} />
   ) : (
-    <InferenceResultsPage data={toSelectionResults(data)} />
+    <InferenceResultsPage selections={data.recommendations.map(toSelection)} />
   );
 };

@@ -29,7 +29,7 @@ const renderSkeleton = (_: unknown, index: number) => (
 
 type ResultSetProps = {
   set: ResultSetData;
-  /** Called with the set's id; running sets show a cancel button when given. */
+  /** Called with the set's id; active sets show a cancel button when given. */
   onCancel?: (id: string) => void;
   /** Id of the set currently being canceled, if any. */
   cancelingId?: string;
@@ -38,14 +38,15 @@ type ResultSetProps = {
 export const ResultSet = ({ set, onCancel, cancelingId }: ResultSetProps) => {
   const heading = <Typography variant="h6">{set.title}</Typography>;
 
-  if (set.status === 'running') {
+  // `active` sets look like `loading` ones, plus a way to cancel them.
+  if (set.status === 'active' || set.status === 'loading') {
     return (
       <ResultSetRoot aria-busy="true" aria-label={set.title}>
         {heading}
         <SkeletonGrid role="status" aria-label={`Loading ${set.title}`}>
           {Array.from({ length: SKELETON_TILE_COUNT }, renderSkeleton)}
         </SkeletonGrid>
-        {onCancel && (
+        {set.status === 'active' && onCancel && (
           <CancelButton
             variant="outlined"
             color="warning"
@@ -55,17 +56,6 @@ export const ResultSet = ({ set, onCancel, cancelingId }: ResultSetProps) => {
             {CANCEL_SESSION_LABEL}
           </CancelButton>
         )}
-      </ResultSetRoot>
-    );
-  }
-
-  if (set.status === 'loading') {
-    return (
-      <ResultSetRoot aria-busy="true" aria-label={set.title}>
-        {heading}
-        <SkeletonGrid role="status" aria-label={`Loading ${set.title}`}>
-          {Array.from({ length: SKELETON_TILE_COUNT }, renderSkeleton)}
-        </SkeletonGrid>
       </ResultSetRoot>
     );
   }

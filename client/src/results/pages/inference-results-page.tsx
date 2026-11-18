@@ -2,17 +2,17 @@ import { Box, Stack, Typography } from '@mui/material';
 import { useState } from 'react';
 
 import { CompareDialog } from '../components/compare-dialog';
-import { ResultsProgress } from '../components/results-progress';
 import { SelectionBar } from '../components/selection-bar';
 import { SelectionItem } from '../components/selection-item';
 import { useImageSelection } from '../hooks/use-image-selection';
-import type { ResultSelection, SelectionResultsData } from '../types';
+import type { ResultSelection } from '../types';
 import { ResultsContent } from './results-page.styles';
 
+/** Results of a completed inference session: one selection per statistic. */
 export const InferenceResultsPage = ({
-  data,
+  selections,
 }: {
-  data: SelectionResultsData;
+  selections: readonly ResultSelection[];
 }) => {
   const selection = useImageSelection();
   const [compareOpen, setCompareOpen] = useState(false);
@@ -38,13 +38,9 @@ export const InferenceResultsPage = ({
           or use its checkbox, to select it.
         </Typography>
       </Box>
-      {data.status === 'started' ? (
-        <ResultsProgress progress={data.progress} />
-      ) : (
-        <ResultsContent spacing={1}>
-          {data.selections.map(renderSelection)}
-        </ResultsContent>
-      )}
+      <ResultsContent spacing={1}>
+        {selections.map(renderSelection)}
+      </ResultsContent>
       <SelectionBar
         count={selection.images.length}
         onClear={selection.clear}

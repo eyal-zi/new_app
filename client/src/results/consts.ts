@@ -1,3 +1,22 @@
+import { SessionStatus } from '@/api/generated/model';
+
+/**
+ * Session status flow: started -> running -> completed. From any step before
+ * completed a session can also end as failed or canceled. A session that is
+ * not in a terminal status is "in progress": the results pages show it as
+ * loading, offer to cancel it and keep polling until it reaches one.
+ */
+export const TERMINAL_STATUSES: readonly SessionStatus[] = [
+  SessionStatus.completed,
+  SessionStatus.failed,
+  SessionStatus.canceled,
+];
+/** Terminal statuses that produce no results. */
+export const FAILED_STATUSES: readonly SessionStatus[] = [
+  SessionStatus.failed,
+  SessionStatus.canceled,
+];
+
 export const RESULT_IMAGE_LABELS = {
   a: 'original',
   evaluated: 'evaluated',
@@ -8,6 +27,7 @@ export const SKELETON_TILE_COUNT = RESULT_COLUMNS;
 /** In theme spacing units. */
 export const SKELETON_TILE_HEIGHT = 25;
 export const PROGRESS_MAX_WIDTH = 480;
+export const PROGRESS_DECIMALS = 3;
 
 export const RESULTS_CONTENT_MAX_WIDTH = 1000;
 
@@ -37,8 +57,8 @@ export const SELECTABLE_IMAGE_ASPECT_RATIO = '1 / 1';
 export const SESSION_IDS_PARAM = 'ids';
 export const SESSION_IDS_SEPARATOR = ',';
 
-/** How often a running session is re-fetched to see whether it has started. */
-export const RUNNING_POLL_INTERVAL_MS = 3000;
+/** How often an in-progress session is re-fetched to see whether it has finished. */
+export const ACTIVE_POLL_INTERVAL_MS = 3000;
 export const RUNNING_MESSAGE = 'Your session is running…';
 export const CANCEL_SESSION_LABEL = 'Cancel session';
 export const SESSION_CANCELED_MESSAGE = 'Session canceled';

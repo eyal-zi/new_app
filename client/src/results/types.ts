@@ -1,7 +1,7 @@
 export type ResultSet =
   | { id: string; title: string; status: 'loading' }
-  /** Waiting to start: the only state in which it can still be canceled. */
-  | { id: string; title: string; status: 'running' }
+  /** Not in a terminal status yet (started or running): it can still be canceled. */
+  | { id: string; title: string; status: 'active' }
   | {
       id: string;
       title: string;
@@ -32,13 +32,5 @@ export type ResultSelection =
       columnTitles: readonly string[];
       rows: readonly SelectionGridRow[];
     };
-
-export type SelectionResultsData =
-  | {
-      status: 'started';
-      /** 0-100, or null when the progress is not known yet. */
-      progress: number | null;
-    }
-  | { status: 'ready'; selections: readonly ResultSelection[] };
 
 export type SelectedImage = { id: string; src: string; label: string };

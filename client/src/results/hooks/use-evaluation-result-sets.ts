@@ -1,17 +1,14 @@
 import { useQueries } from '@tanstack/react-query';
 
 import { getGetSessionQueryOptions } from '@/api/generated/api';
-import { SessionStatus, SessionType } from '@/api/generated/model';
+import { SessionType } from '@/api/generated/model';
 import { isEvaluationSession } from '@/sessions/utils/get-session-type';
 
-import { RUNNING_POLL_INTERVAL_MS } from '../consts';
+import { FAILED_STATUSES } from '../consts';
 import type { ResultSet } from '../types';
+import { describeFailedStatus } from '../utils/describe-failed-status';
+import { refetchWhileInProgress } from '../utils/refetch-while-in-progress';
 import { toResultSet } from '../utils/to-result-set';
-
-const FAILED_STATUSES: readonly SessionStatus[] = [
-  SessionStatus.failed,
-  SessionStatus.canceled,
-];
 
 /**
  * Result sets for the given evaluation session ids. Sessions that fail to
@@ -22,13 +19,7 @@ export const useEvaluationResultSets = (ids: readonly string[]) => {
   const extras = useQueries({
     queries: ids.map((id) =>
       getGetSessionQueryOptions(SessionType.evaluation, id, {
-        query: {
-          // Keep checking until the session leaves the running state.
-          refetchInterval: ({ state }) =>
-            state.data?.status === SessionStatus.running
-              ? RUNNING_POLL_INTERVAL_MS
-              : false,
-        },
+        query: { refetchInterval: refetchWhileInProgress },
       }),
     ),
   });
@@ -37,7 +28,8 @@ export const useEvaluationResultSets = (ids: readonly string[]) => {
   const problems: string[] = [];
 
   extras.forEach(({ data, isError, isPending }, index) => {
-    const id = ids[index] ?? '';
+    // useQueries returns its results in the order of the queries, i.e. of `ids`.
+    const id = ids[index] as string;
 
     if (isError) {
       problems.push(`Couldn't load session ${id}.`);
@@ -46,7 +38,7 @@ export const useEvaluationResultSets = (ids: readonly string[]) => {
     } else if (!data || !isEvaluationSession(data)) {
       problems.push(`Session ${id} is not an evaluation session.`);
     } else if (FAILED_STATUSES.includes(data.status)) {
-      problems.push(`Session ${id} ${data.status}.`);
+      problems.push(`Session ${id} ${describeFailedStatus(data.status)}.`);
     } else {
       sets.push(toResultSet(data));
     }

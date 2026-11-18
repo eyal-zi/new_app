@@ -7,6 +7,7 @@ export const ResultsProgressRoot = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   gap: theme.spacing(1),
+  width: '100%',
   maxWidth: PROGRESS_MAX_WIDTH,
   padding: theme.spacing(4, 0),
 }));

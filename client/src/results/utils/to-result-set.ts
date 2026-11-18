@@ -2,11 +2,14 @@ import type { EvaluationSessionDto } from '@/api/generated/model';
 import { SessionStatus } from '@/api/generated/model';
 
 import type { ResultSet } from '../types';
+import { isTerminalStatus } from './is-terminal-status';
 
 /**
- * One result set per evaluation session, titled by its id and sent image file name: image A next to the
- * evaluated image. Is running until it starts, then stays loading until the session is completed and the
- * evaluated image exists.
+ * One result set per evaluation session, titled by its session id: image A
+ * next to the evaluated image. It is `active` until the session reaches a
+ * terminal status, and `loading` if the session completed but the evaluated
+ * image isn't there yet. Callers filter out failed and canceled sessions
+ * before calling this.
  */
 export const toResultSet = (dto: EvaluationSessionDto): ResultSet => {
   const base = {
@@ -14,8 +17,8 @@ export const toResultSet = (dto: EvaluationSessionDto): ResultSet => {
     title: dto.session_id,
   };
 
-  if (dto.status === SessionStatus.running) {
-    return { ...base, status: 'running' };
+  if (!isTerminalStatus(dto.status)) {
+    return { ...base, status: 'active' };
   }
 
   if (
