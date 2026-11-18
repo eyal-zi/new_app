@@ -14,10 +14,10 @@ import { useSessionOwner } from '@/shared/hooks/use-session-owner';
 import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
 
 import {
-  type Algorithm,
-  ALGORITHM_OPTIONS,
-} from '../components/select-algorithms-step/consts';
-import { SelectAlgorithmsStep } from '../components/select-algorithms-step/select-algorithms-step';
+  type Statistic,
+  STATISTIC_OPTIONS,
+} from '../components/select-statistics-step/consts';
+import { SelectStatisticsStep } from '../components/select-statistics-step/select-statistics-step';
 import {
   FIRST_IMAGE_PICKER,
   INFERENCE_STEPS,
@@ -30,18 +30,18 @@ export const InferencePage = () => {
   // Held here, not in the step, so the files survive moving between steps.
   const [firstImage, setFirstImage] = useState<File | null>(null);
   const [secondImage, setSecondImage] = useState<File | null>(null);
-  const [algorithms, setAlgorithms] = useState<Algorithm[]>([]);
+  const [statistics, setStatistics] = useState<Statistic[]>([]);
 
   const owner = useSessionOwner();
   const navigate = useNavigate();
   const { mutateAsync, isPending } = useCreateInferenceSession();
 
-  const selections: Selection[] = ALGORITHM_OPTIONS.filter(({ value }) =>
-    algorithms.includes(value),
+  const selections: Selection[] = STATISTIC_OPTIONS.filter(({ value }) =>
+    statistics.includes(value),
   ).map(({ value, label }) => ({ id: value, label }));
 
-  const removeAlgorithm = (id: string) =>
-    setAlgorithms((current) => current.filter((value) => value !== id));
+  const removeStatistic = (id: string) =>
+    setStatistics((current) => current.filter((value) => value !== id));
 
   const finish = async () => {
     if (!owner || !firstImage || !secondImage) {
@@ -51,7 +51,7 @@ export const InferencePage = () => {
     const { session_id } = await mutateAsync({
       data: {
         session_owner: owner,
-        statistics: algorithms,
+        statistics,
         variationa_file: firstImage,
         variationb_file: secondImage,
       },
@@ -87,14 +87,14 @@ export const InferencePage = () => {
       isComplete: !!firstImage && !!secondImage,
     },
     {
-      ...INFERENCE_STEPS.selectAlgorithms,
+      ...INFERENCE_STEPS.selectStatistics,
       content: (
-        <SelectAlgorithmsStep
-          algorithms={algorithms}
-          onAlgorithmsChange={setAlgorithms}
+        <SelectStatisticsStep
+          statistics={statistics}
+          onStatisticsChange={setStatistics}
         />
       ),
-      isComplete: algorithms.length > 0,
+      isComplete: statistics.length > 0,
     },
     {
       ...INFERENCE_STEPS.summary,
@@ -106,7 +106,7 @@ export const InferencePage = () => {
           secondImage={secondImage}
           selections={selections}
           onRemoveSelection={
-            algorithms.length > 1 ? removeAlgorithm : undefined
+            statistics.length > 1 ? removeStatistic : undefined
           }
         />
       ),
