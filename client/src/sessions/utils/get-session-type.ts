@@ -16,15 +16,14 @@ export const isEvaluationSession = (
   dto: SessionDetailsDto,
 ): dto is EvaluationSessionDto => 'evaluated_image_url' in dto;
 
-export const isInferenceSession = (
-  dto: SessionDetailsDto,
-): dto is InferenceSessionDto =>
-  !isTrainingSession(dto) && !isEvaluationSession(dto);
-
 /**
- * The API doesn't send a type: a session with an `s8_link` is training, one
- * with an `evaluated_image_url` (even a null one) is evaluation, anything else
- * is inference.
+ * Session details carry no `type` field, so the type is inferred from the
+ * fields only one type has: a session with an `s8_link` is training, one with
+ * an `evaluated_image_url` (even a null one) is evaluation, anything else is
+ * inference (the `isTrainingSession` / `isEvaluationSession` guards above use
+ * the same rule). If a new session type is added, teach these guards about it,
+ * or it will be mistaken for inference. Where the type is already known (e.g.
+ * from the URL), prefer that over inferring it.
  */
 export const getSessionType = (dto: SessionDetailsDto): SessionType => {
   if (isTrainingSession(dto)) {

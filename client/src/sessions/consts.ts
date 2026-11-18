@@ -69,3 +69,6 @@ export const SESSION_IMAGE_NAMES = {
   a: 'variationa',
   b: 'variationb',
 } as const;
+
+/** Shown in place of an image the session doesn't have. */
+export const NO_IMAGE_LABEL = '—';

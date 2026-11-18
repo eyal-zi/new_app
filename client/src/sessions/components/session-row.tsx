@@ -1,7 +1,9 @@
 import { Link, TableCell, TableRow } from '@mui/material';
 import { Link as RouterLink, type LinkProps } from '@tanstack/react-router';
 
-import { getResultsPath, SESSION_IMAGE_NAMES } from '../consts';
+import { SessionType } from '@/api/generated/model';
+
+import { getResultsPath, NO_IMAGE_LABEL, SESSION_IMAGE_NAMES } from '../consts';
 import type { ImageOpener, Session } from '../types';
 import { formatDateTime } from '../utils/format';
 import { ProgressCell } from './progress-cell';
@@ -39,11 +41,16 @@ export const SessionRow = ({
         />
       </TableCell>
       <TableCell>
-        <SessionImage
-          src={session.imageBUrl}
-          alt={`${session.id} - ${SESSION_IMAGE_NAMES.b}`}
-          onOpen={onOpenImage}
-        />
+        {/* Evaluation sessions have a single image; the API sends an empty image B. */}
+        {session.type === SessionType.evaluation ? (
+          NO_IMAGE_LABEL
+        ) : (
+          <SessionImage
+            src={session.imageBUrl}
+            alt={`${session.id} - ${SESSION_IMAGE_NAMES.b}`}
+            onOpen={onOpenImage}
+          />
+        )}
       </TableCell>
       <TableCell>{formatDateTime(session.createdAt)}</TableCell>
       <TableCell>{formatDateTime(session.updatedAt)}</TableCell>
