@@ -24,6 +24,11 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  CreateEvaluationSessionFormDto,
+  CreateInferenceSessionFormDto,
+  CreateTrainingSessionFormDto,
+  CreatedSessionDto,
+  CreatedTrainingSessionDto,
   DeleteSessionParams,
   EvaluationSessionDto,
   GroupSessionsBodyDto,
@@ -204,6 +209,219 @@ export function useMe<TData = Awaited<ReturnType<typeof me>>, TError = unknown>(
 
 
 
+
+/**
+ * @summary Create an inference session
+ */
+export const createInferenceSession = (
+    createInferenceSessionFormDto: CreateInferenceSessionFormDto,
+ options?: SecondParameter<typeof request>,signal?: AbortSignal
+) => {
+
+      const formData = new FormData();
+formData.append(`session_owner`, createInferenceSessionFormDto.session_owner);
+createInferenceSessionFormDto.statistics.forEach(value => formData.append(`statistics`, value));
+formData.append(`variationa_file`, createInferenceSessionFormDto.variationa_file);
+formData.append(`variationb_file`, createInferenceSessionFormDto.variationb_file);
+
+      return request<CreatedSessionDto>(
+      {url: `/api/inference`, method: 'POST',
+      headers: {'Content-Type': 'multipart/form-data', },
+       data: formData, signal
+    },
+      options);
+    }
+
+
+
+
+export const getCreateInferenceSessionMutationKey = () => ['createInferenceSession'] as const;
+
+export const getCreateInferenceSessionMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createInferenceSession>>, TError,CreateInferenceSessionMutationVariables, TContext>, request?: SecondParameter<typeof request>}
+): UseMutationOptions<Awaited<ReturnType<typeof createInferenceSession>>, TError,CreateInferenceSessionMutationVariables, TContext> => {
+
+const mutationKey = getCreateInferenceSessionMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createInferenceSession>>, CreateInferenceSessionMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  createInferenceSession(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateInferenceSessionMutationResult = NonNullable<Awaited<ReturnType<typeof createInferenceSession>>>
+    export type CreateInferenceSessionMutationBody = CreateInferenceSessionFormDto
+    export type CreateInferenceSessionMutationError = void
+    export type CreateInferenceSessionMutationVariables = {data: CreateInferenceSessionFormDto}
+
+    /** @summary Create an inference session */
+export const useCreateInferenceSession = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createInferenceSession>>, TError,CreateInferenceSessionMutationVariables, TContext>, request?: SecondParameter<typeof request>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createInferenceSession>>,
+        TError,
+        CreateInferenceSessionMutationVariables,
+        TContext
+      > => {
+      return useMutation(getCreateInferenceSessionMutationOptions(options), queryClient);
+    }
+
+/**
+ * @summary Create a training session
+ */
+export const createTrainingSession = (
+    createTrainingSessionFormDto: CreateTrainingSessionFormDto,
+ options?: SecondParameter<typeof request>,signal?: AbortSignal
+) => {
+
+      const formData = new FormData();
+formData.append(`session_owner`, createTrainingSessionFormDto.session_owner);
+if(createTrainingSessionFormDto.training_type !== undefined && createTrainingSessionFormDto.training_type !== null) {
+ formData.append(`training_type`, createTrainingSessionFormDto.training_type);
+ }
+formData.append(`variationa_file`, createTrainingSessionFormDto.variationa_file);
+formData.append(`variationb_file`, createTrainingSessionFormDto.variationb_file);
+
+      return request<CreatedTrainingSessionDto>(
+      {url: `/api/training`, method: 'POST',
+      headers: {'Content-Type': 'multipart/form-data', },
+       data: formData, signal
+    },
+      options);
+    }
+
+
+
+
+export const getCreateTrainingSessionMutationKey = () => ['createTrainingSession'] as const;
+
+export const getCreateTrainingSessionMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createTrainingSession>>, TError,CreateTrainingSessionMutationVariables, TContext>, request?: SecondParameter<typeof request>}
+): UseMutationOptions<Awaited<ReturnType<typeof createTrainingSession>>, TError,CreateTrainingSessionMutationVariables, TContext> => {
+
+const mutationKey = getCreateTrainingSessionMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createTrainingSession>>, CreateTrainingSessionMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  createTrainingSession(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateTrainingSessionMutationResult = NonNullable<Awaited<ReturnType<typeof createTrainingSession>>>
+    export type CreateTrainingSessionMutationBody = CreateTrainingSessionFormDto
+    export type CreateTrainingSessionMutationError = void
+    export type CreateTrainingSessionMutationVariables = {data: CreateTrainingSessionFormDto}
+
+    /** @summary Create a training session */
+export const useCreateTrainingSession = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createTrainingSession>>, TError,CreateTrainingSessionMutationVariables, TContext>, request?: SecondParameter<typeof request>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createTrainingSession>>,
+        TError,
+        CreateTrainingSessionMutationVariables,
+        TContext
+      > => {
+      return useMutation(getCreateTrainingSessionMutationOptions(options), queryClient);
+    }
+
+/**
+ * @summary Create an evaluation session
+ */
+export const createEvaluationSession = (
+    createEvaluationSessionFormDto: CreateEvaluationSessionFormDto,
+ options?: SecondParameter<typeof request>,signal?: AbortSignal
+) => {
+
+      const formData = new FormData();
+formData.append(`session_owner`, createEvaluationSessionFormDto.session_owner);
+formData.append(`variationa_file`, createEvaluationSessionFormDto.variationa_file);
+
+      return request<CreatedSessionDto>(
+      {url: `/api/evaluation`, method: 'POST',
+      headers: {'Content-Type': 'multipart/form-data', },
+       data: formData, signal
+    },
+      options);
+    }
+
+
+
+
+export const getCreateEvaluationSessionMutationKey = () => ['createEvaluationSession'] as const;
+
+export const getCreateEvaluationSessionMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createEvaluationSession>>, TError,CreateEvaluationSessionMutationVariables, TContext>, request?: SecondParameter<typeof request>}
+): UseMutationOptions<Awaited<ReturnType<typeof createEvaluationSession>>, TError,CreateEvaluationSessionMutationVariables, TContext> => {
+
+const mutationKey = getCreateEvaluationSessionMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createEvaluationSession>>, CreateEvaluationSessionMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  createEvaluationSession(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateEvaluationSessionMutationResult = NonNullable<Awaited<ReturnType<typeof createEvaluationSession>>>
+    export type CreateEvaluationSessionMutationBody = CreateEvaluationSessionFormDto
+    export type CreateEvaluationSessionMutationError = void
+    export type CreateEvaluationSessionMutationVariables = {data: CreateEvaluationSessionFormDto}
+
+    /** @summary Create an evaluation session */
+export const useCreateEvaluationSession = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createEvaluationSession>>, TError,CreateEvaluationSessionMutationVariables, TContext>, request?: SecondParameter<typeof request>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createEvaluationSession>>,
+        TError,
+        CreateEvaluationSessionMutationVariables,
+        TContext
+      > => {
+      return useMutation(getCreateEvaluationSessionMutationOptions(options), queryClient);
+    }
 
 /**
  * @summary Get a group of sessions of any type

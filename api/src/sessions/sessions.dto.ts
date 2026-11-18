@@ -5,9 +5,12 @@ import {
 } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
+  ArrayMaxSize,
+  IsArray,
   IsBoolean,
   IsIn,
   IsInt,
+  IsNotEmpty,
   IsOptional,
   IsString,
   IsUUID,
@@ -20,7 +23,11 @@ import {
 import {
   DEFAULT_NUMBER_OF_SESSIONS,
   MAX_NUMBER_OF_SESSIONS,
+  MAX_OWNER_LENGTH,
   MAX_SEARCH_LENGTH,
+  MAX_STATISTIC_LENGTH,
+  MAX_STATISTICS,
+  MAX_TRAINING_TYPE_LENGTH,
   RECOMMENDATION_RESULT_TYPES,
   SESSION_STATUSES,
   SESSION_TYPES,
@@ -221,4 +228,88 @@ export class GroupSessionsBodyDto {
   @ValidateNested()
   @Type(() => SessionSearchValuesDto)
   search_values?: SessionSearchValuesDto;
+}
+
+const toArray = ({ value }: { value: unknown }) =>
+  value === undefined || value === '' ? [] : [value].flat();
+
+export class CreateSessionBodyDto {
+  @ApiProperty({ maxLength: MAX_OWNER_LENGTH })
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(MAX_OWNER_LENGTH)
+  session_owner!: string;
+}
+
+export class CreateInferenceSessionBodyDto extends CreateSessionBodyDto {
+  @ApiProperty({ type: [String], maxLength: MAX_STATISTIC_LENGTH })
+  @Transform(toArray)
+  @IsArray()
+  @ArrayMaxSize(MAX_STATISTICS)
+  @IsString({ each: true })
+  @MaxLength(MAX_STATISTIC_LENGTH, { each: true })
+  statistics!: string[];
+}
+
+export class CreateTrainingSessionBodyDto extends CreateSessionBodyDto {
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    required: false,
+    maxLength: MAX_TRAINING_TYPE_LENGTH,
+  })
+  @Transform(({ value }: { value: unknown }) =>
+    value === '' || value === 'null' ? null : value,
+  )
+  @IsOptional()
+  @IsString()
+  @MaxLength(MAX_TRAINING_TYPE_LENGTH)
+  training_type?: string | null;
+}
+
+export class CreateEvaluationSessionBodyDto extends CreateSessionBodyDto {}
+
+const imageFile = (description: string) => ({
+  type: 'string' as const,
+  format: 'binary',
+  description,
+});
+
+// Documents the multipart form for Swagger/Orval. The files themselves never
+// reach the validated body: they are read from the upload interceptor.
+export class CreateInferenceSessionFormDto extends CreateInferenceSessionBodyDto {
+  @ApiProperty(imageFile('Image file'))
+  variationa_file!: unknown;
+
+  @ApiProperty(imageFile('Image file'))
+  variationb_file!: unknown;
+}
+
+export class CreateTrainingSessionFormDto extends CreateTrainingSessionBodyDto {
+  @ApiProperty(imageFile('Image file, jpg/jpeg only'))
+  variationa_file!: unknown;
+
+  @ApiProperty(imageFile('Image file'))
+  variationb_file!: unknown;
+}
+
+export class CreateEvaluationSessionFormDto extends CreateEvaluationSessionBodyDto {
+  @ApiProperty(imageFile('Image file, jpg/jpeg/png only'))
+  variationa_file!: unknown;
+}
+
+export class CreatedSessionDto {
+  @ApiProperty() session_id!: string;
+
+  @ApiProperty({ enum: SESSION_STATUSES, enumName: 'SessionStatus' })
+  status!: (typeof SESSION_STATUSES)[number];
+
+  @ApiProperty({ type: String, nullable: true }) logs!: string | null;
+}
+
+export class CreatedTrainingSessionDto extends CreatedSessionDto {
+  @ApiProperty({ type: Number, format: 'float', minimum: 0, maximum: 1 })
+  progress!: number;
+
+  @ApiProperty() s8_link!: string;
 }

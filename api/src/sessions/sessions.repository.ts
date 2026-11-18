@@ -55,6 +55,14 @@ export class SessionsRepository {
     return totals?.total ?? 0;
   }
 
+  async create(values: typeof sessions.$inferInsert) {
+    const [created] = await this.database.db
+      .insert(sessions)
+      .values(values)
+      .returning();
+    return created as typeof sessions.$inferSelect;
+  }
+
   async findOne(type: string, id: string) {
     const [session] = await this.database.db
       .select()

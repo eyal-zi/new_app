@@ -8,9 +8,16 @@ import {
   Param,
   Post,
   Query,
+  UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiCreatedResponse,
   ApiExtension,
   ApiExtraModels,
   ApiNoContentResponse,
@@ -18,10 +25,21 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiTags,
+  ApiUnsupportedMediaTypeResponse,
 } from '@nestjs/swagger';
 
-import { READ_ONLY_EXTENSION } from './sessions.constants.js';
+import { MAX_UPLOAD_BYTES } from '../files/files.constants.js';
+import type { UploadedImage } from '../files/files.service.js';
+import { READ_ONLY_EXTENSION, UPLOAD_FIELDS } from './sessions.constants.js';
 import {
+  CreatedSessionDto,
+  CreatedTrainingSessionDto,
+  CreateEvaluationSessionBodyDto,
+  CreateEvaluationSessionFormDto,
+  CreateInferenceSessionBodyDto,
+  CreateInferenceSessionFormDto,
+  CreateTrainingSessionBodyDto,
+  CreateTrainingSessionFormDto,
   DeleteSessionQueryDto,
   EvaluationSessionDto,
   GroupSessionsBodyDto,
@@ -35,12 +53,80 @@ import {
 } from './sessions.dto.js';
 import { SessionsService } from './sessions.service.js';
 
+type UploadedFilesByField = Record<string, UploadedImage[] | undefined>;
+
+const uploadInterceptor = (...fields: string[]) =>
+  FileFieldsInterceptor(
+    fields.map((name) => ({ name, maxCount: 1 })),
+    { limits: { fileSize: MAX_UPLOAD_BYTES } },
+  );
+
 @ApiTags('sessions')
 @ApiBearerAuth()
 @ApiExtraModels(InferenceSessionDto, TrainingSessionDto, EvaluationSessionDto)
 @Controller()
 export class SessionsController {
   constructor(private readonly sessions: SessionsService) {}
+
+  @Post('inference')
+  @UseInterceptors(
+    uploadInterceptor(UPLOAD_FIELDS.VARIATION_A, UPLOAD_FIELDS.VARIATION_B),
+  )
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: CreateInferenceSessionFormDto })
+  @ApiOperation({ summary: 'Create an inference session' })
+  @ApiCreatedResponse({ type: CreatedSessionDto })
+  @ApiBadRequestResponse()
+  @ApiUnsupportedMediaTypeResponse()
+  createInferenceSession(
+    @Body() body: CreateInferenceSessionBodyDto,
+    @UploadedFiles() files: UploadedFilesByField,
+  ) {
+    return this.sessions.createInference(
+      body,
+      files[UPLOAD_FIELDS.VARIATION_A]?.[0],
+      files[UPLOAD_FIELDS.VARIATION_B]?.[0],
+    );
+  }
+
+  @Post('training')
+  @UseInterceptors(
+    uploadInterceptor(UPLOAD_FIELDS.VARIATION_A, UPLOAD_FIELDS.VARIATION_B),
+  )
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: CreateTrainingSessionFormDto })
+  @ApiOperation({ summary: 'Create a training session' })
+  @ApiCreatedResponse({ type: CreatedTrainingSessionDto })
+  @ApiBadRequestResponse()
+  @ApiUnsupportedMediaTypeResponse()
+  createTrainingSession(
+    @Body() body: CreateTrainingSessionBodyDto,
+    @UploadedFiles() files: UploadedFilesByField,
+  ) {
+    return this.sessions.createTraining(
+      body,
+      files[UPLOAD_FIELDS.VARIATION_A]?.[0],
+      files[UPLOAD_FIELDS.VARIATION_B]?.[0],
+    );
+  }
+
+  @Post('evaluation')
+  @UseInterceptors(uploadInterceptor(UPLOAD_FIELDS.VARIATION_A))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: CreateEvaluationSessionFormDto })
+  @ApiOperation({ summary: 'Create an evaluation session' })
+  @ApiCreatedResponse({ type: CreatedSessionDto })
+  @ApiBadRequestResponse()
+  @ApiUnsupportedMediaTypeResponse()
+  createEvaluationSession(
+    @Body() body: CreateEvaluationSessionBodyDto,
+    @UploadedFiles() files: UploadedFilesByField,
+  ) {
+    return this.sessions.createEvaluation(
+      body,
+      files[UPLOAD_FIELDS.VARIATION_A]?.[0],
+    );
+  }
 
   @Post('sessions/group')
   @HttpCode(HttpStatus.OK)

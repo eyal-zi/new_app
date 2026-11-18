@@ -53,6 +53,135 @@
         ]
       }
     },
+    "/api/inference": {
+      "post": {
+        "operationId": "createInferenceSession",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInferenceSessionFormDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedSessionDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "415": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create an inference session",
+        "tags": [
+          "sessions"
+        ]
+      }
+    },
+    "/api/training": {
+      "post": {
+        "operationId": "createTrainingSession",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTrainingSessionFormDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedTrainingSessionDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "415": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a training session",
+        "tags": [
+          "sessions"
+        ]
+      }
+    },
+    "/api/evaluation": {
+      "post": {
+        "operationId": "createEvaluationSession",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEvaluationSessionFormDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedSessionDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "415": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create an evaluation session",
+        "tags": [
+          "sessions"
+        ]
+      }
+    },
     "/api/sessions/group": {
       "post": {
         "operationId": "groupSessions",
@@ -807,6 +936,144 @@
           "variationa_info",
           "variationb_info",
           "evaluated_image_url"
+        ]
+      },
+      "CreateInferenceSessionFormDto": {
+        "type": "object",
+        "properties": {
+          "session_owner": {
+            "type": "string",
+            "maxLength": 254
+          },
+          "statistics": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          "variationa_file": {
+            "type": "string",
+            "format": "binary",
+            "description": "Image file"
+          },
+          "variationb_file": {
+            "type": "string",
+            "format": "binary",
+            "description": "Image file"
+          }
+        },
+        "required": [
+          "session_owner",
+          "statistics",
+          "variationa_file",
+          "variationb_file"
+        ]
+      },
+      "CreatedSessionDto": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SessionStatus"
+              }
+            ]
+          },
+          "logs": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "session_id",
+          "status",
+          "logs"
+        ]
+      },
+      "CreateTrainingSessionFormDto": {
+        "type": "object",
+        "properties": {
+          "session_owner": {
+            "type": "string",
+            "maxLength": 254
+          },
+          "training_type": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 100
+          },
+          "variationa_file": {
+            "type": "string",
+            "format": "binary",
+            "description": "Image file, jpg/jpeg only"
+          },
+          "variationb_file": {
+            "type": "string",
+            "format": "binary",
+            "description": "Image file"
+          }
+        },
+        "required": [
+          "session_owner",
+          "variationa_file",
+          "variationb_file"
+        ]
+      },
+      "CreatedTrainingSessionDto": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SessionStatus"
+              }
+            ]
+          },
+          "logs": {
+            "type": "string",
+            "nullable": true
+          },
+          "progress": {
+            "type": "number",
+            "format": "float",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "s8_link": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "session_id",
+          "status",
+          "logs",
+          "progress",
+          "s8_link"
+        ]
+      },
+      "CreateEvaluationSessionFormDto": {
+        "type": "object",
+        "properties": {
+          "session_owner": {
+            "type": "string",
+            "maxLength": 254
+          },
+          "variationa_file": {
+            "type": "string",
+            "format": "binary",
+            "description": "Image file, jpg/jpeg/png only"
+          }
+        },
+        "required": [
+          "session_owner",
+          "variationa_file"
         ]
       },
       "SessionSearchValuesDto": {
