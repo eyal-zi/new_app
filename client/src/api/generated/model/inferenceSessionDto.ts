@@ -6,13 +6,11 @@
  */
 import type { InferenceSessionDtoVariationaInfo } from './inferenceSessionDtoVariationaInfo';
 import type { InferenceSessionDtoVariationbInfo } from './inferenceSessionDtoVariationbInfo';
-import type { InferenceSessionType } from './inferenceSessionType';
 import type { RecommendationsDto } from './recommendationsDto';
 import type { SessionStatus } from './sessionStatus';
 
 export interface InferenceSessionDto {
   session_id: string;
-  type: InferenceSessionType;
   session_owner: string;
   image_a_url: string;
   image_b_url: string;

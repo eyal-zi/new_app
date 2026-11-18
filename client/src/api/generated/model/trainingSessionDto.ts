@@ -7,11 +7,9 @@
 import type { SessionStatus } from './sessionStatus';
 import type { TrainingSessionDtoVariationaInfo } from './trainingSessionDtoVariationaInfo';
 import type { TrainingSessionDtoVariationbInfo } from './trainingSessionDtoVariationbInfo';
-import type { TrainingSessionType } from './trainingSessionType';
 
 export interface TrainingSessionDto {
   session_id: string;
-  type: TrainingSessionType;
   session_owner: string;
   image_a_url: string;
   image_b_url: string;

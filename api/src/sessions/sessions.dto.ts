@@ -37,9 +37,6 @@ import {
 export class SessionDto {
   @ApiProperty() session_id!: string;
 
-  @ApiProperty({ enum: SESSION_TYPES, enumName: 'SessionType' })
-  type!: (typeof SESSION_TYPES)[number];
-
   @ApiProperty() session_owner!: string;
 
   @ApiProperty() image_a_url!: string;
@@ -108,9 +105,6 @@ export class RecommendationsDto {
 }
 
 export class InferenceSessionDto extends SessionDto {
-  @ApiProperty({ enum: ['inference'], enumName: 'InferenceSessionType' })
-  declare type: 'inference';
-
   @ApiProperty({ type: RecommendationsDto })
   recommendations!: RecommendationsDto;
 
@@ -118,9 +112,6 @@ export class InferenceSessionDto extends SessionDto {
 }
 
 export class TrainingSessionDto extends SessionDto {
-  @ApiProperty({ enum: ['training'], enumName: 'TrainingSessionType' })
-  declare type: 'training';
-
   @ApiProperty({ type: String, nullable: true })
   training_type!: string | null;
 
@@ -128,9 +119,6 @@ export class TrainingSessionDto extends SessionDto {
 }
 
 export class EvaluationSessionDto extends SessionDto {
-  @ApiProperty({ enum: ['evaluation'], enumName: 'EvaluationSessionType' })
-  declare type: 'evaluation';
-
   @ApiProperty({ type: String, nullable: true })
   evaluated_image_url!: string | null;
 }
@@ -144,14 +132,6 @@ export const SESSION_DETAILS_SCHEMA = {
     { $ref: getSchemaPath(TrainingSessionDto) },
     { $ref: getSchemaPath(EvaluationSessionDto) },
   ],
-  discriminator: {
-    propertyName: 'type',
-    mapping: {
-      inference: getSchemaPath(InferenceSessionDto),
-      training: getSchemaPath(TrainingSessionDto),
-      evaluation: getSchemaPath(EvaluationSessionDto),
-    },
-  },
 };
 
 export class SessionSearchValuesDto {

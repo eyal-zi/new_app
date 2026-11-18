@@ -6,12 +6,10 @@
  */
 import type { EvaluationSessionDtoVariationaInfo } from './evaluationSessionDtoVariationaInfo';
 import type { EvaluationSessionDtoVariationbInfo } from './evaluationSessionDtoVariationbInfo';
-import type { EvaluationSessionType } from './evaluationSessionType';
 import type { SessionStatus } from './sessionStatus';
 
 export interface EvaluationSessionDto {
   session_id: string;
-  type: EvaluationSessionType;
   session_owner: string;
   image_a_url: string;
   image_b_url: string;

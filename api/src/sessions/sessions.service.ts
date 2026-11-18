@@ -9,6 +9,7 @@ import {
   INITIAL_PROGRESS,
   PERCENT,
   S8_TRAINING_LINK_BASE_URL,
+  SESSION_TYPES,
   UPLOAD_FIELDS,
 } from './sessions.constants.js';
 import type {
@@ -26,6 +27,8 @@ import type {
 import { SessionsRepository } from './sessions.repository.js';
 import type { sessions } from './sessions.schema.js';
 
+type SessionTypeValue = (typeof SESSION_TYPES)[number];
+
 type SessionRow = typeof sessions.$inferSelect;
 
 const ANY_IMAGE = IMAGE_TYPES;
@@ -40,7 +43,6 @@ const toCreatedSessionDto = (item: SessionRow): CreatedSessionDto => ({
 
 const toSessionDto = (item: SessionRow): SessionDto => ({
   session_id: item.id,
-  type: item.type as SessionDto['type'],
   session_owner: item.owner,
   image_a_url: item.imageAUrl,
   image_b_url: item.imageBUrl,
@@ -61,7 +63,6 @@ const toSessionDetailsDto = (item: SessionRow): SessionDetailsDto => {
     case 'inference':
       return {
         ...base,
-        type: 'inference',
         recommendations:
           item.recommendations as InferenceSessionDto['recommendations'],
         statistics: item.statistics ?? [],
@@ -69,14 +70,12 @@ const toSessionDetailsDto = (item: SessionRow): SessionDetailsDto => {
     case 'training':
       return {
         ...base,
-        type: 'training',
         training_type: item.trainingType,
         s8_link: item.s8Link ?? '',
       };
     default:
       return {
         ...base,
-        type: 'evaluation',
         evaluated_image_url: item.evaluatedImageUrl,
       };
   }
@@ -194,13 +193,13 @@ export class SessionsService {
   async group(
     query: GroupSessionsQueryDto,
     searchValues?: SessionSearchValuesDto,
-    type?: SessionDto['type'],
+    type?: SessionTypeValue,
   ): Promise<SessionDetailsDto[]> {
     const items = await this.sessions.group(query, searchValues, type);
     return items.map(toSessionDetailsDto);
   }
 
-  async get(type: SessionDto['type'], id: string): Promise<SessionDetailsDto> {
+  async get(type: SessionTypeValue, id: string): Promise<SessionDetailsDto> {
     const item = await this.sessions.findOne(type, id);
 
     if (!item) {
@@ -210,11 +209,11 @@ export class SessionsService {
     return toSessionDetailsDto(item);
   }
 
-  count(searchValues?: SessionSearchValuesDto, type?: SessionDto['type']) {
+  count(searchValues?: SessionSearchValuesDto, type?: SessionTypeValue) {
     return this.sessions.count(searchValues, type);
   }
 
-  async delete(type: SessionDto['type'], id: string, shouldDelete: boolean) {
+  async delete(type: SessionTypeValue, id: string, shouldDelete: boolean) {
     if (shouldDelete && !(await this.sessions.delete(type, id))) {
       throw new NotFoundException();
     }

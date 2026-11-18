@@ -236,15 +236,7 @@
                       {
                         "$ref": "#/components/schemas/EvaluationSessionDto"
                       }
-                    ],
-                    "discriminator": {
-                      "propertyName": "type",
-                      "mapping": {
-                        "inference": "#/components/schemas/InferenceSessionDto",
-                        "training": "#/components/schemas/TrainingSessionDto",
-                        "evaluation": "#/components/schemas/EvaluationSessionDto"
-                      }
-                    }
+                    ]
                   }
                 }
               }
@@ -325,15 +317,7 @@
                       {
                         "$ref": "#/components/schemas/EvaluationSessionDto"
                       }
-                    ],
-                    "discriminator": {
-                      "propertyName": "type",
-                      "mapping": {
-                        "inference": "#/components/schemas/InferenceSessionDto",
-                        "training": "#/components/schemas/TrainingSessionDto",
-                        "evaluation": "#/components/schemas/EvaluationSessionDto"
-                      }
-                    }
+                    ]
                   }
                 }
               }
@@ -477,15 +461,7 @@
                     {
                       "$ref": "#/components/schemas/EvaluationSessionDto"
                     }
-                  ],
-                  "discriminator": {
-                    "propertyName": "type",
-                    "mapping": {
-                      "inference": "#/components/schemas/InferenceSessionDto",
-                      "training": "#/components/schemas/TrainingSessionDto",
-                      "evaluation": "#/components/schemas/EvaluationSessionDto"
-                    }
-                  }
+                  ]
                 }
               }
             }
@@ -601,12 +577,6 @@
           "user"
         ]
       },
-      "InferenceSessionType": {
-        "type": "string",
-        "enum": [
-          "inference"
-        ]
-      },
       "SessionStatus": {
         "type": "string",
         "enum": [
@@ -687,13 +657,6 @@
           "session_id": {
             "type": "string"
           },
-          "type": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/InferenceSessionType"
-              }
-            ]
-          },
           "session_owner": {
             "type": "string"
           },
@@ -753,7 +716,6 @@
         },
         "required": [
           "session_id",
-          "type",
           "session_owner",
           "image_a_url",
           "image_b_url",
@@ -769,24 +731,11 @@
           "statistics"
         ]
       },
-      "TrainingSessionType": {
-        "type": "string",
-        "enum": [
-          "training"
-        ]
-      },
       "TrainingSessionDto": {
         "type": "object",
         "properties": {
           "session_id": {
             "type": "string"
-          },
-          "type": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/TrainingSessionType"
-              }
-            ]
           },
           "session_owner": {
             "type": "string"
@@ -845,7 +794,6 @@
         },
         "required": [
           "session_id",
-          "type",
           "session_owner",
           "image_a_url",
           "image_b_url",
@@ -861,24 +809,11 @@
           "s8_link"
         ]
       },
-      "EvaluationSessionType": {
-        "type": "string",
-        "enum": [
-          "evaluation"
-        ]
-      },
       "EvaluationSessionDto": {
         "type": "object",
         "properties": {
           "session_id": {
             "type": "string"
-          },
-          "type": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/EvaluationSessionType"
-              }
-            ]
           },
           "session_owner": {
             "type": "string"
@@ -934,7 +869,6 @@
         },
         "required": [
           "session_id",
-          "type",
           "session_owner",
           "image_a_url",
           "image_b_url",
