@@ -14,10 +14,6 @@ import { UPLOAD_REQUEST_TIMEOUT_MS } from '@/shared/constants';
 import { useSessionOwner } from '@/shared/hooks/use-session-owner';
 import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
 
-import {
-  type Statistic,
-  STATISTIC_OPTIONS,
-} from '../components/select-statistics-step/consts';
 import { SelectStatisticsStep } from '../components/select-statistics-step/select-statistics-step';
 import {
   FIRST_IMAGE_PICKER,
@@ -32,7 +28,7 @@ export const InferencePage = () => {
   // Held here, not in the step, so the files survive moving between steps.
   const [firstImage, setFirstImage] = useState<File | null>(null);
   const [secondImage, setSecondImage] = useState<File | null>(null);
-  const [statistics, setStatistics] = useState<Statistic[]>([]);
+  const [statistics, setStatistics] = useState<string[]>([]);
 
   const owner = useSessionOwner();
   const navigate = useNavigate();
@@ -40,9 +36,10 @@ export const InferencePage = () => {
     request: { timeout: UPLOAD_REQUEST_TIMEOUT_MS },
   });
 
-  const selections: Selection[] = STATISTIC_OPTIONS.filter(({ value }) =>
-    statistics.includes(value),
-  ).map(({ value, label }) => ({ id: value, label }));
+  const selections: Selection[] = statistics.map((statistic) => ({
+    id: statistic,
+    label: statistic,
+  }));
 
   const removeStatistic = (id: string) =>
     setStatistics((current) => current.filter((value) => value !== id));

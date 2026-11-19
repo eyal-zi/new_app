@@ -14,11 +14,7 @@ import { UPLOAD_REQUEST_TIMEOUT_MS } from '@/shared/constants';
 import { useSessionOwner } from '@/shared/hooks/use-session-owner';
 import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
 
-import {
-  REQUIRED_TYPE_OPTIONS,
-  REQUIRED_TYPES,
-  type RequiredType,
-} from '../components/select-type-step/consts';
+import { DEFAULT_TYPE_OPTION } from '../components/select-type-step/consts';
 import { SelectTypeStep } from '../components/select-type-step/select-type-step';
 import {
   FIRST_IMAGE_PICKER,
@@ -32,7 +28,7 @@ export const TrainingPage = () => {
   // Held here, not in the step, so the files survive moving between steps.
   const [firstImage, setFirstImage] = useState<File | null>(null);
   const [secondImage, setSecondImage] = useState<File | null>(null);
-  const [requiredType, setRequiredType] = useState<RequiredType | null>(null);
+  const [requiredType, setRequiredType] = useState<string | null>(null);
 
   const owner = useSessionOwner();
   const navigate = useNavigate();
@@ -40,9 +36,17 @@ export const TrainingPage = () => {
     request: { timeout: UPLOAD_REQUEST_TIMEOUT_MS },
   });
 
-  const selections: Selection[] = REQUIRED_TYPE_OPTIONS.filter(
-    ({ value }) => value === requiredType,
-  ).map(({ value, label }) => ({ id: value, label }));
+  const selections: Selection[] = requiredType
+    ? [
+        {
+          id: requiredType,
+          label:
+            requiredType === DEFAULT_TYPE_OPTION.value
+              ? DEFAULT_TYPE_OPTION.label
+              : requiredType,
+        },
+      ]
+    : [];
 
   const finish = async () => {
     if (!owner || !firstImage || !secondImage || isPending) {
@@ -55,7 +59,9 @@ export const TrainingPage = () => {
           session_owner: owner,
           // The default type is the API's fallback, so it's omitted entirely.
           training_type:
-            requiredType === REQUIRED_TYPES.default ? undefined : requiredType,
+            requiredType === DEFAULT_TYPE_OPTION.value
+              ? undefined
+              : requiredType,
           variationa_file: firstImage,
           variationb_file: secondImage,
         },

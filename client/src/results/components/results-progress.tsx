@@ -1,5 +1,7 @@
 import { Typography } from '@mui/material';
 
+import { PERCENT } from '@/shared/constants';
+
 import { PROGRESS_DECIMALS, PROGRESS_LABEL, RUNNING_MESSAGE } from '../consts';
 import { ProgressBar, ResultsProgressRoot } from './results-progress.styles';
 
