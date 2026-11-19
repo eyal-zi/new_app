@@ -33,7 +33,7 @@ const IMAGE_SIZES_PX: readonly (readonly [number, number])[] = [
   [400, 400],
 ];
 const TRAINING_TYPES = ['fine_tune', 'full', 'lora'];
-const STATISTICS = ['accuracy', 'precision', 'recall', 'f1', 'latency'];
+const STATISTICS = ['tomato', 'pineapple', 'mango', 'banana', 'cucumber'];
 const PROGRESS_DECIMALS = 2;
 const NULL_VARIATION_INFO_CHANCE = 0.3;
 const NULL_TRAINING_TYPE_CHANCE = 0.2;

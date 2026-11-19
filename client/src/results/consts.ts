@@ -60,7 +60,7 @@ export const SCORE_MIN = 0;
 export const SCORE_MAX = 1;
 export const SCORE_COLOR_SATURATION = 75;
 export const SCORE_COLOR_LIGHTNESS = 45;
-export const SCORE_DECIMALS = 2;
+export const SCORE_DECIMALS = 3;
 
 /** Shape of each cell in the selection grid. */
 export const SELECTABLE_IMAGE_ASPECT_RATIO = '1 / 1';

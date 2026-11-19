@@ -38,8 +38,8 @@ export const UPLOAD_FIELDS = {
 // generated results after this delay.
 export const MOCK_PROCESSING_DELAY_MS = 5000;
 export const MOCK_RESULT_KEYS = ['_front_view', '_side_view', '_top_view'];
-export const MOCK_DEFAULT_STATISTIC = 'accuracy';
-export const MOCK_SCORE_DECIMALS = 2;
+export const MOCK_DEFAULT_STATISTIC = 'tomato';
+export const MOCK_SCORE_DECIMALS = 3;
 // Every MOCK_FILE_RESULT_STEP-th statistic (the last of each group) yields
 // files instead of scores.
 export const MOCK_FILE_RESULT_STEP = 2;
