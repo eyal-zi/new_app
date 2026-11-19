@@ -83,10 +83,16 @@ export class SessionDto {
 }
 
 export class RecommendationResultDto {
-  @ApiProperty({ type: String, nullable: true })
+  @ApiProperty({
+    oneOf: [{ type: 'string' }, { type: 'number' }],
+    nullable: true,
+  })
   variationa!: string | number | null;
 
-  @ApiProperty({ type: String, nullable: true })
+  @ApiProperty({
+    oneOf: [{ type: 'string' }, { type: 'number' }],
+    nullable: true,
+  })
   variationb!: string | number | null;
 
   @ApiProperty({ enum: RECOMMENDATION_RESULT_TYPES })

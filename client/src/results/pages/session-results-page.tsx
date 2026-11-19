@@ -19,6 +19,8 @@ import { isHttpUrl } from '@/sessions/utils/is-http-url';
 import { SESSION_TYPES } from '@/shared/session-type-constants';
 import { ErrorState, LoadingState } from '@/shared/ui/states';
 
+import { EvaluationResultsPage } from '../components/evaluation-results-page';
+import { InferenceResultsPage } from '../components/inference-results-page';
 import { RunningSession } from '../components/running-session';
 import {
   FAILED_STATUSES,
@@ -35,8 +37,6 @@ import { isTerminalStatus } from '../utils/is-terminal-status';
 import { refetchWhileInProgress } from '../utils/refetch-while-in-progress';
 import { toResultSet } from '../utils/to-result-set';
 import { toSelection } from '../utils/to-selection';
-import { EvaluationResultsPage } from './evaluation-results-page';
-import { InferenceResultsPage } from './inference-results-page';
 
 const isSessionType = (value: string): value is SessionType =>
   (SESSION_TYPES as readonly string[]).includes(value);
@@ -98,7 +98,8 @@ export const SessionResultsPage = () => {
     return <LoadingState />;
   }
 
-  if (isError || !data) {
+  // A failed background refetch keeps its data, so it doesn't replace the page.
+  if (!data) {
     return <ErrorState message={LOAD_SESSION_ERROR_MESSAGE} retry={refetch} />;
   }
 

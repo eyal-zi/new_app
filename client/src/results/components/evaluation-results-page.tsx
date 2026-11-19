@@ -1,12 +1,12 @@
 import { Box, Stack, Typography } from '@mui/material';
 
-import { ResultSet } from '../components/result-set';
-import { ResultsContent } from '../components/results-content';
 import {
   EVALUATION_RESULTS_SUBTITLE,
   EVALUATION_RESULTS_TITLE,
 } from '../consts';
 import type { ResultSet as ResultSetData } from '../types';
+import { ResultSet } from './result-set';
+import { ResultsContent } from './results-content';
 
 type EvaluationResultsPageProps = {
   sets: readonly ResultSetData[];

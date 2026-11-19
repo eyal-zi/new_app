@@ -1,13 +1,13 @@
 import { Box, Stack, Typography } from '@mui/material';
 import { useState } from 'react';
 
-import { CompareDialog } from '../components/compare-dialog';
-import { ResultsContent } from '../components/results-content';
-import { SelectionBar } from '../components/selection-bar';
-import { SelectionItem } from '../components/selection-item';
 import { INFERENCE_RESULTS_SUBTITLE, INFERENCE_RESULTS_TITLE } from '../consts';
 import { useImageSelection } from '../hooks/use-image-selection';
 import type { ResultSelection } from '../types';
+import { CompareDialog } from './compare-dialog';
+import { ResultsContent } from './results-content';
+import { SelectionBar } from './selection-bar';
+import { SelectionItem } from './selection-item';
 
 /** Results of a completed inference session: one selection per statistic. */
 export const InferenceResultsPage = ({

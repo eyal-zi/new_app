@@ -7,13 +7,13 @@ import { getGetSessionQueryKey, useDeleteSession } from '@/api/generated/api';
 import { SessionType } from '@/api/generated/model';
 import { ErrorState } from '@/shared/ui/states';
 
+import { EvaluationResultsPage } from '../components/evaluation-results-page';
 import {
   NO_SESSIONS_MESSAGE,
   SESSION_CANCELED_MESSAGE,
   SESSION_IDS_PARAM,
 } from '../consts';
-import { useEvaluationResultSets } from '../hooks/use-evaluation-result-sets';
-import { EvaluationResultsPage } from './evaluation-results-page';
+import { useEvaluationResultSets } from '../queries/use-evaluation-result-sets';
 
 /** Compare view: fetches every session listed in the `ids` search param. */
 export const EvaluationSessionsResultsPage = () => {

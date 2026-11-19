@@ -104,6 +104,7 @@ export const ImageGallery = <T,>({
           caption={image.caption}
           onClick={isInteractive ? () => select(item, index) : undefined}
           onDelete={onDelete && (() => onDelete(item, index))}
+          controlsOnHover={false}
           deleteButtonRef={getDeleteButtonRef?.(item)}
         />
       </GalleryItem>

@@ -33,15 +33,16 @@ export const useEvaluationResultSets = (ids: readonly string[]) => {
   const sets: ResultSet[] = [];
   const problems: string[] = [];
 
-  extras.forEach(({ data, isError, isPending }, index) => {
+  extras.forEach(({ data, isError }, index) => {
     // useQueries returns its results in the order of the queries, i.e. of `ids`.
     const id = ids[index] as string;
 
-    if (isError) {
+    // A failed background refetch keeps its data, so only a missing one is a problem.
+    if (!data && isError) {
       problems.push(getLoadProblem(id));
-    } else if (isPending) {
+    } else if (!data) {
       sets.push({ id, title: id, status: 'loading' });
-    } else if (!data || !isEvaluationSession(data)) {
+    } else if (!isEvaluationSession(data)) {
       problems.push(getNotEvaluationProblem(id));
     } else if (FAILED_STATUSES.includes(data.status)) {
       problems.push(getFailedProblem(id, describeFailedStatus(data.status)));

@@ -10,6 +10,7 @@ import { PageLayout } from '@/shared/components/page-layout/page-layout';
 import type { Selection } from '@/shared/components/selection-list/types';
 import { Steps } from '@/shared/components/steps/steps';
 import type { StepItem } from '@/shared/components/steps/types';
+import { UPLOAD_REQUEST_TIMEOUT_MS } from '@/shared/constants';
 import { useSessionOwner } from '@/shared/hooks/use-session-owner';
 import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
 
@@ -35,7 +36,9 @@ export const TrainingPage = () => {
 
   const owner = useSessionOwner();
   const navigate = useNavigate();
-  const { mutateAsync, isPending } = useCreateTrainingSession();
+  const { mutateAsync, isPending } = useCreateTrainingSession({
+    request: { timeout: UPLOAD_REQUEST_TIMEOUT_MS },
+  });
 
   const selections: Selection[] = REQUIRED_TYPE_OPTIONS.filter(
     ({ value }) => value === requiredType,

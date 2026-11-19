@@ -8,8 +8,13 @@ import { EVALUATION_RESULTS_ROUTE_PATH } from '@/sessions/consts';
 import { PageLayout } from '@/shared/components/page-layout/page-layout';
 import { Steps } from '@/shared/components/steps/steps';
 import type { StepItem } from '@/shared/components/steps/types';
+import {
+  MAX_CONCURRENT_UPLOADS,
+  UPLOAD_REQUEST_TIMEOUT_MS,
+} from '@/shared/constants';
 import { useSessionOwner } from '@/shared/hooks/use-session-owner';
 import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
+import { mapWithConcurrency } from '@/shared/utils/map-with-concurrency';
 
 import { EvaluationSummaryStep } from '../components/summary-step/summary-step';
 import { UploadStep } from '../components/upload-step/upload-step';
@@ -22,7 +27,9 @@ export const EvaluationPage = () => {
   const navigate = useNavigate();
   // One flag for the whole batch: `isPending` only follows the last request.
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { mutateAsync } = useCreateEvaluationSession();
+  const { mutateAsync } = useCreateEvaluationSession({
+    request: { timeout: UPLOAD_REQUEST_TIMEOUT_MS },
+  });
 
   // A session evaluates a single image, so each image gets its own session.
   // Each failure is reported by the query client; the sessions that were
@@ -36,12 +43,13 @@ export const EvaluationPage = () => {
     setIsSubmitting(true);
 
     try {
-      const results = await Promise.allSettled(
-        images.map((image) =>
+      const results = await mapWithConcurrency(
+        images,
+        MAX_CONCURRENT_UPLOADS,
+        (image) =>
           mutateAsync({
             data: { session_owner: owner, variationa_file: image },
           }),
-        ),
       );
       const ids = results.flatMap((result) =>
         result.status === 'fulfilled' ? [result.value.session_id] : [],

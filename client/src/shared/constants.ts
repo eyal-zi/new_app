@@ -3,6 +3,10 @@
 import type { Accept } from 'react-dropzone';
 
 export const REQUEST_TIMEOUT_MS = 15_000;
+/** Uploads can be large and slow, so they get a longer timeout. */
+export const UPLOAD_REQUEST_TIMEOUT_MS = 5 * 60_000;
+/** How many upload requests run at once, so queued ones don't burn their timeout. */
+export const MAX_CONCURRENT_UPLOADS = 4;
 
 export const QUERY_STALE_TIME_MS = 30_000;
 export const QUERY_GC_TIME_MS = 5 * 60_000;

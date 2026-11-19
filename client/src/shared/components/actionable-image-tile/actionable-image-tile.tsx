@@ -32,6 +32,12 @@ export type ActionableImageTileProps = Omit<ImageTileProps, 'action'> & {
   onDownload?: () => void | Promise<void>;
   /** Shows a delete button on hover. */
   onDelete?: () => void;
+  /**
+   * Whether the controls (select, download, delete) only show on hover or
+   * focus. Defaults to `true`; pass `false` to keep them always visible, e.g.
+   * where there's no hover. A selected tile always shows its checkbox.
+   */
+  controlsOnHover?: boolean;
   /** Lets the caller move focus to the delete button, e.g. after a neighbour is removed. */
   deleteButtonRef?: Ref<HTMLButtonElement>;
 };
@@ -46,6 +52,7 @@ export const ActionableImageTile = ({
   selection,
   onDownload,
   onDelete,
+  controlsOnHover = true,
   deleteButtonRef,
   onClick,
   ...tileProps
@@ -79,12 +86,15 @@ export const ActionableImageTile = ({
   // A selectable tile stays clickable, so ctrl/cmd + click has a target.
   const handleClick = onClick ?? (selection ? () => undefined : undefined);
 
+  const hoverControlClass = controlsOnHover
+    ? TILE_HOVER_CONTROL_CLASS
+    : undefined;
   const downloadLabel = `${DOWNLOAD_IMAGE_LABEL}: ${tileProps.alt}`;
   const deleteLabel = `${DELETE_IMAGE_LABEL}: ${tileProps.alt}`;
 
   const actions: ReactNode =
     onDownload || onDelete ? (
-      <Stack direction="row" spacing={0.5} className={TILE_HOVER_CONTROL_CLASS}>
+      <Stack direction="row" spacing={0.5} className={hoverControlClass}>
         {onDownload && (
           <Tooltip title={downloadLabel}>
             <TileDownloadButton
@@ -114,7 +124,9 @@ export const ActionableImageTile = ({
       <ImageTile {...tileProps} onClick={handleClick} action={actions} />
       {selection && (
         <TileSelectCheckbox
-          className={`${TILE_HOVER_CONTROL_CLASS} ${TILE_SELECT_CLASS}`}
+          className={[hoverControlClass, TILE_SELECT_CLASS]
+            .filter(Boolean)
+            .join(' ')}
           checked={selection.selected}
           onChange={selection.onChange}
           onClick={stopPropagation}

@@ -7,9 +7,7 @@
 import type { RecommendationResultDtoType } from './recommendationResultDtoType';
 
 export interface RecommendationResultDto {
-  /** @nullable */
-  variationa: string | null;
-  /** @nullable */
-  variationb: string | null;
+  variationa: string | number | null;
+  variationb: string | number | null;
   type: RecommendationResultDtoType;
 }

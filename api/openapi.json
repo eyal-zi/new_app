@@ -603,11 +603,25 @@
         "type": "object",
         "properties": {
           "variationa": {
-            "type": "string",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ],
             "nullable": true
           },
           "variationb": {
-            "type": "string",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ],
             "nullable": true
           },
           "type": {
