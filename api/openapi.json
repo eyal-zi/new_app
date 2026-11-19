@@ -53,6 +53,144 @@
         ]
       }
     },
+    "/api/inference": {
+      "post": {
+        "operationId": "createInferenceSession",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInferenceSessionFormDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedSessionDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "413": {
+            "description": "An image is over the size limit"
+          },
+          "415": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create an inference session",
+        "tags": [
+          "sessions"
+        ]
+      }
+    },
+    "/api/training": {
+      "post": {
+        "operationId": "createTrainingSession",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTrainingSessionFormDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedTrainingSessionDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "413": {
+            "description": "An image is over the size limit"
+          },
+          "415": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a training session",
+        "tags": [
+          "sessions"
+        ]
+      }
+    },
+    "/api/evaluation": {
+      "post": {
+        "operationId": "createEvaluationSession",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEvaluationSessionFormDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedSessionDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": ""
+          },
+          "413": {
+            "description": "An image is over the size limit"
+          },
+          "415": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create an evaluation session",
+        "tags": [
+          "sessions"
+        ]
+      }
+    },
     "/api/sessions/group": {
       "post": {
         "operationId": "groupSessions",
@@ -97,7 +235,17 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/SessionDto"
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/InferenceSessionDto"
+                      },
+                      {
+                        "$ref": "#/components/schemas/TrainingSessionDto"
+                      },
+                      {
+                        "$ref": "#/components/schemas/EvaluationSessionDto"
+                      }
+                    ]
                   }
                 }
               }
@@ -168,7 +316,17 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/SessionDto"
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/InferenceSessionDto"
+                      },
+                      {
+                        "$ref": "#/components/schemas/TrainingSessionDto"
+                      },
+                      {
+                        "$ref": "#/components/schemas/EvaluationSessionDto"
+                      }
+                    ]
                   }
                 }
               }
@@ -275,6 +433,62 @@
       }
     },
     "/api/{type}/{sessionId}": {
+      "get": {
+        "operationId": "getSession",
+        "parameters": [
+          {
+            "name": "type",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/SessionType"
+            }
+          },
+          {
+            "name": "sessionId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/InferenceSessionDto"
+                    },
+                    {
+                      "$ref": "#/components/schemas/TrainingSessionDto"
+                    },
+                    {
+                      "$ref": "#/components/schemas/EvaluationSessionDto"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get a session",
+        "tags": [
+          "sessions"
+        ]
+      },
       "delete": {
         "operationId": "deleteSession",
         "parameters": [
@@ -299,7 +513,7 @@
             "name": "should_delete",
             "required": true,
             "in": "query",
-            "description": "The session is deleted only when true",
+            "description": "When true the session is deleted; otherwise it is canceled (status set to canceled)",
             "schema": {
               "type": "boolean"
             }
@@ -311,6 +525,9 @@
           },
           "404": {
             "description": ""
+          },
+          "409": {
+            "description": "The session can no longer be canceled (it already ended)"
           }
         },
         "security": [
@@ -432,6 +649,474 @@
           "user"
         ]
       },
+      "SessionStatus": {
+        "type": "string",
+        "enum": [
+          "started",
+          "running",
+          "completed",
+          "failed",
+          "canceled"
+        ]
+      },
+      "RecommendationResultDto": {
+        "type": "object",
+        "properties": {
+          "variationa": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "nullable": true
+          },
+          "variationb": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "file",
+              "score"
+            ]
+          }
+        },
+        "required": [
+          "variationa",
+          "variationb",
+          "type"
+        ]
+      },
+      "RecommendationsDto": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string"
+          },
+          "statistic": {
+            "type": "string"
+          },
+          "results": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/RecommendationResultDto"
+            },
+            "description": "Results keyed by column. Keys are formatted like \"_this_is_key\"; the client turns them into display names.",
+            "example": {
+              "_front_view": {
+                "variationa": "0.2",
+                "variationb": "0.7",
+                "type": "score"
+              }
+            }
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SessionStatus"
+              }
+            ]
+          }
+        },
+        "required": [
+          "session_id",
+          "statistic",
+          "results",
+          "status"
+        ]
+      },
+      "InferenceSessionDto": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string"
+          },
+          "session_owner": {
+            "type": "string"
+          },
+          "image_a_url": {
+            "type": "string"
+          },
+          "image_b_url": {
+            "type": "string"
+          },
+          "creation_time": {
+            "type": "string",
+            "description": "Naive ISO-8601 timestamp in UTC (no timezone designator)",
+            "example": "2026-11-09T12:00:00.000"
+          },
+          "last_update": {
+            "type": "string",
+            "description": "Naive ISO-8601 timestamp in UTC (no timezone designator)",
+            "example": "2026-11-09T12:00:00.000"
+          },
+          "progress": {
+            "type": "number",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 1,
+            "description": "A fraction from 0 to 1"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SessionStatus"
+              }
+            ]
+          },
+          "notes": {
+            "type": "string"
+          },
+          "logs": {
+            "type": "string",
+            "nullable": true
+          },
+          "variationa_info": {
+            "type": "object",
+            "nullable": true
+          },
+          "variationb_info": {
+            "type": "object",
+            "nullable": true
+          },
+          "recommendations": {
+            "description": "One recommendation per requested statistic.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecommendationsDto"
+            }
+          },
+          "statistics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "session_id",
+          "session_owner",
+          "image_a_url",
+          "image_b_url",
+          "creation_time",
+          "last_update",
+          "progress",
+          "status",
+          "notes",
+          "logs",
+          "variationa_info",
+          "variationb_info",
+          "recommendations",
+          "statistics"
+        ]
+      },
+      "TrainingSessionDto": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string"
+          },
+          "session_owner": {
+            "type": "string"
+          },
+          "image_a_url": {
+            "type": "string"
+          },
+          "image_b_url": {
+            "type": "string"
+          },
+          "creation_time": {
+            "type": "string",
+            "description": "Naive ISO-8601 timestamp in UTC (no timezone designator)",
+            "example": "2026-11-09T12:00:00.000"
+          },
+          "last_update": {
+            "type": "string",
+            "description": "Naive ISO-8601 timestamp in UTC (no timezone designator)",
+            "example": "2026-11-09T12:00:00.000"
+          },
+          "progress": {
+            "type": "number",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 1,
+            "description": "A fraction from 0 to 1"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SessionStatus"
+              }
+            ]
+          },
+          "notes": {
+            "type": "string"
+          },
+          "logs": {
+            "type": "string",
+            "nullable": true
+          },
+          "variationa_info": {
+            "type": "object",
+            "nullable": true
+          },
+          "variationb_info": {
+            "type": "object",
+            "nullable": true
+          },
+          "training_type": {
+            "type": "string",
+            "nullable": true
+          },
+          "s8_link": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "session_id",
+          "session_owner",
+          "image_a_url",
+          "image_b_url",
+          "creation_time",
+          "last_update",
+          "progress",
+          "status",
+          "notes",
+          "logs",
+          "variationa_info",
+          "variationb_info",
+          "training_type",
+          "s8_link"
+        ]
+      },
+      "EvaluationSessionDto": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string"
+          },
+          "session_owner": {
+            "type": "string"
+          },
+          "image_a_url": {
+            "type": "string"
+          },
+          "image_b_url": {
+            "type": "string"
+          },
+          "creation_time": {
+            "type": "string",
+            "description": "Naive ISO-8601 timestamp in UTC (no timezone designator)",
+            "example": "2026-11-09T12:00:00.000"
+          },
+          "last_update": {
+            "type": "string",
+            "description": "Naive ISO-8601 timestamp in UTC (no timezone designator)",
+            "example": "2026-11-09T12:00:00.000"
+          },
+          "progress": {
+            "type": "number",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 1,
+            "description": "A fraction from 0 to 1"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SessionStatus"
+              }
+            ]
+          },
+          "notes": {
+            "type": "string"
+          },
+          "logs": {
+            "type": "string",
+            "nullable": true
+          },
+          "variationa_info": {
+            "type": "object",
+            "nullable": true
+          },
+          "variationb_info": {
+            "type": "object",
+            "nullable": true
+          },
+          "evaluated_image_url": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "session_id",
+          "session_owner",
+          "image_a_url",
+          "image_b_url",
+          "creation_time",
+          "last_update",
+          "progress",
+          "status",
+          "notes",
+          "logs",
+          "variationa_info",
+          "variationb_info",
+          "evaluated_image_url"
+        ]
+      },
+      "CreateInferenceSessionFormDto": {
+        "type": "object",
+        "properties": {
+          "session_owner": {
+            "type": "string",
+            "maxLength": 254
+          },
+          "statistics": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 100
+            },
+            "minItems": 1,
+            "maxItems": 50,
+            "uniqueItems": true
+          },
+          "variationa_file": {
+            "type": "string",
+            "format": "binary",
+            "description": "Image file"
+          },
+          "variationb_file": {
+            "type": "string",
+            "format": "binary",
+            "description": "Image file"
+          }
+        },
+        "required": [
+          "session_owner",
+          "statistics",
+          "variationa_file",
+          "variationb_file"
+        ]
+      },
+      "CreatedSessionDto": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SessionStatus"
+              }
+            ]
+          },
+          "logs": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "session_id",
+          "status",
+          "logs"
+        ]
+      },
+      "CreateTrainingSessionFormDto": {
+        "type": "object",
+        "properties": {
+          "session_owner": {
+            "type": "string",
+            "maxLength": 254
+          },
+          "training_type": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 100
+          },
+          "variationa_file": {
+            "type": "string",
+            "format": "binary",
+            "description": "Image file, jpg/jpeg only"
+          },
+          "variationb_file": {
+            "type": "string",
+            "format": "binary",
+            "description": "Image file"
+          }
+        },
+        "required": [
+          "session_owner",
+          "variationa_file",
+          "variationb_file"
+        ]
+      },
+      "CreatedTrainingSessionDto": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SessionStatus"
+              }
+            ]
+          },
+          "logs": {
+            "type": "string",
+            "nullable": true
+          },
+          "progress": {
+            "type": "number",
+            "format": "float",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "A fraction from 0 to 1"
+          },
+          "s8_link": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "session_id",
+          "status",
+          "logs",
+          "progress",
+          "s8_link"
+        ]
+      },
+      "CreateEvaluationSessionFormDto": {
+        "type": "object",
+        "properties": {
+          "session_owner": {
+            "type": "string",
+            "maxLength": 254
+          },
+          "variationa_file": {
+            "type": "string",
+            "format": "binary",
+            "description": "Image file, jpg/jpeg/png only"
+          }
+        },
+        "required": [
+          "session_owner",
+          "variationa_file"
+        ]
+      },
       "SessionSearchValuesDto": {
         "type": "object",
         "properties": {
@@ -471,84 +1156,6 @@
           "training",
           "inference",
           "evaluation"
-        ]
-      },
-      "SessionStatus": {
-        "type": "string",
-        "enum": [
-          "pending",
-          "in_progress",
-          "running",
-          "completed",
-          "failed",
-          "canceled"
-        ]
-      },
-      "SessionDto": {
-        "type": "object",
-        "properties": {
-          "session_id": {
-            "type": "string"
-          },
-          "type": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/SessionType"
-              }
-            ]
-          },
-          "session_owner": {
-            "type": "string"
-          },
-          "image_a_url": {
-            "type": "string"
-          },
-          "image_b_url": {
-            "type": "string"
-          },
-          "creation_time": {
-            "type": "string",
-            "description": "Naive ISO-8601 timestamp in UTC (no timezone designator)",
-            "example": "2026-11-09T12:00:00.000"
-          },
-          "last_update": {
-            "type": "string",
-            "description": "Naive ISO-8601 timestamp in UTC (no timezone designator)",
-            "example": "2026-11-09T12:00:00.000"
-          },
-          "progress": {
-            "type": "number",
-            "nullable": true,
-            "minimum": 0,
-            "maximum": 100
-          },
-          "status": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/SessionStatus"
-              }
-            ]
-          },
-          "notes": {
-            "type": "string"
-          },
-          "logs": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "required": [
-          "session_id",
-          "type",
-          "session_owner",
-          "image_a_url",
-          "image_b_url",
-          "creation_time",
-          "last_update",
-          "progress",
-          "status",
-          "notes",
-          "logs"
         ]
       }
     }

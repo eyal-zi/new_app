@@ -21,6 +21,3 @@ export const SECOND_IMAGE_PICKER: ImagePickerConfig = {
   description: 'PNG only',
   accept: PNG_ACCEPT,
 };
-
-export const REMOVE_LAST_SELECTION_REASON =
-  'At least one selection is required.';

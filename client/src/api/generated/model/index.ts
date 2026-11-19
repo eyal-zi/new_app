@@ -5,13 +5,30 @@
  * OpenAPI spec version: 1.0
  */
 
+export * from './createdSessionDto';
+export * from './createdTrainingSessionDto';
+export * from './createEvaluationSessionFormDto';
+export * from './createInferenceSessionFormDto';
+export * from './createTrainingSessionFormDto';
 export * from './deleteSessionParams';
+export * from './evaluationSessionDto';
+export * from './evaluationSessionDtoVariationaInfo';
+export * from './evaluationSessionDtoVariationbInfo';
 export * from './groupSessionsBodyDto';
 export * from './groupSessionsByTypeParams';
 export * from './groupSessionsParams';
+export * from './inferenceSessionDto';
+export * from './inferenceSessionDtoVariationaInfo';
+export * from './inferenceSessionDtoVariationbInfo';
 export * from './loginResponseDto';
-export * from './sessionDto';
+export * from './recommendationResultDto';
+export * from './recommendationResultDtoType';
+export * from './recommendationsDto';
+export * from './recommendationsDtoResults';
 export * from './sessionSearchValuesDto';
 export * from './sessionStatus';
 export * from './sessionType';
+export * from './trainingSessionDto';
+export * from './trainingSessionDtoVariationaInfo';
+export * from './trainingSessionDtoVariationbInfo';
 export * from './userDto';

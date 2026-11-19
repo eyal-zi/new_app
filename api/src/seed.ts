@@ -1,14 +1,20 @@
 import 'dotenv/config';
 
+import { randomUUID } from 'node:crypto';
+
 import { sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 
 import { ENV_KEYS } from './envKeys.constants.js';
 import {
+  COMPLETED_STATUS,
+  INITIAL_PROGRESS,
+  MAX_PROGRESS,
   SESSION_STATUSES,
   SESSION_TYPES,
 } from './sessions/sessions.constants.js';
+import { buildMockResults } from './sessions/sessions.mock.js';
 import { sessions } from './sessions/sessions.schema.js';
 
 const SESSION_COUNT = 500;
@@ -26,6 +32,11 @@ const IMAGE_SIZES_PX: readonly (readonly [number, number])[] = [
   [64, 256],
   [400, 400],
 ];
+const TRAINING_TYPES = ['fine_tune', 'full', 'lora'];
+const STATISTICS = ['tomato', 'pineapple', 'mango', 'banana', 'cucumber'];
+const PROGRESS_DECIMALS = 2;
+const NULL_VARIATION_INFO_CHANCE = 0.3;
+const NULL_TRAINING_TYPE_CHANCE = 0.2;
 const RANDOM_SEED = 20260101;
 const OWNERS = [
   'alice',
@@ -59,12 +70,15 @@ const between = (min: number, max: number) =>
 
 const progressFor = (status: (typeof SESSION_STATUSES)[number]) => {
   switch (status) {
-    case 'pending':
-      return 0;
+    case 'running':
+      return INITIAL_PROGRESS;
     case 'completed':
-      return 100;
+      return MAX_PROGRESS;
     default:
-      return between(1, 99);
+      return +(
+        INITIAL_PROGRESS +
+        random() * (MAX_PROGRESS - INITIAL_PROGRESS)
+      ).toFixed(PROGRESS_DECIMALS);
   }
 };
 
@@ -74,6 +88,41 @@ const imageUrl = (seed: string) => {
   return `https://picsum.photos/seed/${seed}/${width}/${height}`;
 };
 
+const variationInfo = (name: string) =>
+  random() < NULL_VARIATION_INFO_CHANCE
+    ? null
+    : { name, model_version: `v${between(1, 5)}`, seed: between(0, 9999) };
+
+// Results exist only for completed sessions, built by the same generator the
+// mock worker uses, so seeded and freshly created sessions look alike.
+const createTypeSpecificFields = (
+  type: (typeof SESSION_TYPES)[number],
+  id: string,
+  status: (typeof SESSION_STATUSES)[number],
+) => {
+  switch (type) {
+    case 'inference': {
+      const statistics = STATISTICS.slice(0, between(1, STATISTICS.length));
+
+      return {
+        statistics,
+        ...(status === COMPLETED_STATUS
+          ? buildMockResults(type, id, statistics)
+          : {}),
+      };
+    }
+
+    case 'training':
+      return {
+        trainingType:
+          random() < NULL_TRAINING_TYPE_CHANCE ? null : pick(TRAINING_TYPES),
+        s8Link: `https://s8.example.com/training/${id}`,
+      };
+    case 'evaluation':
+      return status === COMPLETED_STATUS ? buildMockResults(type, id) : {};
+  }
+};
+
 const createMockSession = (index: number) => {
   const now = Date.now();
   const createdAt = new Date(now - random() * MAX_AGE_DAYS * MS_PER_DAY);
@@ -81,9 +130,12 @@ const createMockSession = (index: number) => {
     createdAt.getTime() + random() * (now - createdAt.getTime()),
   );
   const status = pick(SESSION_STATUSES);
+  const type = pick(SESSION_TYPES);
+  const id = randomUUID();
 
   return {
-    type: pick(SESSION_TYPES),
+    id,
+    type,
     owner: pick(OWNERS),
     imageAUrl: imageUrl(`session-${index}-a`),
     imageBUrl: imageUrl(`session-${index}-b`),
@@ -93,6 +145,9 @@ const createMockSession = (index: number) => {
     status,
     notes: '',
     logs: status === 'failed' ? 'Session failed unexpectedly' : null,
+    variationaInfo: variationInfo('variation a'),
+    variationbInfo: variationInfo('variation b'),
+    ...createTypeSpecificFields(type, id, status),
   };
 };
 

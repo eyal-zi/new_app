@@ -1,6 +1,5 @@
-import type { SessionDto } from '@/api/generated/model';
-
 import type { Session } from '../types';
+import { getSessionType, type SessionDetailsDto } from './get-session-type';
 
 // Matches a trailing timezone designator: "Z" or an offset like "+02:00".
 const TIMEZONE_DESIGNATOR = /(Z|[+-]\d{2}(:?\d{2})?)$/i;
@@ -11,9 +10,9 @@ const TIMEZONE_DESIGNATOR = /(Z|[+-]\d{2}(:?\d{2})?)$/i;
 const mapDate = (iso: string): Date =>
   new Date(TIMEZONE_DESIGNATOR.test(iso) ? iso : `${iso}Z`);
 
-const mapSession = (dto: SessionDto): Session => ({
+const mapSession = (dto: SessionDetailsDto): Session => ({
   id: dto.session_id,
-  type: dto.type,
+  type: getSessionType(dto),
   owner: dto.session_owner,
   imageAUrl: dto.image_a_url,
   imageBUrl: dto.image_b_url,
@@ -23,5 +22,5 @@ const mapSession = (dto: SessionDto): Session => ({
   status: dto.status,
 });
 
-export const mapSessions = (dtos: SessionDto[]): Session[] =>
+export const mapSessions = (dtos: SessionDetailsDto[]): Session[] =>
   dtos.map(mapSession);

@@ -14,7 +14,14 @@ import { UnauthorizedRoute } from '@/core/pages/unauthorized-route';
 import { Layout } from '@/demo/layout/layout';
 import { EvaluationPage } from '@/evaluation/pages/evaluation-page';
 import { InferencePage } from '@/inference/pages/inference-page';
-import { SESSIONS_PATH } from '@/sessions/consts';
+import { EvaluationSessionsResultsPage } from '@/results/pages/evaluation-sessions-results-page';
+import { SessionResultsPage } from '@/results/pages/session-results-page';
+import { validateResultsSearch } from '@/results/utils/validate-results-search';
+import {
+  EVALUATION_RESULTS_ROUTE_PATH,
+  RESULTS_ROUTE_PATH,
+  SESSIONS_PATH,
+} from '@/sessions/consts';
 import { SessionsPage } from '@/sessions/pages/sessions-page';
 import { SESSION_TYPE_PATHS } from '@/shared/session-type-constants';
 import { ErrorState } from '@/shared/ui/states';
@@ -86,6 +93,19 @@ const evaluation = createRoute({
   component: EvaluationPage,
 });
 
+const evaluationResults = createRoute({
+  getParentRoute: () => layoutRoute,
+  path: EVALUATION_RESULTS_ROUTE_PATH,
+  validateSearch: validateResultsSearch,
+  component: EvaluationSessionsResultsPage,
+});
+
+const results = createRoute({
+  getParentRoute: () => layoutRoute,
+  path: RESULTS_ROUTE_PATH,
+  component: SessionResultsPage,
+});
+
 export const createAppRouter = () =>
   createRouter({
     routeTree: root.addChildren([
@@ -96,6 +116,8 @@ export const createAppRouter = () =>
         training,
         inference,
         evaluation,
+        evaluationResults,
+        results,
       ]),
     ]),
     defaultPreload: false,
