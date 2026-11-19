@@ -1,4 +1,4 @@
-import { useListTypes } from '@/api/generated/api';
+import { useListTrainingTypes } from '@/api/generated/api';
 import { ChoiceGroup } from '@/shared/components/choice-group/choice-group';
 import { StepHeader } from '@/shared/components/step-header/step-header';
 import { ErrorState, LoadingState } from '@/shared/ui/states';
@@ -18,7 +18,7 @@ export const SelectTypeStep = ({
   requiredType,
   onRequiredTypeChange,
 }: SelectTypeStepProps) => {
-  const { data, isPending, isError, refetch } = useListTypes();
+  const { data, isPending, isError, refetch } = useListTrainingTypes();
 
   return (
     <SelectTypeStepRoot>
