@@ -29,6 +29,7 @@ import {
   INVALID_RESULTS_LINK_MESSAGE,
   LOAD_SESSION_ERROR_MESSAGE,
   NO_EVALUATED_IMAGE_MESSAGE,
+  NO_INFERENCE_RESULTS_MESSAGE,
   REDIRECTING_MESSAGE,
   SESSION_CANCELED_MESSAGE,
 } from '../consts';
@@ -144,7 +145,11 @@ export const SessionResultsPage = () => {
     );
   }
 
-  // Only completed sessions get here, so inference results are all available.
+  // Sessions completed before recommendations were stored have none.
+  if (data.recommendations.length === 0) {
+    return <ErrorState message={NO_INFERENCE_RESULTS_MESSAGE} />;
+  }
+
   return (
     <InferenceResultsPage selections={data.recommendations.map(toSelection)} />
   );

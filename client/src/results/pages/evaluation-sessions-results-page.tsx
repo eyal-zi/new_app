@@ -2,6 +2,7 @@ import { Stack } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSearch } from '@tanstack/react-router';
 import { enqueueSnackbar } from 'notistack';
+import { useState } from 'react';
 
 import { getGetSessionQueryKey, useDeleteSession } from '@/api/generated/api';
 import { SessionType } from '@/api/generated/model';
@@ -21,6 +22,10 @@ export const EvaluationSessionsResultsPage = () => {
   const ids = search[SESSION_IDS_PARAM] ?? [];
   const { sets, problems } = useEvaluationResultSets(ids);
   const queryClient = useQueryClient();
+  // Every in-flight cancel, since the mutation's own state only follows the last call.
+  const [cancelingIds, setCancelingIds] = useState<ReadonlySet<string>>(
+    new Set(),
+  );
   const cancellation = useDeleteSession({
     mutation: {
       onSuccess: (_, { sessionId }) => {
@@ -35,16 +40,30 @@ export const EvaluationSessionsResultsPage = () => {
         void queryClient.invalidateQueries({
           queryKey: getGetSessionQueryKey(SessionType.evaluation, sessionId),
         }),
+      // Unlike per-call callbacks, this runs for every request.
+      onSettled: (_data, _error, { sessionId }) =>
+        setCancelingIds((current) => {
+          const next = new Set(current);
+          next.delete(sessionId);
+
+          return next;
+        }),
     },
   });
 
   // Not deleted: the session stays in the db, marked as canceled.
-  const cancelSession = (sessionId: string) =>
+  const cancelSession = (sessionId: string) => {
+    if (cancelingIds.has(sessionId)) {
+      return;
+    }
+
+    setCancelingIds((current) => new Set(current).add(sessionId));
     cancellation.mutate({
       type: SessionType.evaluation,
       sessionId,
       params: { should_delete: false },
     });
+  };
 
   if (ids.length === 0) {
     return <ErrorState message={NO_SESSIONS_MESSAGE} />;
@@ -58,9 +77,7 @@ export const EvaluationSessionsResultsPage = () => {
       <EvaluationResultsPage
         sets={sets}
         onCancelSet={cancelSession}
-        cancelingId={
-          cancellation.isPending ? cancellation.variables.sessionId : undefined
-        }
+        cancelingIds={cancelingIds}
       />
     </Stack>
   );

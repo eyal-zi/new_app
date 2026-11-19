@@ -12,14 +12,15 @@ type EvaluationResultsPageProps = {
   sets: readonly ResultSetData[];
   /** Makes running sets cancelable. */
   onCancelSet?: (id: string) => void;
-  cancelingId?: string;
+  /** Ids of the sets currently being canceled. */
+  cancelingIds?: ReadonlySet<string>;
 };
 
 /** Presents one gallery per evaluation session: image A and its evaluated image. */
 export const EvaluationResultsPage = ({
   sets,
   onCancelSet,
-  cancelingId,
+  cancelingIds,
 }: EvaluationResultsPageProps) => (
   <Stack spacing={3}>
     <Box>
@@ -34,7 +35,7 @@ export const EvaluationResultsPage = ({
           key={set.id}
           set={set}
           onCancel={onCancelSet}
-          cancelingId={cancelingId}
+          cancelingIds={cancelingIds}
         />
       ))}
     </ResultsContent>

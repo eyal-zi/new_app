@@ -32,11 +32,11 @@ type ResultSetProps = {
   set: ResultSetData;
   /** Called with the set's id; active sets show a cancel button when given. */
   onCancel?: (id: string) => void;
-  /** Id of the set currently being canceled, if any. */
-  cancelingId?: string;
+  /** Ids of the sets currently being canceled. */
+  cancelingIds?: ReadonlySet<string>;
 };
 
-export const ResultSet = ({ set, onCancel, cancelingId }: ResultSetProps) => {
+export const ResultSet = ({ set, onCancel, cancelingIds }: ResultSetProps) => {
   const heading = <Typography variant="h6">{set.title}</Typography>;
 
   // `active` sets look like `loading` ones, plus a way to cancel them.
@@ -51,7 +51,7 @@ export const ResultSet = ({ set, onCancel, cancelingId }: ResultSetProps) => {
           <CancelButton
             variant="outlined"
             color="warning"
-            loading={cancelingId === set.id}
+            loading={cancelingIds?.has(set.id)}
             onClick={() => onCancel(set.id)}
           >
             {CANCEL_SESSION_LABEL}

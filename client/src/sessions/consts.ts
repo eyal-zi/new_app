@@ -17,8 +17,6 @@ export const getResultsPath = (type: SessionType, id: string) =>
 
 export const TAG_FONT_SIZE = '1rem';
 
-export const PERCENT = 100;
-
 export const SESSION_STATUSES = Object.values(SessionStatus);
 
 export const SESSION_STATUS_LABELS: Record<SessionStatus, string> = {

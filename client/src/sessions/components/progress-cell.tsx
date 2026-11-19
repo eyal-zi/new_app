@@ -1,6 +1,7 @@
 import { Typography } from '@mui/material';
 
-import { PERCENT } from '../consts';
+import { PERCENT } from '@/shared/constants';
+
 import { formatPercent } from '../utils/format';
 import { ProgressBar, ProgressCellRoot } from './progress-cell.styles';
 

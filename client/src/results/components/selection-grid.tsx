@@ -36,11 +36,7 @@ export const SelectionGrid = ({
     const id = `${selectionId}:${row.id}:${index}`;
 
     if (cell.type === 'empty') {
-      return (
-        <EmptyCell key={id} role="listitem">
-          {EMPTY_CELL_LABEL}
-        </EmptyCell>
-      );
+      return <EmptyCell key={id}>{EMPTY_CELL_LABEL}</EmptyCell>;
     }
 
     if (cell.type === 'score') {

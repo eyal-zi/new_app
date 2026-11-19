@@ -56,7 +56,6 @@ export const SCORE_GREEN_HUE = 120;
 export const SCORE_RING_SIZE = 96;
 export const SCORE_RING_THICKNESS = 5;
 export const SCORE_RING_TRACK_OPACITY = 0.15;
-export const PERCENT = 100;
 export const SCORE_MIN = 0;
 export const SCORE_MAX = 1;
 export const SCORE_COLOR_SATURATION = 75;
@@ -102,11 +101,11 @@ export const getUnknownTypeMessage = (type: string) =>
   `Unknown session type "${type}".`;
 export const getFailedSessionMessage = (description: string) =>
   `This session ${description}.`;
+export const NO_INFERENCE_RESULTS_MESSAGE =
+  'No results are available for this session.';
 export const NO_EVALUATED_IMAGE_MESSAGE =
   'The evaluated image is not available for this session.';
 export const getLoadProblem = (id: string) => `Couldn't load session ${id}.`;
-export const getNotEvaluationProblem = (id: string) =>
-  `Session ${id} is not an evaluation session.`;
 export const getFailedProblem = (id: string, description: string) =>
   `Session ${id} ${description}.`;
 export const getNoEvaluatedImageProblem = (id: string) =>

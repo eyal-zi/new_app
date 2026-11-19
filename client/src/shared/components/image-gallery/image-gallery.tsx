@@ -22,6 +22,8 @@ export type ImageGalleryProps<T> = {
    * so using it doesn't open the lightbox.
    */
   onDelete?: (item: T, index: number) => void;
+  /** Prefix of each delete button's label, e.g. "Remove image". */
+  deleteLabel?: string;
   /** Ref for an item's delete button, e.g. to move focus to it. */
   getDeleteButtonRef?: (item: T) => Ref<HTMLButtonElement>;
   /** Open a full-screen viewer when a tile is clicked. Defaults to `true`. */
@@ -44,6 +46,7 @@ export const ImageGallery = <T,>({
   getImage,
   onItemClick,
   onDelete,
+  deleteLabel,
   getDeleteButtonRef,
   lightbox = true,
   gap = DEFAULT_GALLERY_GAP,
@@ -104,6 +107,7 @@ export const ImageGallery = <T,>({
           caption={image.caption}
           onClick={isInteractive ? () => select(item, index) : undefined}
           onDelete={onDelete && (() => onDelete(item, index))}
+          deleteLabel={deleteLabel}
           controlsOnHover={false}
           deleteButtonRef={getDeleteButtonRef?.(item)}
         />

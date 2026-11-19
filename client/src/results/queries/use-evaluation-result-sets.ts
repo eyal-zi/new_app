@@ -9,7 +9,6 @@ import {
   getFailedProblem,
   getLoadProblem,
   getNoEvaluatedImageProblem,
-  getNotEvaluationProblem,
 } from '../consts';
 import type { ResultSet } from '../types';
 import { describeFailedStatus } from '../utils/describe-failed-status';
@@ -18,7 +17,7 @@ import { toResultSet } from '../utils/to-result-set';
 
 /**
  * Result sets for the given evaluation session ids. Sessions that fail to
- * load, aren't evaluation sessions, or failed/were canceled are left out and
+ * load or failed/were canceled are left out and
  * reported in `problems`.
  */
 export const useEvaluationResultSets = (ids: readonly string[]) => {
@@ -38,13 +37,22 @@ export const useEvaluationResultSets = (ids: readonly string[]) => {
     const id = ids[index] as string;
 
     // A failed background refetch keeps its data, so only a missing one is a problem.
-    if (!data && isError) {
-      problems.push(getLoadProblem(id));
-    } else if (!data) {
-      sets.push({ id, title: id, status: 'loading' });
-    } else if (!isEvaluationSession(data)) {
-      problems.push(getNotEvaluationProblem(id));
-    } else if (FAILED_STATUSES.includes(data.status)) {
+    if (!data) {
+      if (isError) {
+        problems.push(getLoadProblem(id));
+      } else {
+        sets.push({ id, title: id, status: 'loading' });
+      }
+
+      return;
+    }
+
+    // The endpoint only serves evaluation sessions; this narrows the type.
+    if (!isEvaluationSession(data)) {
+      return;
+    }
+
+    if (FAILED_STATUSES.includes(data.status)) {
       problems.push(getFailedProblem(id, describeFailedStatus(data.status)));
     } else {
       const set = toResultSet(data);

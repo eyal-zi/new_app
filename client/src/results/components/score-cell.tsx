@@ -1,8 +1,9 @@
 import { Typography } from '@mui/material';
 
+import { PERCENT } from '@/shared/constants';
+
 import {
   getScoreLabel,
-  PERCENT,
   SCORE_DECIMALS,
   SCORE_RING_SIZE,
   SCORE_RING_THICKNESS,
@@ -28,7 +29,7 @@ export const ScoreCell = ({ score }: ScoreCellProps) => {
   } as const;
 
   return (
-    <ScoreFrame role="listitem">
+    <ScoreFrame>
       <RingWrapper>
         <RingTrack {...ringProps} value={PERCENT} aria-hidden />
         <RingValue

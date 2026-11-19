@@ -16,6 +16,7 @@ import {
   MAX_IMAGES,
   REMOVE_ALL_LABEL,
   REMOVE_ALL_TITLE,
+  REMOVE_IMAGE_LABEL,
   UPLOAD_SUBTITLE,
   UPLOAD_TITLE,
 } from './consts';
@@ -113,6 +114,7 @@ export const UploadStep = ({ images, onImagesChange }: UploadStepProps) => {
                 caption: file.name,
               })}
               onDelete={({ file }, index) => remove(file, index)}
+              deleteLabel={REMOVE_IMAGE_LABEL}
               getDeleteButtonRef={({ file }) => registerRemoveButton(file)}
               label={GALLERY_LABEL}
             />

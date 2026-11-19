@@ -11,6 +11,7 @@ export const getGalleryCountLabel = (count: number) =>
   `${count} of ${MAX_IMAGES} images`;
 
 export const REMOVE_ALL_LABEL = 'Remove all';
+export const REMOVE_IMAGE_LABEL = 'Remove image';
 export const REMOVE_ALL_TITLE = 'Remove all images?';
 export const getRemoveAllDescription = (count: number) =>
   `All ${count} images will be removed. You'll need to upload them again.`;

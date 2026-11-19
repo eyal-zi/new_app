@@ -32,6 +32,8 @@ export type ActionableImageTileProps = Omit<ImageTileProps, 'action'> & {
   onDownload?: () => void | Promise<void>;
   /** Shows a delete button on hover. */
   onDelete?: () => void;
+  /** Prefix of the delete button's label, followed by the image's alt. Defaults to "Delete image". */
+  deleteLabel?: string;
   /**
    * Whether the controls (select, download, delete) only show on hover or
    * focus. Defaults to `true`; pass `false` to keep them always visible, e.g.
@@ -52,6 +54,7 @@ export const ActionableImageTile = ({
   selection,
   onDownload,
   onDelete,
+  deleteLabel: deleteLabelPrefix = DELETE_IMAGE_LABEL,
   controlsOnHover = true,
   deleteButtonRef,
   onClick,
@@ -90,7 +93,7 @@ export const ActionableImageTile = ({
     ? TILE_HOVER_CONTROL_CLASS
     : undefined;
   const downloadLabel = `${DOWNLOAD_IMAGE_LABEL}: ${tileProps.alt}`;
-  const deleteLabel = `${DELETE_IMAGE_LABEL}: ${tileProps.alt}`;
+  const deleteLabel = `${deleteLabelPrefix}: ${tileProps.alt}`;
 
   const actions: ReactNode =
     onDownload || onDelete ? (

@@ -48,3 +48,5 @@ export const COLOR_SCHEME_BACKGROUNDS = {
 } as const;
 
 export const SUMMARY_TITLE = 'Summary';
+
+export const PERCENT = 100;

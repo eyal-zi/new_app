@@ -31,7 +31,7 @@ export const SelectableImage = ({
 
   return (
     <>
-      <SelectableImageFrame role="listitem">
+      <SelectableImageFrame>
         <ActionableImageTile
           src={image.src}
           alt={image.label}

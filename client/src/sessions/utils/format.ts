@@ -1,4 +1,4 @@
-import { PERCENT } from '../consts';
+import { PERCENT } from '@/shared/constants';
 
 const pad = (value: number) => String(value).padStart(2, '0');
 
