@@ -1,10 +1,17 @@
-import { DEFAULT_DOWNLOAD_FILE_NAME } from '@/shared/constants';
+import {
+  DEFAULT_DOWNLOAD_FILE_NAME,
+  type ImageDownloadFormat,
+} from '@/shared/constants';
+
+import { convertImageBlob } from './convert-image';
 
 export type DownloadFileOptions = {
   /** Name to save the file as. Defaults to the file name in the URL. */
   fileName?: string;
   /** Used when there's no `fileName` and the URL has no file name. */
   fallbackName?: string;
+  /** Converts the image to this format first; its extension replaces any existing one. */
+  format?: ImageDownloadFormat;
 };
 
 const NON_FILE_NAME_CHARS = /[^a-z0-9. -]+/gi;
@@ -15,6 +22,7 @@ const toFileName = (text: string) =>
   text.replace(NON_FILE_NAME_CHARS, '-').replace(EDGE_SEPARATORS, '');
 
 const hasExtension = (name: string) => name.includes('.');
+const EXTENSION = /\.[^.]+$/;
 
 const getUrlFileName = (url: string) => {
   const lastSegment = new URL(url, window.location.href).pathname
@@ -35,15 +43,16 @@ const withExtension = (name: string, mimeType: string) => {
 const resolveFileName = (
   url: string,
   mimeType: string,
-  { fileName, fallbackName }: DownloadFileOptions,
+  { fileName, fallbackName, format }: DownloadFileOptions,
 ) => {
   const name =
     fileName ??
     getUrlFileName(url) ??
     (fallbackName && toFileName(fallbackName)) ??
     DEFAULT_DOWNLOAD_FILE_NAME;
+  const baseName = format ? name.replace(EXTENSION, '') : name;
 
-  return withExtension(name || DEFAULT_DOWNLOAD_FILE_NAME, mimeType);
+  return withExtension(baseName || DEFAULT_DOWNLOAD_FILE_NAME, mimeType);
 };
 
 /** Saves an in-memory file, e.g. a generated CSV. */
@@ -84,5 +93,8 @@ export const downloadFile = async (
     return;
   }
 
-  downloadBlob(blob, resolveFileName(url, blob.type, options));
+  const { format } = options;
+  const file = format ? await convertImageBlob(blob, format) : blob;
+
+  downloadBlob(file, resolveFileName(url, file.type, options));
 };

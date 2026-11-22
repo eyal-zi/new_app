@@ -2,12 +2,14 @@ import DownloadIcon from '@mui/icons-material/Download';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
-import { IconButton } from '@mui/material';
+import { IconButton, Tooltip } from '@mui/material';
 import { useState } from 'react';
 import { useControls } from 'react-zoom-pan-pinch';
 
+import { type ImageDownloadFormat } from '@/shared/constants';
 import { downloadFile } from '@/shared/utils/download-file';
 
+import { DownloadFormatOptions } from '../../../download-format-options/download-format-options';
 import { type GalleryImage } from '../../types';
 import {
   CONTROLS_GROUP_LABEL,
@@ -31,11 +33,15 @@ export const LightboxControls = ({ image }: LightboxControlsProps) => {
   const handleZoomOut = () => void zoomOut();
   const handleReset = () => void resetTransform();
 
-  const handleDownload = async () => {
+  const handleDownload = async (format?: ImageDownloadFormat) => {
+    if (isDownloading) {
+      return;
+    }
+
     setIsDownloading(true);
 
     try {
-      await downloadFile(image.src, { fallbackName: image.alt });
+      await downloadFile(image.src, { fallbackName: image.alt, format });
     } finally {
       setIsDownloading(false);
     }
@@ -52,13 +58,22 @@ export const LightboxControls = ({ image }: LightboxControlsProps) => {
       <IconButton aria-label={ZOOM_IN_LABEL} onClick={handleZoomIn}>
         <ZoomInIcon />
       </IconButton>
-      <IconButton
-        aria-label={DOWNLOAD_LABEL}
-        onClick={() => void handleDownload()}
-        disabled={isDownloading}
+      <Tooltip
+        title={
+          <DownloadFormatOptions
+            label={DOWNLOAD_LABEL}
+            onSelect={(_event, format) => void handleDownload(format)}
+          />
+        }
       >
-        <DownloadIcon />
-      </IconButton>
+        <IconButton
+          aria-label={DOWNLOAD_LABEL}
+          aria-busy={isDownloading}
+          onClick={() => void handleDownload()}
+        >
+          <DownloadIcon />
+        </IconButton>
+      </Tooltip>
     </ControlsGroup>
   );
 };

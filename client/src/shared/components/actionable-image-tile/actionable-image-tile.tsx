@@ -2,6 +2,9 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { Stack, Tooltip } from '@mui/material';
 import { type MouseEvent, type ReactNode, type Ref, useState } from 'react';
 
+import { type ImageDownloadFormat } from '@/shared/constants';
+
+import { DownloadFormatOptions } from '../download-format-options/download-format-options';
 import { ImageTile, type ImageTileProps } from '../image-tile/image-tile';
 import { RemoveButton } from '../remove-button/remove-button';
 import {
@@ -28,8 +31,12 @@ export type ActionableImageTileProps = Omit<ImageTileProps, 'action'> & {
    * also toggles it, instead of calling `onClick`.
    */
   selection?: TileSelection;
-  /** Shows a download button on hover. May be async to show a busy state. */
-  onDownload?: () => void | Promise<void>;
+  /**
+   * Shows a download button on hover. Clicking it calls this with no format
+   * (download as is); its tooltip offers SVG / PNG / JPEG. May be async to
+   * show a busy state.
+   */
+  onDownload?: (format?: ImageDownloadFormat) => void | Promise<void>;
   /** Shows a delete button on hover. */
   onDelete?: () => void;
   /** Prefix of the delete button's label, followed by the image's alt. Defaults to "Delete image". */
@@ -62,7 +69,10 @@ export const ActionableImageTile = ({
 }: ActionableImageTileProps) => {
   const [isDownloading, setIsDownloading] = useState(false);
 
-  const handleDownload = async (event: MouseEvent) => {
+  const handleDownload = async (
+    event: MouseEvent,
+    format?: ImageDownloadFormat,
+  ) => {
     event.stopPropagation();
 
     if (isDownloading) {
@@ -72,7 +82,7 @@ export const ActionableImageTile = ({
     setIsDownloading(true);
 
     try {
-      await onDownload?.();
+      await onDownload?.(format);
     } finally {
       setIsDownloading(false);
     }
@@ -99,7 +109,14 @@ export const ActionableImageTile = ({
     onDownload || onDelete ? (
       <Stack direction="row" spacing={0.5} className={hoverControlClass}>
         {onDownload && (
-          <Tooltip title={downloadLabel}>
+          <Tooltip
+            title={
+              <DownloadFormatOptions
+                label={downloadLabel}
+                onSelect={(event, format) => void handleDownload(event, format)}
+              />
+            }
+          >
             <TileDownloadButton
               aria-label={downloadLabel}
               aria-busy={isDownloading}

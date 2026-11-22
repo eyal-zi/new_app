@@ -50,3 +50,12 @@ export const COLOR_SCHEME_BACKGROUNDS = {
 export const SUMMARY_TITLE = 'Summary';
 
 export const PERCENT = 100;
+
+export const IMAGE_DOWNLOAD_FORMATS = [
+  { format: 'svg', label: 'SVG', mimeType: 'image/svg+xml' },
+  { format: 'png', label: 'PNG', mimeType: 'image/png' },
+  { format: 'jpeg', label: 'JPEG', mimeType: 'image/jpeg' },
+] as const;
+
+export type ImageDownloadFormat =
+  (typeof IMAGE_DOWNLOAD_FORMATS)[number]['format'];
