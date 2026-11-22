@@ -1,7 +1,11 @@
 import { SessionStatus } from '@/api/generated/model';
+import { CancelIcon } from '@/assets/icons/cancel-icon';
+import { DeleteIcon } from '@/assets/icons/delete-icon';
 
 import type {
   ColumnFilter,
+  SessionAction,
+  SessionActionConfig,
   SessionColumnId,
   SessionSearchField,
 } from './types';
@@ -40,6 +44,25 @@ export const FINISHED_SESSION_STATUSES: ReadonlySet<SessionStatus> = new Set([
   SessionStatus.failed,
   SessionStatus.canceled,
 ]);
+
+export const SESSION_ACTIONS: Record<SessionAction, SessionActionConfig> = {
+  delete: {
+    label: 'Delete',
+    icon: DeleteIcon,
+    title: 'Delete session?',
+    getDescription: (id) => `Session ${id} will be permanently deleted.`,
+    successMessage: 'Session deleted',
+    shouldDelete: true,
+  },
+  cancel: {
+    label: 'Cancel',
+    icon: CancelIcon,
+    title: 'Cancel session?',
+    getDescription: (id) => `Session ${id} will be canceled.`,
+    successMessage: 'Session canceled',
+    shouldDelete: false,
+  },
+};
 
 export const SEARCH_FIELDS = [
   'session_id',

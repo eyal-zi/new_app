@@ -12,7 +12,12 @@ import { TABLE_PAGE_SIZE_OPTIONS } from '@/shared/constants';
 import { EmptyState } from '@/shared/ui/empty-state';
 
 import { SESSION_COLUMNS } from '../consts';
-import type { ImageOpener, Session, SessionFilters } from '../types';
+import type {
+  ImageOpener,
+  Session,
+  SessionActionHandler,
+  SessionFilters,
+} from '../types';
 import { ColumnFilterCell } from './column-filter-cell';
 import { SessionRow } from './session-row';
 import { FilterRow, FitTable, TablePanel } from './sessions-table.styles';
@@ -28,8 +33,7 @@ export const SessionsTable = ({
   onFilterChange,
   onPageChange,
   onPageSizeChange,
-  onDelete,
-  onCancel,
+  onAction,
   onOpenImage,
 }: {
   sessions: Session[];
@@ -40,8 +44,7 @@ export const SessionsTable = ({
   onFilterChange: (patch: SessionFilters) => void;
   onPageChange: (page: number) => void;
   onPageSizeChange: (pageSize: number) => void;
-  onDelete: (session: Session) => void;
-  onCancel: (session: Session) => void;
+  onAction: SessionActionHandler;
   onOpenImage: ImageOpener;
 }) => {
   const changePage = (
@@ -69,8 +72,7 @@ export const SessionsTable = ({
     <SessionRow
       key={session.id}
       session={session}
-      onDelete={onDelete}
-      onCancel={onCancel}
+      onAction={onAction}
       onOpenImage={onOpenImage}
     />
   );

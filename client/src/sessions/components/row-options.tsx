@@ -1,5 +1,3 @@
-import CancelIcon from '@mui/icons-material/Cancel';
-import DeleteIcon from '@mui/icons-material/Delete';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import {
   IconButton,
@@ -10,16 +8,17 @@ import {
 } from '@mui/material';
 import { type MouseEvent, useState } from 'react';
 
+import { SESSION_ACTIONS } from '../consts';
+import type { SessionAction } from '../types';
+
 export const RowOptions = ({
   sessionId,
-  isFinished,
-  onDelete,
-  onCancel,
+  actions,
+  onSelect,
 }: {
   sessionId: string;
-  isFinished: boolean;
-  onDelete: () => void;
-  onCancel: () => void;
+  actions: readonly SessionAction[];
+  onSelect: (action: SessionAction) => void;
 }) => {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
 
@@ -27,14 +26,22 @@ export const RowOptions = ({
     setAnchor(event.currentTarget);
   const closeMenu = () => setAnchor(null);
 
-  const deleteSession = () => {
+  const selectAction = (action: SessionAction) => {
     closeMenu();
-    onDelete();
+    onSelect(action);
   };
 
-  const cancelSession = () => {
-    closeMenu();
-    onCancel();
+  const renderItem = (action: SessionAction) => {
+    const { label, icon: Icon } = SESSION_ACTIONS[action];
+
+    return (
+      <MenuItem key={action} onClick={() => selectAction(action)}>
+        <ListItemIcon>
+          <Icon fontSize="small" />
+        </ListItemIcon>
+        <ListItemText>{label}</ListItemText>
+      </MenuItem>
+    );
   };
 
   return (
@@ -48,21 +55,7 @@ export const RowOptions = ({
         <MoreVertIcon />
       </IconButton>
       <Menu anchorEl={anchor} open={Boolean(anchor)} onClose={closeMenu}>
-        {isFinished ? (
-          <MenuItem onClick={deleteSession}>
-            <ListItemIcon>
-              <DeleteIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Delete</ListItemText>
-          </MenuItem>
-        ) : (
-          <MenuItem onClick={cancelSession}>
-            <ListItemIcon>
-              <CancelIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Cancel</ListItemText>
-          </MenuItem>
-        )}
+        {actions.map(renderItem)}
       </Menu>
     </>
   );

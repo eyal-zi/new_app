@@ -1,3 +1,6 @@
+import type { SvgIconProps } from '@mui/material';
+import type { ComponentType } from 'react';
+
 import type {
   SessionSearchValuesDto,
   SessionStatus,
@@ -22,12 +25,27 @@ export interface Session {
 // What the row's options menu asks the page to do with a session.
 export type SessionAction = 'delete' | 'cancel';
 
+// How an action shows in the row menu (label, icon) and its confirmation dialog.
+export interface SessionActionConfig {
+  label: string;
+  icon: ComponentType<SvgIconProps>;
+  title: string;
+  getDescription: (id: string) => string;
+  successMessage: string;
+  shouldDelete: boolean;
+}
+
 export interface ViewedImage {
   src: string;
   alt: string;
 }
 
 export type ImageOpener = (image: ViewedImage) => void;
+
+export type SessionActionHandler = (
+  session: Session,
+  action: SessionAction,
+) => void;
 
 // Status has its own dropdown, so it is not a free-text search field.
 export type SessionSearchField = Exclude<

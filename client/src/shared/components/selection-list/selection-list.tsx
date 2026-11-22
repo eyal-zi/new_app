@@ -1,6 +1,7 @@
-import CancelIcon from '@mui/icons-material/Cancel';
 import { Tooltip, Typography } from '@mui/material';
 import { useRef } from 'react';
+
+import { CancelIcon } from '@/assets/icons/cancel-icon';
 
 import { getRemoveSelectionLabel, SELECTIONS_TITLE } from './consts';
 import { Chips, Section, SelectionChip } from './selection-list.styles';
