@@ -51,3 +51,25 @@ export const CANCELED_STATUS = SESSION_STATUSES[4];
 export const CANCELED_LOGS = 'Session was canceled';
 // Statuses a session can still be moved out of by the mock processor.
 export const ACTIVE_STATUSES = ['started', 'running'] as const;
+
+export const SESSION_FILTER_TYPES = ['string'] as const;
+
+export type SessionFilterType = (typeof SESSION_FILTER_TYPES)[number];
+
+export type SessionFilterDefinition = {
+  /** Key inside `variationa_info` / `variationb_info`. */
+  name: string;
+  type: SessionFilterType;
+  /** Label shown for the filter in the sessions table. */
+  title: string;
+};
+
+/**
+ * The extra, adjustable filters of the sessions table. They describe both the
+ * properties a session's `variationa_info` / `variationb_info` may hold and
+ * the properties `search_values` may filter by. Add an entry to add a filter.
+ */
+export const SESSION_INFO_FILTERS: readonly SessionFilterDefinition[] = [
+  { name: 'name', type: 'string', title: 'Name' },
+  { name: 'model_version', type: 'string', title: 'Model version' },
+];

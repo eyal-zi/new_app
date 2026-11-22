@@ -6,6 +6,7 @@
  */
 
 /**
+ * Values by property name, as listed by the filter schema (name, model_version), or null
  * @nullable
  */
-export type TrainingSessionDtoVariationaInfo = { [key: string]: unknown } | null;
+export type TrainingSessionDtoVariationaInfo = {[key: string]: string} | null;

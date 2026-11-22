@@ -91,7 +91,7 @@ const imageUrl = (seed: string) => {
 const variationInfo = (name: string) =>
   random() < NULL_VARIATION_INFO_CHANCE
     ? null
-    : { name, model_version: `v${between(1, 5)}`, seed: between(0, 9999) };
+    : { name, model_version: `v${between(1, 5)}` };
 
 // Results exist only for completed sessions, built by the same generator the
 // mock worker uses, so seeded and freshly created sessions look alike.

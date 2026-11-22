@@ -34,9 +34,38 @@ import {
   MAX_TRAINING_TYPE_LENGTH,
   MIN_PROGRESS,
   RECOMMENDATION_RESULT_TYPES,
+  SESSION_FILTER_TYPES,
+  SESSION_INFO_FILTERS,
   SESSION_STATUSES,
   SESSION_TYPES,
 } from './sessions.constants.js';
+import { IsSessionInfoFilter } from './sessions.filters.js';
+import type { SessionInfo } from './sessions.schema.js';
+
+const infoPropertyNames = SESSION_INFO_FILTERS.map(({ name }) => name).join(
+  ', ',
+);
+
+const INFO_VALUE_SCHEMA = { type: 'string' };
+
+export class SessionFilterSchemaDto {
+  @ApiProperty({
+    description:
+      'Key of the property inside variationa_info / variationb_info, and in the same-named search_values objects',
+  })
+  name!: string;
+
+  @ApiProperty({
+    enum: SESSION_FILTER_TYPES,
+    enumName: 'SessionFilterType',
+    description:
+      'Type of the value. Strings match case-insensitively by substring',
+  })
+  type!: (typeof SESSION_FILTER_TYPES)[number];
+
+  @ApiProperty({ description: 'Label for the filter in the sessions table' })
+  title!: string;
+}
 
 export class SessionDto {
   @ApiProperty() session_id!: string;
@@ -75,11 +104,21 @@ export class SessionDto {
 
   @ApiProperty({ type: String, nullable: true }) logs!: string | null;
 
-  @ApiProperty({ type: Object, nullable: true })
-  variationa_info!: Record<string, unknown> | null;
+  @ApiProperty({
+    type: 'object',
+    additionalProperties: INFO_VALUE_SCHEMA,
+    nullable: true,
+    description: `Values by property name, as listed by the filter schema (${infoPropertyNames}), or null`,
+  })
+  variationa_info!: SessionInfo | null;
 
-  @ApiProperty({ type: Object, nullable: true })
-  variationb_info!: Record<string, unknown> | null;
+  @ApiProperty({
+    type: 'object',
+    additionalProperties: INFO_VALUE_SCHEMA,
+    nullable: true,
+    description: `Values by property name, as listed by the filter schema (${infoPropertyNames}), or null`,
+  })
+  variationb_info!: SessionInfo | null;
 }
 
 export class RecommendationResultDto {
@@ -180,6 +219,24 @@ export class SessionSearchValuesDto {
   @IsString()
   @MaxLength(MAX_SEARCH_LENGTH)
   status?: string;
+
+  @ApiPropertyOptional({
+    type: 'object',
+    additionalProperties: INFO_VALUE_SCHEMA,
+    description: `Filters on variationa_info, by property name (${infoPropertyNames}); see the filter schema endpoint for the types`,
+  })
+  @IsOptional()
+  @IsSessionInfoFilter()
+  variationa_info?: SessionInfo;
+
+  @ApiPropertyOptional({
+    type: 'object',
+    additionalProperties: INFO_VALUE_SCHEMA,
+    description: `Filters on variationb_info, by property name (${infoPropertyNames}); see the filter schema endpoint for the types`,
+  })
+  @IsOptional()
+  @IsSessionInfoFilter()
+  variationb_info?: SessionInfo;
 }
 
 export class SessionTypeParamDto {

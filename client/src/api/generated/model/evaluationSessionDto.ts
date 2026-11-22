@@ -28,9 +28,15 @@ export interface EvaluationSessionDto {
   notes: string;
   /** @nullable */
   logs: string | null;
-  /** @nullable */
+  /**
+     * Values by property name, as listed by the filter schema (name, model_version), or null
+     * @nullable
+     */
   variationa_info: EvaluationSessionDtoVariationaInfo;
-  /** @nullable */
+  /**
+     * Values by property name, as listed by the filter schema (name, model_version), or null
+     * @nullable
+     */
   variationb_info: EvaluationSessionDtoVariationbInfo;
   /** @nullable */
   evaluated_image_url: string | null;
