@@ -1,4 +1,4 @@
-import { SessionStatus } from '@/api/generated/model';
+import { SessionStatus, SessionType } from '@/api/generated/model';
 import { CancelIcon } from '@/assets/icons/cancel-icon';
 import { DeleteIcon } from '@/assets/icons/delete-icon';
 
@@ -11,15 +11,20 @@ import type {
 } from './types';
 
 export const SESSIONS_PATH = '/sessions';
-export const getResultsPath = (id: string) => `${SESSIONS_PATH}/${id}/results`;
+export const RESULTS_ROUTE_PATH =
+  `${SESSIONS_PATH}/$type/$sessionId/results` as const;
+/** Compare view: `?ids=a,b,c` lists the evaluation sessions to show. */
+export const EVALUATION_RESULTS_ROUTE_PATH =
+  `${SESSIONS_PATH}/${SessionType.evaluation}/results` as const;
+export const getResultsPath = (type: SessionType, id: string) =>
+  `${SESSIONS_PATH}/${type}/${id}/results`;
 
 export const TAG_FONT_SIZE = '1rem';
 
 export const SESSION_STATUSES = Object.values(SessionStatus);
 
 export const SESSION_STATUS_LABELS: Record<SessionStatus, string> = {
-  pending: 'Pending',
-  in_progress: 'In progress',
+  started: 'Started',
   running: 'Running',
   completed: 'Completed',
   failed: 'Failed',
@@ -30,8 +35,7 @@ export const SESSION_STATUS_COLORS: Record<
   SessionStatus,
   'default' | 'info' | 'primary' | 'success' | 'error' | 'warning'
 > = {
-  pending: 'default',
-  in_progress: 'info',
+  started: 'info',
   running: 'primary',
   completed: 'success',
   failed: 'error',
@@ -89,3 +93,12 @@ export const COLUMN_FILTERS: Partial<Record<SessionColumnId, ColumnFilter>> = {
   owner: { kind: 'text', field: 'session_owner' },
   status: { kind: 'status' },
 };
+
+/** Image names in the sessions table, shown as `{sessionId} - {name}`. */
+export const SESSION_IMAGE_NAMES = {
+  a: 'variationa',
+  b: 'variationb',
+} as const;
+
+/** Shown in place of an image the session doesn't have. */
+export const NO_IMAGE_LABEL = '—';

@@ -15,9 +15,11 @@ import { TrainingModule } from './training/training.module.js';
     LoggingModule,
     DatabaseModule,
     AuthModule,
-    SessionsModule,
+    // Before SessionsModule: its `GET :type/:sessionId` would otherwise capture
+    // `/inference/statistics` and `/training/types` and reject them with a 400.
     InferenceModule,
     TrainingModule,
+    SessionsModule,
   ],
 })
 export class AppModule {}

@@ -5,11 +5,11 @@
  * OpenAPI spec version: 1.0
  */
 import type { SessionStatus } from './sessionStatus';
-import type { SessionType } from './sessionType';
+import type { TrainingSessionDtoVariationaInfo } from './trainingSessionDtoVariationaInfo';
+import type { TrainingSessionDtoVariationbInfo } from './trainingSessionDtoVariationbInfo';
 
-export interface SessionDto {
+export interface TrainingSessionDto {
   session_id: string;
-  type: SessionType;
   session_owner: string;
   image_a_url: string;
   image_b_url: string;
@@ -18,8 +18,9 @@ export interface SessionDto {
   /** Naive ISO-8601 timestamp in UTC (no timezone designator) */
   last_update: string;
   /**
+     * A fraction from 0 to 1
      * @minimum 0
-     * @maximum 100
+     * @maximum 1
      * @nullable
      */
   progress: number | null;
@@ -27,4 +28,11 @@ export interface SessionDto {
   notes: string;
   /** @nullable */
   logs: string | null;
+  /** @nullable */
+  variationa_info: TrainingSessionDtoVariationaInfo;
+  /** @nullable */
+  variationb_info: TrainingSessionDtoVariationbInfo;
+  /** @nullable */
+  training_type: string | null;
+  s8_link: string;
 }

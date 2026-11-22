@@ -36,24 +36,25 @@ type ImageLightboxProps = {
   image: GalleryImage;
   /** Identifies the image; zoom and pan reset whenever it changes. */
   imageId: string;
-  index: number;
-  total: number;
+  /** Position among the images; omit all of the navigation props for one image. */
+  index?: number;
+  total?: number;
   onClose: () => void;
-  onNext: () => void;
-  onPrevious: () => void;
+  onNext?: () => void;
+  onPrevious?: () => void;
 };
 
 export const ImageLightbox = ({
   open,
   image,
   imageId,
-  index,
-  total,
+  index = 0,
+  total = 1,
   onClose,
   onNext,
   onPrevious,
 }: ImageLightboxProps) => {
-  const canNavigate = total > 1;
+  const canNavigate = total > 1 && !!onNext && !!onPrevious;
   const transformRef = useRef<ReactZoomPanPinchRef>(null);
 
   // Reset instead of remounting the wrapper on a new image: remounting would
@@ -68,9 +69,9 @@ export const ImageLightbox = ({
     }
 
     if (event.key === LIGHTBOX_NEXT_KEY) {
-      onNext();
+      onNext?.();
     } else if (event.key === LIGHTBOX_PREVIOUS_KEY) {
-      onPrevious();
+      onPrevious?.();
     }
   };
 

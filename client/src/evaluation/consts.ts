@@ -5,6 +5,9 @@ export const EVALUATION_STEPS = {
   summary: { id: 'summary', label: 'Summary' },
 } as const;
 
+export const getPartialFailureMessage = (failed: number, total: number) =>
+  `${failed} of ${total} sessions couldn't be created.`;
+
 export const EVALUATION_STEPS_LABELS: Partial<StepsLabels> = {
   finish: 'Evaluate',
 };

@@ -6,7 +6,7 @@ export const SELECT_TYPE_TITLE = 'Select required type';
 export const CHOICES_MAX_WIDTH = 150;
 
 /** Always offered, ahead of the types fetched from the API. */
-export const DEFAULT_TYPE_OPTION: ChoiceOption<string> = {
+export const DEFAULT_TYPE_OPTION = {
   value: 'default',
   label: 'Default',
-};
+} satisfies ChoiceOption<string>;

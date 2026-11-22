@@ -9,9 +9,9 @@ export const DROPZONE_DESCRIPTION = `${IMAGE_ACCEPT_DESCRIPTION} · up to ${MAX_
 export const GALLERY_LABEL = 'Uploaded images';
 export const getGalleryCountLabel = (count: number) =>
   `${count} of ${MAX_IMAGES} images`;
-export const getRemoveImageLabel = (fileName: string) => `Remove ${fileName}`;
 
 export const REMOVE_ALL_LABEL = 'Remove all';
+export const REMOVE_IMAGE_LABEL = 'Remove image';
 export const REMOVE_ALL_TITLE = 'Remove all images?';
 export const getRemoveAllDescription = (count: number) =>
   `All ${count} images will be removed. You'll need to upload them again.`;

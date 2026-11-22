@@ -9,8 +9,7 @@ export type SessionStatus = typeof SessionStatus[keyof typeof SessionStatus];
 
 
 export const SessionStatus = {
-  pending: 'pending',
-  in_progress: 'in_progress',
+  started: 'started',
   running: 'running',
   completed: 'completed',
   failed: 'failed',
