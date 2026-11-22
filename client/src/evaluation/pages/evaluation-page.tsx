@@ -1,6 +1,6 @@
 import { useNavigate } from '@tanstack/react-router';
 import { enqueueSnackbar } from 'notistack';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 
 import { useCreateEvaluationSession } from '@/api/generated/api';
 import { SESSION_IDS_PARAM } from '@/results/consts';
@@ -12,6 +12,7 @@ import {
   MAX_CONCURRENT_UPLOADS,
   UPLOAD_REQUEST_TIMEOUT_MS,
 } from '@/shared/constants';
+import { useIsMountedRef } from '@/shared/hooks/use-is-mounted-ref';
 import { useSessionOwner } from '@/shared/hooks/use-session-owner';
 import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
 import { mapWithConcurrency } from '@/shared/utils/map-with-concurrency';
@@ -35,15 +36,7 @@ export const EvaluationPage = () => {
     request: { timeout: UPLOAD_REQUEST_TIMEOUT_MS },
   });
   // The batch can outlive the page; don't pull the user back once they left.
-  const isMountedRef = useRef(true);
-
-  useEffect(() => {
-    isMountedRef.current = true;
-
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, []);
+  const isMountedRef = useIsMountedRef();
 
   // A session evaluates a single image, so each image gets its own session.
   // Each failure is reported by the query client; the sessions that were

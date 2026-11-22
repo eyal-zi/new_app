@@ -11,6 +11,7 @@ import type { Selection } from '@/shared/components/selection-list/types';
 import { Steps } from '@/shared/components/steps/steps';
 import type { StepItem } from '@/shared/components/steps/types';
 import { UPLOAD_REQUEST_TIMEOUT_MS } from '@/shared/constants';
+import { useIsMountedRef } from '@/shared/hooks/use-is-mounted-ref';
 import { useSessionOwner } from '@/shared/hooks/use-session-owner';
 import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
 
@@ -33,6 +34,7 @@ export const TrainingPage = () => {
 
   const owner = useSessionOwner();
   const navigate = useNavigate();
+  const isMountedRef = useIsMountedRef();
   const { mutateAsync, isPending } = useCreateTrainingSession({
     request: { timeout: UPLOAD_REQUEST_TIMEOUT_MS },
   });
@@ -68,10 +70,13 @@ export const TrainingPage = () => {
         },
       });
 
-      await navigate({
-        to: RESULTS_ROUTE_PATH,
-        params: { type: SessionType.training, sessionId: session_id },
-      });
+      // The upload can outlive the page; don't pull the user back once they left.
+      if (isMountedRef.current) {
+        await navigate({
+          to: RESULTS_ROUTE_PATH,
+          params: { type: SessionType.training, sessionId: session_id },
+        });
+      }
     } catch {
       // Already reported by the query client; stay here so the user can retry.
     }
