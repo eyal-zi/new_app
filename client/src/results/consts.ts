@@ -1,16 +1,5 @@
 import { SessionStatus } from '@/api/generated/model';
 
-/**
- * Session status flow: started -> running -> completed. From any step before
- * completed a session can also end as failed or canceled. A session that is
- * not in a terminal status is "in progress": the results pages show it as
- * loading, offer to cancel it and keep polling until it reaches one.
- */
-export const TERMINAL_STATUSES: readonly SessionStatus[] = [
-  SessionStatus.completed,
-  SessionStatus.failed,
-  SessionStatus.canceled,
-];
 /** Terminal statuses that produce no results. */
 export const FAILED_STATUSES: readonly SessionStatus[] = [
   SessionStatus.failed,
