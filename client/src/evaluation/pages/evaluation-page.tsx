@@ -1,6 +1,6 @@
 import { useNavigate } from '@tanstack/react-router';
 import { enqueueSnackbar } from 'notistack';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useCreateEvaluationSession } from '@/api/generated/api';
 import { SESSION_IDS_PARAM } from '@/results/consts';
@@ -30,6 +30,16 @@ export const EvaluationPage = () => {
   const { mutateAsync } = useCreateEvaluationSession({
     request: { timeout: UPLOAD_REQUEST_TIMEOUT_MS },
   });
+  // The batch can outlive the page; don't pull the user back once they left.
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   // A session evaluates a single image, so each image gets its own session.
   // Each failure is reported by the query client; the sessions that were
@@ -62,7 +72,7 @@ export const EvaluationPage = () => {
         });
       }
 
-      if (ids.length > 0) {
+      if (ids.length > 0 && isMountedRef.current) {
         await navigate({
           to: EVALUATION_RESULTS_ROUTE_PATH,
           search: { [SESSION_IDS_PARAM]: ids },

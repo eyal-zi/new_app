@@ -38,12 +38,8 @@ export const VARIATION_KEYS = ['variationa', 'variationb'] as const;
 export const EMPTY_CELL_LABEL = '—';
 
 export const SELECTION_GRID_ROW_TITLE_WIDTH = 14;
-/** In px. */
-export const SELECTION_LOADING_SPINNER_SIZE = 18;
 /** Index into `theme.shadows`. */
 export const SELECTION_BAR_ELEVATION = 6;
-/** In theme spacing units. */
-export const SELECTION_SKELETON_HEIGHT = 20;
 
 /** Up to this many compared images share one row. */
 export const COMPARE_MAX_SINGLE_ROW = 3;
@@ -88,7 +84,6 @@ export const CLEAR_SELECTION_LABEL = 'Clear';
 export const COMPARE_LABEL = 'Compare';
 
 export const PROGRESS_LABEL = 'Results progress';
-export const LOADING_LABEL = 'Loading';
 export const getLoadingLabel = (title: string) => `Loading ${title}`;
 export const getScoreLabel = (score: string) => `Score ${score}`;
 

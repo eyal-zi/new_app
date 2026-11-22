@@ -28,14 +28,12 @@ export type SelectionGridRow = {
   cells: readonly GridCell[];
 };
 
-export type ResultSelection =
-  | { id: string; title: string; status: 'loading' }
-  | {
-      id: string;
-      title: string;
-      status: 'ready';
-      columnTitles: readonly string[];
-      rows: readonly SelectionGridRow[];
-    };
+export type ResultSelection = {
+  id: string;
+  title: string;
+  status: 'ready';
+  columnTitles: readonly string[];
+  rows: readonly SelectionGridRow[];
+};
 
 export type SelectedImage = { id: string; src: string; label: string };
