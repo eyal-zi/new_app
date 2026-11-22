@@ -16,8 +16,14 @@ import type {
 import { DEFAULT_TABLE_PAGE_SIZE } from '@/shared/constants';
 import { useDebouncedValue } from '@/shared/hooks/use-debounced-value';
 
-import type { SessionFilters, SessionSearchFilters } from '../types';
+import { DEFAULT_INFO_FILTER } from '../consts';
+import type {
+  InfoFilter,
+  SessionFilters,
+  SessionSearchFilters,
+} from '../types';
 import { getActiveSearchFilters } from '../utils/get-active-search-filters';
+import { getInfoSearchValues } from '../utils/get-info-search-values';
 import { mapSessions } from '../utils/map-session';
 import {
   REFETCH_INTERVAL_MS,
@@ -32,26 +38,35 @@ export const useSessionsTable = () => {
   const [searchFilters, setSearchFilters] = useState<SessionSearchFilters>({});
   const [type, setType] = useState<SessionType>();
   const [status, setStatus] = useState<SessionStatus>();
+  const [infoFilter, setInfoFilter] = useState<InfoFilter>(DEFAULT_INFO_FILTER);
 
   // Only the typed text is debounced; the type and status dropdowns apply at
   // once.
   const debouncedSearch = useDebouncedValue(searchFilters, SEARCH_DEBOUNCE_MS);
+  const debouncedInfo = useDebouncedValue(infoFilter, SEARCH_DEBOUNCE_MS);
 
   // Go back to the first page when the filters the server sees change, not
   // while the user is still typing.
-  const [applied, setApplied] = useState({ debouncedSearch, type, status });
+  const [applied, setApplied] = useState({
+    debouncedSearch,
+    debouncedInfo,
+    type,
+    status,
+  });
 
   if (
     applied.debouncedSearch !== debouncedSearch ||
+    applied.debouncedInfo !== debouncedInfo ||
     applied.type !== type ||
     applied.status !== status
   ) {
-    setApplied({ debouncedSearch, type, status });
+    setApplied({ debouncedSearch, debouncedInfo, type, status });
     setPage(0);
   }
 
   const searchValues: SessionSearchValuesDto = {
     ...getActiveSearchFilters(debouncedSearch),
+    ...getInfoSearchValues(debouncedInfo),
     ...(status && { status }),
   };
   const queryOptions = {
@@ -139,6 +154,8 @@ export const useSessionsTable = () => {
     page,
     pageSize,
     filters: { ...searchFilters, type, status },
+    infoFilter,
+    setInfoFilter,
     refetch,
     setPage,
     changeFilters,

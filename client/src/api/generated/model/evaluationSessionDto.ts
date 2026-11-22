@@ -29,12 +29,12 @@ export interface EvaluationSessionDto {
   /** @nullable */
   logs: string | null;
   /**
-     * Values by property name, as listed by the filter schema (name, model_version), or null
+     * Values by property name, as listed by the filter schema (banana, strawberry), or null
      * @nullable
      */
   variationa_info: EvaluationSessionDtoVariationaInfo;
   /**
-     * Values by property name, as listed by the filter schema (name, model_version), or null
+     * Values by property name, as listed by the filter schema (banana, strawberry), or null
      * @nullable
      */
   variationb_info: EvaluationSessionDtoVariationbInfo;

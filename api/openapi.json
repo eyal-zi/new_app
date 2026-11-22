@@ -819,7 +819,7 @@
               "type": "string"
             },
             "nullable": true,
-            "description": "Values by property name, as listed by the filter schema (name, model_version), or null"
+            "description": "Values by property name, as listed by the filter schema (banana, strawberry), or null"
           },
           "variationb_info": {
             "type": "object",
@@ -827,7 +827,7 @@
               "type": "string"
             },
             "nullable": true,
-            "description": "Values by property name, as listed by the filter schema (name, model_version), or null"
+            "description": "Values by property name, as listed by the filter schema (banana, strawberry), or null"
           },
           "recommendations": {
             "description": "One recommendation per requested statistic.",
@@ -912,7 +912,7 @@
               "type": "string"
             },
             "nullable": true,
-            "description": "Values by property name, as listed by the filter schema (name, model_version), or null"
+            "description": "Values by property name, as listed by the filter schema (banana, strawberry), or null"
           },
           "variationb_info": {
             "type": "object",
@@ -920,7 +920,7 @@
               "type": "string"
             },
             "nullable": true,
-            "description": "Values by property name, as listed by the filter schema (name, model_version), or null"
+            "description": "Values by property name, as listed by the filter schema (banana, strawberry), or null"
           },
           "training_type": {
             "type": "string",
@@ -999,7 +999,7 @@
               "type": "string"
             },
             "nullable": true,
-            "description": "Values by property name, as listed by the filter schema (name, model_version), or null"
+            "description": "Values by property name, as listed by the filter schema (banana, strawberry), or null"
           },
           "variationb_info": {
             "type": "object",
@@ -1007,7 +1007,7 @@
               "type": "string"
             },
             "nullable": true,
-            "description": "Values by property name, as listed by the filter schema (name, model_version), or null"
+            "description": "Values by property name, as listed by the filter schema (banana, strawberry), or null"
           },
           "evaluated_image_url": {
             "type": "string",
@@ -1195,14 +1195,14 @@
             "additionalProperties": {
               "type": "string"
             },
-            "description": "Filters on variationa_info, by property name (name, model_version); see the filter schema endpoint for the types"
+            "description": "Filters on variationa_info, by property name (banana, strawberry); see the filter schema endpoint for the types"
           },
           "variationb_info": {
             "type": "object",
             "additionalProperties": {
               "type": "string"
             },
-            "description": "Filters on variationb_info, by property name (name, model_version); see the filter schema endpoint for the types"
+            "description": "Filters on variationb_info, by property name (banana, strawberry); see the filter schema endpoint for the types"
           }
         }
       },

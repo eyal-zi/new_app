@@ -70,6 +70,6 @@ export type SessionFilterDefinition = {
  * the properties `search_values` may filter by. Add an entry to add a filter.
  */
 export const SESSION_INFO_FILTERS: readonly SessionFilterDefinition[] = [
-  { name: 'name', type: 'string', title: 'Name' },
-  { name: 'model_version', type: 'string', title: 'Model version' },
+  { name: 'banana', type: 'string', title: 'Banana' },
+  { name: 'strawberry', type: 'string', title: 'Strawberry' },
 ];

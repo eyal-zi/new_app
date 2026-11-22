@@ -6,6 +6,6 @@
  */
 
 /**
- * Filters on variationb_info, by property name (name, model_version); see the filter schema endpoint for the types
+ * Filters on variationb_info, by property name (banana, strawberry); see the filter schema endpoint for the types
  */
 export type SessionSearchValuesDtoVariationbInfo = {[key: string]: string};

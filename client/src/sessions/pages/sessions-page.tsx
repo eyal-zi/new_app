@@ -7,6 +7,7 @@ import { ImageLightbox } from '@/shared/components/image-gallery/image-lightbox/
 import { ConfirmationDialog } from '@/shared/ui/confirmation-dialog';
 import { ErrorState, LoadingState } from '@/shared/ui/states';
 
+import { InfoFilterBar } from '../components/info-filter-bar';
 import { SessionsTable } from '../components/sessions-table';
 import { StaleDataNotice } from '../components/stale-data-notice';
 import { SESSION_ACTIONS } from '../consts';
@@ -82,7 +83,11 @@ export const SessionsPage = () => {
           Browse, search and manage all sessions.
         </Typography>
       </Box>
-      <Box>
+      <Stack spacing={2}>
+        <InfoFilterBar
+          filter={table.infoFilter}
+          onChange={table.setInfoFilter}
+        />
         {isPending && !isError && <LoadingState />}
         {table.isRefetchError && (
           <StaleDataNotice updatedAt={table.dataUpdatedAt} />
@@ -104,7 +109,7 @@ export const SessionsPage = () => {
             onOpenImage={openImage}
           />
         )}
-      </Box>
+      </Stack>
       {pending && (
         <ConfirmationDialog
           open={dialogOpen}
