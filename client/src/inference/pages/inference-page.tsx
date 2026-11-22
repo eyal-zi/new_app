@@ -18,6 +18,7 @@ import { SelectStatisticsStep } from '../components/select-statistics-step/selec
 import {
   FIRST_IMAGE_PICKER,
   INFERENCE_STEPS,
+  INFERENCE_STEPS_LABELS,
   MIN_STATISTICS,
   SECOND_IMAGE_PICKER,
   UPLOAD_SUBTITLE,
@@ -121,7 +122,12 @@ export const InferencePage = () => {
 
   return (
     <PageLayout title={SESSION_TYPE_LABELS.inference}>
-      <Steps steps={steps} onFinish={finish} isFinishing={isPending} />
+      <Steps
+        steps={steps}
+        onFinish={finish}
+        isFinishing={isPending}
+        labels={INFERENCE_STEPS_LABELS}
+      />
     </PageLayout>
   );
 };

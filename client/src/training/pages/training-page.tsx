@@ -20,6 +20,7 @@ import {
   FIRST_IMAGE_PICKER,
   SECOND_IMAGE_PICKER,
   TRAINING_STEPS,
+  TRAINING_STEPS_LABELS,
   UPLOAD_SUBTITLE,
   UPLOAD_TITLE,
 } from '../consts';
@@ -126,7 +127,12 @@ export const TrainingPage = () => {
 
   return (
     <PageLayout title={SESSION_TYPE_LABELS.training}>
-      <Steps steps={steps} onFinish={finish} isFinishing={isPending} />
+      <Steps
+        steps={steps}
+        onFinish={finish}
+        isFinishing={isPending}
+        labels={TRAINING_STEPS_LABELS}
+      />
     </PageLayout>
   );
 };

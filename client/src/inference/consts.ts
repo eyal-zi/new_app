@@ -1,4 +1,5 @@
 import { type ImagePickerConfig } from '@/shared/components/image-pickers-step/image-pickers-step';
+import { type StepsLabels } from '@/shared/components/steps/types';
 import { IMAGE_ACCEPT, IMAGE_ACCEPT_DESCRIPTION } from '@/shared/constants';
 
 export const INFERENCE_STEPS = {
@@ -6,6 +7,10 @@ export const INFERENCE_STEPS = {
   selectStatistics: { id: 'select-statistics', label: 'Select statistics' },
   summary: { id: 'summary', label: 'Summary' },
 } as const;
+
+export const INFERENCE_STEPS_LABELS: Partial<StepsLabels> = {
+  finish: 'Inference',
+};
 
 export const UPLOAD_TITLE = 'Upload files';
 export const UPLOAD_SUBTITLE = `Add two images (${IMAGE_ACCEPT_DESCRIPTION}) to continue.`;

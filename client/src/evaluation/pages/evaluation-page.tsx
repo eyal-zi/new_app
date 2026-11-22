@@ -18,7 +18,11 @@ import { mapWithConcurrency } from '@/shared/utils/map-with-concurrency';
 
 import { EvaluationSummaryStep } from '../components/summary-step/summary-step';
 import { UploadStep } from '../components/upload-step/upload-step';
-import { EVALUATION_STEPS, getPartialFailureMessage } from '../consts';
+import {
+  EVALUATION_STEPS,
+  EVALUATION_STEPS_LABELS,
+  getPartialFailureMessage,
+} from '../consts';
 
 export const EvaluationPage = () => {
   // Held here, not in the step, so the files survive moving between steps.
@@ -98,7 +102,12 @@ export const EvaluationPage = () => {
 
   return (
     <PageLayout title={SESSION_TYPE_LABELS.evaluation}>
-      <Steps steps={steps} onFinish={finish} isFinishing={isSubmitting} />
+      <Steps
+        steps={steps}
+        onFinish={finish}
+        isFinishing={isSubmitting}
+        labels={EVALUATION_STEPS_LABELS}
+      />
     </PageLayout>
   );
 };

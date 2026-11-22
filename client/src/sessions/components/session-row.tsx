@@ -3,8 +3,18 @@ import { Link as RouterLink, type LinkProps } from '@tanstack/react-router';
 
 import { SessionType } from '@/api/generated/model';
 
-import { getResultsPath, NO_IMAGE_LABEL, SESSION_IMAGE_NAMES } from '../consts';
-import type { ImageOpener, Session } from '../types';
+import {
+  FINISHED_SESSION_STATUSES,
+  getResultsPath,
+  NO_IMAGE_LABEL,
+  SESSION_IMAGE_NAMES,
+} from '../consts';
+import type {
+  ImageOpener,
+  Session,
+  SessionAction,
+  SessionActionHandler,
+} from '../types';
 import { formatDateTime } from '../utils/format';
 import { ProgressCell } from './progress-cell';
 import { RowOptions } from './row-options';
@@ -15,14 +25,17 @@ import { TypeTag } from './type-tag';
 
 export const SessionRow = ({
   session,
-  onDelete,
+  onAction,
   onOpenImage,
 }: {
   session: Session;
-  onDelete: (session: Session) => void;
+  onAction: SessionActionHandler;
   onOpenImage: ImageOpener;
 }) => {
-  const deleteSession = () => onDelete(session);
+  const actions: SessionAction[] = FINISHED_SESSION_STATUSES.has(session.status)
+    ? ['delete']
+    : ['cancel'];
+  const requestAction = (action: SessionAction) => onAction(session, action);
 
   return (
     <TableRow hover>
@@ -69,7 +82,11 @@ export const SessionRow = ({
         </Link>
       </TableCell>
       <TableCell align="right">
-        <RowOptions sessionId={session.id} onDelete={deleteSession} />
+        <RowOptions
+          sessionId={session.id}
+          actions={actions}
+          onSelect={requestAction}
+        />
       </TableCell>
     </TableRow>
   );
