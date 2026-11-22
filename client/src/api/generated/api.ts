@@ -683,7 +683,7 @@ export const useDeleteSession = <TError = void,
 /**
  * @summary List the statistics an inference can compute
  */
-export const listStatistics = (
+export const listInferenceStatistics = (
 
  options?: SecondParameter<typeof request>,signal?: AbortSignal
 ) => {
@@ -698,69 +698,69 @@ export const listStatistics = (
 
 
 
-export const getListStatisticsQueryKey = () => {
+export const getListInferenceStatisticsQueryKey = () => {
     return [
     `/api/inference/statistics`
     ] as const;
     }
 
 
-export const getListStatisticsQueryOptions = <TData = Awaited<ReturnType<typeof listStatistics>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listStatistics>>, TError, TData>>, request?: SecondParameter<typeof request>}
+export const getListInferenceStatisticsQueryOptions = <TData = Awaited<ReturnType<typeof listInferenceStatistics>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listInferenceStatistics>>, TError, TData>>, request?: SecondParameter<typeof request>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getListStatisticsQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getListInferenceStatisticsQueryKey();
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof listStatistics>>> = ({ signal }) => listStatistics(requestOptions, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listInferenceStatistics>>> = ({ signal }) => listInferenceStatistics(requestOptions, signal);
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listStatistics>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listInferenceStatistics>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type ListStatisticsQueryResult = NonNullable<Awaited<ReturnType<typeof listStatistics>>>
-export type ListStatisticsQueryError = unknown
+export type ListInferenceStatisticsQueryResult = NonNullable<Awaited<ReturnType<typeof listInferenceStatistics>>>
+export type ListInferenceStatisticsQueryError = unknown
 
 
 /** @summary List the statistics an inference can compute */
-export function useListStatistics<TData = Awaited<ReturnType<typeof listStatistics>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listStatistics>>, TError, TData>> & Pick<
+export function useListInferenceStatistics<TData = Awaited<ReturnType<typeof listInferenceStatistics>>, TError = unknown>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listInferenceStatistics>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof listStatistics>>,
+          Awaited<ReturnType<typeof listInferenceStatistics>>,
           TError,
-          Awaited<ReturnType<typeof listStatistics>>
+          Awaited<ReturnType<typeof listInferenceStatistics>>
         > , 'initialData'
       >, request?: SecondParameter<typeof request>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /** @summary List the statistics an inference can compute */
-export function useListStatistics<TData = Awaited<ReturnType<typeof listStatistics>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listStatistics>>, TError, TData>> & Pick<
+export function useListInferenceStatistics<TData = Awaited<ReturnType<typeof listInferenceStatistics>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listInferenceStatistics>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof listStatistics>>,
+          Awaited<ReturnType<typeof listInferenceStatistics>>,
           TError,
-          Awaited<ReturnType<typeof listStatistics>>
+          Awaited<ReturnType<typeof listInferenceStatistics>>
         > , 'initialData'
       >, request?: SecondParameter<typeof request>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /** @summary List the statistics an inference can compute */
-export function useListStatistics<TData = Awaited<ReturnType<typeof listStatistics>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listStatistics>>, TError, TData>>, request?: SecondParameter<typeof request>}
+export function useListInferenceStatistics<TData = Awaited<ReturnType<typeof listInferenceStatistics>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listInferenceStatistics>>, TError, TData>>, request?: SecondParameter<typeof request>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /** @summary List the statistics an inference can compute */
-export function useListStatistics<TData = Awaited<ReturnType<typeof listStatistics>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listStatistics>>, TError, TData>>, request?: SecondParameter<typeof request>}
+export function useListInferenceStatistics<TData = Awaited<ReturnType<typeof listInferenceStatistics>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listInferenceStatistics>>, TError, TData>>, request?: SecondParameter<typeof request>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getListStatisticsQueryOptions(options)
+  const queryOptions = getListInferenceStatisticsQueryOptions(options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -776,7 +776,7 @@ export function useListStatistics<TData = Awaited<ReturnType<typeof listStatisti
 /**
  * @summary List the types a training can be run with
  */
-export const listTypes = (
+export const listTrainingTypes = (
 
  options?: SecondParameter<typeof request>,signal?: AbortSignal
 ) => {
@@ -791,69 +791,69 @@ export const listTypes = (
 
 
 
-export const getListTypesQueryKey = () => {
+export const getListTrainingTypesQueryKey = () => {
     return [
     `/api/training/types`
     ] as const;
     }
 
 
-export const getListTypesQueryOptions = <TData = Awaited<ReturnType<typeof listTypes>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTypes>>, TError, TData>>, request?: SecondParameter<typeof request>}
+export const getListTrainingTypesQueryOptions = <TData = Awaited<ReturnType<typeof listTrainingTypes>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTrainingTypes>>, TError, TData>>, request?: SecondParameter<typeof request>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getListTypesQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getListTrainingTypesQueryKey();
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof listTypes>>> = ({ signal }) => listTypes(requestOptions, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listTrainingTypes>>> = ({ signal }) => listTrainingTypes(requestOptions, signal);
 
 
 
 
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listTypes>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listTrainingTypes>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type ListTypesQueryResult = NonNullable<Awaited<ReturnType<typeof listTypes>>>
-export type ListTypesQueryError = unknown
+export type ListTrainingTypesQueryResult = NonNullable<Awaited<ReturnType<typeof listTrainingTypes>>>
+export type ListTrainingTypesQueryError = unknown
 
 
 /** @summary List the types a training can be run with */
-export function useListTypes<TData = Awaited<ReturnType<typeof listTypes>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTypes>>, TError, TData>> & Pick<
+export function useListTrainingTypes<TData = Awaited<ReturnType<typeof listTrainingTypes>>, TError = unknown>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTrainingTypes>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof listTypes>>,
+          Awaited<ReturnType<typeof listTrainingTypes>>,
           TError,
-          Awaited<ReturnType<typeof listTypes>>
+          Awaited<ReturnType<typeof listTrainingTypes>>
         > , 'initialData'
       >, request?: SecondParameter<typeof request>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /** @summary List the types a training can be run with */
-export function useListTypes<TData = Awaited<ReturnType<typeof listTypes>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTypes>>, TError, TData>> & Pick<
+export function useListTrainingTypes<TData = Awaited<ReturnType<typeof listTrainingTypes>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTrainingTypes>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof listTypes>>,
+          Awaited<ReturnType<typeof listTrainingTypes>>,
           TError,
-          Awaited<ReturnType<typeof listTypes>>
+          Awaited<ReturnType<typeof listTrainingTypes>>
         > , 'initialData'
       >, request?: SecondParameter<typeof request>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /** @summary List the types a training can be run with */
-export function useListTypes<TData = Awaited<ReturnType<typeof listTypes>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTypes>>, TError, TData>>, request?: SecondParameter<typeof request>}
+export function useListTrainingTypes<TData = Awaited<ReturnType<typeof listTrainingTypes>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTrainingTypes>>, TError, TData>>, request?: SecondParameter<typeof request>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /** @summary List the types a training can be run with */
-export function useListTypes<TData = Awaited<ReturnType<typeof listTypes>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTypes>>, TError, TData>>, request?: SecondParameter<typeof request>}
+export function useListTrainingTypes<TData = Awaited<ReturnType<typeof listTrainingTypes>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listTrainingTypes>>, TError, TData>>, request?: SecondParameter<typeof request>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getListTypesQueryOptions(options)
+  const queryOptions = getListTrainingTypesQueryOptions(options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

@@ -17,7 +17,7 @@ export class TrainingController {
   @Get('types')
   @ApiOperation({ summary: 'List the types a training can be run with' })
   @ApiOkResponse({ type: String, isArray: true })
-  listTypes() {
+  listTrainingTypes() {
     return this.training.listTypes();
   }
 }

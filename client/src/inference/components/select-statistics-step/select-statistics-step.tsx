@@ -1,4 +1,4 @@
-import { useListStatistics } from '@/api/generated/api';
+import { useListInferenceStatistics } from '@/api/generated/api';
 import { ChoiceGroup } from '@/shared/components/choice-group/choice-group';
 import { StepHeader } from '@/shared/components/step-header/step-header';
 import { ErrorState, LoadingState } from '@/shared/ui/states';
@@ -18,7 +18,7 @@ export const SelectStatisticsStep = ({
   statistics,
   onStatisticsChange,
 }: SelectStatisticsStepProps) => {
-  const { data, isPending, isError, refetch } = useListStatistics();
+  const { data, isPending, isError, refetch } = useListInferenceStatistics();
 
   return (
     <SelectStatisticsStepRoot>

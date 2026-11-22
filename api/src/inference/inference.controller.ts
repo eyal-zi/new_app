@@ -17,7 +17,7 @@ export class InferenceController {
   @Get('statistics')
   @ApiOperation({ summary: 'List the statistics an inference can compute' })
   @ApiOkResponse({ type: String, isArray: true })
-  listStatistics() {
+  listInferenceStatistics() {
     return this.inference.listStatistics();
   }
 }

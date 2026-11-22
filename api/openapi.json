@@ -326,7 +326,7 @@
     },
     "/api/inference/statistics": {
       "get": {
-        "operationId": "listStatistics",
+        "operationId": "listInferenceStatistics",
         "parameters": [],
         "responses": {
           "200": {
@@ -356,7 +356,7 @@
     },
     "/api/training/types": {
       "get": {
-        "operationId": "listTypes",
+        "operationId": "listTrainingTypes",
         "parameters": [],
         "responses": {
           "200": {
