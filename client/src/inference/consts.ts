@@ -15,14 +15,14 @@ export const INFERENCE_STEPS_LABELS: Partial<StepsLabels> = {
 export const UPLOAD_TITLE = 'Upload files';
 export const UPLOAD_SUBTITLE = `Add two images (${IMAGE_ACCEPT_DESCRIPTION}) to continue.`;
 
-export const FIRST_IMAGE_PICKER: ImagePickerConfig = {
-  label: 'First image',
+export const VARIATIONA_IMAGE_PICKER: ImagePickerConfig = {
+  label: 'Variationa File',
   description: IMAGE_ACCEPT_DESCRIPTION,
   accept: IMAGE_ACCEPT,
 };
 
-export const SECOND_IMAGE_PICKER: ImagePickerConfig = {
-  label: 'Second image',
+export const VARIATIONB_IMAGE_PICKER: ImagePickerConfig = {
+  label: 'Variationb File',
   description: IMAGE_ACCEPT_DESCRIPTION,
   accept: IMAGE_ACCEPT,
 };

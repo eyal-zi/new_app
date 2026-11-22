@@ -57,6 +57,13 @@
       "when": 1795012770011,
       "tag": "0007_sessions_progress_fraction",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1795099170011,
+      "tag": "0008_rename_image_columns_to_variations",
+      "breakpoints": true
     }
   ]
 }

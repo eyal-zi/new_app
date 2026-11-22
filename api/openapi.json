@@ -745,10 +745,10 @@
           "session_owner": {
             "type": "string"
           },
-          "image_a_url": {
+          "variationa_file_url": {
             "type": "string"
           },
-          "image_b_url": {
+          "variationb_file_url": {
             "type": "string"
           },
           "creation_time": {
@@ -807,8 +807,8 @@
         "required": [
           "session_id",
           "session_owner",
-          "image_a_url",
-          "image_b_url",
+          "variationa_file_url",
+          "variationb_file_url",
           "creation_time",
           "last_update",
           "progress",
@@ -830,10 +830,10 @@
           "session_owner": {
             "type": "string"
           },
-          "image_a_url": {
+          "variationa_file_url": {
             "type": "string"
           },
-          "image_b_url": {
+          "variationb_file_url": {
             "type": "string"
           },
           "creation_time": {
@@ -886,8 +886,8 @@
         "required": [
           "session_id",
           "session_owner",
-          "image_a_url",
-          "image_b_url",
+          "variationa_file_url",
+          "variationb_file_url",
           "creation_time",
           "last_update",
           "progress",
@@ -909,10 +909,10 @@
           "session_owner": {
             "type": "string"
           },
-          "image_a_url": {
+          "variationa_file_url": {
             "type": "string"
           },
-          "image_b_url": {
+          "variationb_file_url": {
             "type": "string"
           },
           "creation_time": {
@@ -962,8 +962,8 @@
         "required": [
           "session_id",
           "session_owner",
-          "image_a_url",
-          "image_b_url",
+          "variationa_file_url",
+          "variationb_file_url",
           "creation_time",
           "last_update",
           "progress",

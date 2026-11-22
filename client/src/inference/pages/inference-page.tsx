@@ -17,19 +17,19 @@ import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
 
 import { SelectStatisticsStep } from '../components/select-statistics-step/select-statistics-step';
 import {
-  FIRST_IMAGE_PICKER,
+  VARIATIONA_IMAGE_PICKER,
   INFERENCE_STEPS,
   INFERENCE_STEPS_LABELS,
   MIN_STATISTICS,
-  SECOND_IMAGE_PICKER,
+  VARIATIONB_IMAGE_PICKER,
   UPLOAD_SUBTITLE,
   UPLOAD_TITLE,
 } from '../consts';
 
 export const InferencePage = () => {
   // Held here, not in the step, so the files survive moving between steps.
-  const [firstImage, setFirstImage] = useState<File | null>(null);
-  const [secondImage, setSecondImage] = useState<File | null>(null);
+  const [variationaImage, setVariationaImage] = useState<File | null>(null);
+  const [variationbImage, setVariationbImage] = useState<File | null>(null);
   const [statistics, setStatistics] = useState<string[]>([]);
 
   const owner = useSessionOwner();
@@ -48,7 +48,7 @@ export const InferencePage = () => {
     setStatistics((current) => current.filter((value) => value !== id));
 
   const finish = async () => {
-    if (!owner || !firstImage || !secondImage || isPending) {
+    if (!owner || !variationaImage || !variationbImage || isPending) {
       return;
     }
 
@@ -57,8 +57,8 @@ export const InferencePage = () => {
         data: {
           session_owner: owner,
           statistics,
-          variationa_file: firstImage,
-          variationb_file: secondImage,
+          variationa_file: variationaImage,
+          variationb_file: variationbImage,
         },
       });
 
@@ -83,19 +83,19 @@ export const InferencePage = () => {
           subtitle={UPLOAD_SUBTITLE}
           pickers={[
             {
-              ...FIRST_IMAGE_PICKER,
-              value: firstImage,
-              onChange: setFirstImage,
+              ...VARIATIONA_IMAGE_PICKER,
+              value: variationaImage,
+              onChange: setVariationaImage,
             },
             {
-              ...SECOND_IMAGE_PICKER,
-              value: secondImage,
-              onChange: setSecondImage,
+              ...VARIATIONB_IMAGE_PICKER,
+              value: variationbImage,
+              onChange: setVariationbImage,
             },
           ]}
         />
       ),
-      isComplete: !!firstImage && !!secondImage,
+      isComplete: !!variationaImage && !!variationbImage,
     },
     {
       ...INFERENCE_STEPS.selectStatistics,
@@ -111,10 +111,10 @@ export const InferencePage = () => {
       ...INFERENCE_STEPS.summary,
       content: (
         <CompareSummaryStep
-          firstTitle={FIRST_IMAGE_PICKER.label}
-          secondTitle={SECOND_IMAGE_PICKER.label}
-          firstImage={firstImage}
-          secondImage={secondImage}
+          variationaTitle={VARIATIONA_IMAGE_PICKER.label}
+          variationbTitle={VARIATIONB_IMAGE_PICKER.label}
+          variationaImage={variationaImage}
+          variationbImage={variationbImage}
           selections={selections}
           onRemoveSelection={
             statistics.length > MIN_STATISTICS ? removeStatistic : undefined

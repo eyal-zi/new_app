@@ -9,10 +9,10 @@ import { SUMMARY_TITLE } from '@/shared/constants';
 import { useObjectUrl } from '@/shared/hooks/use-object-url';
 
 type CompareSummaryStepProps = {
-  firstTitle: string;
-  secondTitle: string;
-  firstImage: File | null;
-  secondImage: File | null;
+  variationaTitle: string;
+  variationbTitle: string;
+  variationaImage: File | null;
+  variationbImage: File | null;
   selections: readonly Selection[];
   /** Omit to make the selections read-only. */
   onRemoveSelection?: (id: string) => void;
@@ -31,25 +31,25 @@ const toCompareImage = (
 
 /** The summary step of a flow that compares two images. */
 export const CompareSummaryStep = ({
-  firstTitle,
-  secondTitle,
-  firstImage,
-  secondImage,
+  variationaTitle,
+  variationbTitle,
+  variationaImage,
+  variationbImage,
   selections,
   onRemoveSelection,
   removeDisabledReason,
 }: CompareSummaryStepProps) => {
-  const firstSrc = useObjectUrl(firstImage);
-  const secondSrc = useObjectUrl(secondImage);
+  const variationaSrc = useObjectUrl(variationaImage);
+  const variationbSrc = useObjectUrl(variationbImage);
 
   return (
     <Stack spacing={3}>
       <StepHeader title={SUMMARY_TITLE} />
       <CompareRow
-        firstTitle={firstTitle}
-        secondTitle={secondTitle}
-        imageA={toCompareImage(firstImage, firstSrc)}
-        imageB={toCompareImage(secondImage, secondSrc)}
+        variationaTitle={variationaTitle}
+        variationbTitle={variationbTitle}
+        variationaImage={toCompareImage(variationaImage, variationaSrc)}
+        variationbImage={toCompareImage(variationbImage, variationbSrc)}
       />
       <SelectionList
         selections={selections}

@@ -43,9 +43,9 @@ export class SessionDto {
 
   @ApiProperty() session_owner!: string;
 
-  @ApiProperty() image_a_url!: string;
+  @ApiProperty() variationa_file_url!: string;
 
-  @ApiProperty() image_b_url!: string;
+  @ApiProperty() variationb_file_url!: string;
 
   @ApiProperty({
     description: 'Naive ISO-8601 timestamp in UTC (no timezone designator)',

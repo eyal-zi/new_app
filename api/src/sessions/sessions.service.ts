@@ -53,8 +53,8 @@ const toCreatedSessionDto = (item: SessionRow): CreatedSessionDto => ({
 const toSessionDto = (item: SessionRow): SessionDto => ({
   session_id: item.id,
   session_owner: item.owner,
-  image_a_url: item.imageAUrl,
-  image_b_url: item.imageBUrl,
+  variationa_file_url: item.variationaFileUrl,
+  variationb_file_url: item.variationbFileUrl,
   creation_time: toNaiveUtc(item.createdAt),
   last_update: toNaiveUtc(item.updatedAt),
   progress: item.progress,
@@ -143,7 +143,7 @@ export class SessionsService {
     variationa: UploadedImage | undefined,
     variationb: UploadedImage | undefined,
   ): Promise<CreatedSessionDto> {
-    const [imageAUrl, imageBUrl] = await this.files.saveImages([
+    const [variationaFileUrl, variationbFileUrl] = await this.files.saveImages([
       {
         field: UPLOAD_FIELDS.VARIATION_A,
         file: variationa,
@@ -155,11 +155,11 @@ export class SessionsService {
         allowed: ANY_IMAGE,
       },
     ]);
-    const created = await this.createOrCleanUp([imageAUrl, imageBUrl], {
+    const created = await this.createOrCleanUp([variationaFileUrl, variationbFileUrl], {
       type: 'inference',
       owner: body.session_owner,
-      imageAUrl: imageAUrl as string,
-      imageBUrl: imageBUrl as string,
+      variationaFileUrl: variationaFileUrl as string,
+      variationbFileUrl: variationbFileUrl as string,
       progress: INITIAL_PROGRESS,
       statistics: body.statistics,
     });
@@ -174,7 +174,7 @@ export class SessionsService {
     variationa: UploadedImage | undefined,
     variationb: UploadedImage | undefined,
   ): Promise<CreatedTrainingSessionDto> {
-    const [imageAUrl, imageBUrl] = await this.files.saveImages([
+    const [variationaFileUrl, variationbFileUrl] = await this.files.saveImages([
       {
         field: UPLOAD_FIELDS.VARIATION_A,
         file: variationa,
@@ -187,12 +187,12 @@ export class SessionsService {
       },
     ]);
     const id = randomUUID();
-    const created = await this.createOrCleanUp([imageAUrl, imageBUrl], {
+    const created = await this.createOrCleanUp([variationaFileUrl, variationbFileUrl], {
       id,
       type: 'training',
       owner: body.session_owner,
-      imageAUrl: imageAUrl as string,
-      imageBUrl: imageBUrl as string,
+      variationaFileUrl: variationaFileUrl as string,
+      variationbFileUrl: variationbFileUrl as string,
       progress: INITIAL_PROGRESS,
       trainingType: body.training_type ?? null,
       s8Link: `${S8_TRAINING_LINK_BASE_URL}/${id}`,
@@ -211,19 +211,19 @@ export class SessionsService {
     body: CreateEvaluationSessionBodyDto,
     variationa: UploadedImage | undefined,
   ): Promise<CreatedSessionDto> {
-    const [imageAUrl] = await this.files.saveImages([
+    const [variationaFileUrl] = await this.files.saveImages([
       {
         field: UPLOAD_FIELDS.VARIATION_A,
         file: variationa,
         allowed: JPEG_OR_PNG,
       },
     ]);
-    const created = await this.createOrCleanUp([imageAUrl], {
+    const created = await this.createOrCleanUp([variationaFileUrl], {
       type: 'evaluation',
       owner: body.session_owner,
-      imageAUrl: imageAUrl as string,
+      variationaFileUrl: variationaFileUrl as string,
       // Evaluation sessions have a single image; the column is not nullable.
-      imageBUrl: '',
+      variationbFileUrl: '',
       progress: INITIAL_PROGRESS,
     });
 
