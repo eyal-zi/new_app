@@ -1,7 +1,9 @@
-import DownloadIcon from '@mui/icons-material/Download';
-import { Stack, Tooltip } from '@mui/material';
-import { type MouseEvent, type ReactNode, type Ref, useState } from 'react';
+import { Stack } from '@mui/material';
+import { type MouseEvent, type ReactNode, type Ref } from 'react';
 
+import { type ImageDownloadFormat } from '@/shared/constants';
+
+import { DownloadButton } from '../download-button/download-button';
 import { ImageTile, type ImageTileProps } from '../image-tile/image-tile';
 import { RemoveButton } from '../remove-button/remove-button';
 import {
@@ -28,8 +30,12 @@ export type ActionableImageTileProps = Omit<ImageTileProps, 'action'> & {
    * also toggles it, instead of calling `onClick`.
    */
   selection?: TileSelection;
-  /** Shows a download button on hover. May be async to show a busy state. */
-  onDownload?: () => void | Promise<void>;
+  /**
+   * Shows a download button on hover. Clicking it calls this with no format
+   * (download as is); its tooltip offers the `IMAGE_DOWNLOAD_FORMATS`. May be
+   * async to show a busy state.
+   */
+  onDownload?: (format?: ImageDownloadFormat) => void | Promise<void>;
   /** Shows a delete button on hover. */
   onDelete?: () => void;
   /** Prefix of the delete button's label, followed by the image's alt. Defaults to "Delete image". */
@@ -60,24 +66,6 @@ export const ActionableImageTile = ({
   onClick,
   ...tileProps
 }: ActionableImageTileProps) => {
-  const [isDownloading, setIsDownloading] = useState(false);
-
-  const handleDownload = async (event: MouseEvent) => {
-    event.stopPropagation();
-
-    if (isDownloading) {
-      return;
-    }
-
-    setIsDownloading(true);
-
-    try {
-      await onDownload?.();
-    } finally {
-      setIsDownloading(false);
-    }
-  };
-
   // Capture phase, so the tile's own click handler never sees a toggle click.
   const handleClickCapture = (event: MouseEvent) => {
     if (selection && (event.ctrlKey || event.metaKey)) {
@@ -99,15 +87,11 @@ export const ActionableImageTile = ({
     onDownload || onDelete ? (
       <Stack direction="row" spacing={0.5} className={hoverControlClass}>
         {onDownload && (
-          <Tooltip title={downloadLabel}>
-            <TileDownloadButton
-              aria-label={downloadLabel}
-              aria-busy={isDownloading}
-              onClick={(event) => void handleDownload(event)}
-            >
-              <DownloadIcon />
-            </TileDownloadButton>
-          </Tooltip>
+          <DownloadButton
+            label={downloadLabel}
+            onDownload={onDownload}
+            ButtonComponent={TileDownloadButton}
+          />
         )}
         {onDelete && (
           <RemoveButton

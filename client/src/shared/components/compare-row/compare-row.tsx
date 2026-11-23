@@ -15,10 +15,10 @@ import {
 import type { CompareImage } from './types';
 
 export type CompareRowProps = {
-  variationaTitle: string;
-  variationbTitle: string;
-  variationaImage?: CompareImage;
-  variationbImage?: CompareImage;
+  firstTitle: string;
+  secondTitle: string;
+  firstImage?: CompareImage;
+  secondImage?: CompareImage;
 };
 
 const renderCaption = ({ name, size }: CompareImage) => (
@@ -47,16 +47,16 @@ const renderPanel = (title: string, image?: CompareImage) => (
 );
 
 export const CompareRow = ({
-  variationaTitle,
-  variationbTitle,
-  variationaImage,
-  variationbImage,
+  firstTitle,
+  secondTitle,
+  firstImage,
+  secondImage,
 }: CompareRowProps) => (
   <Row direction={{ xs: 'column', sm: 'row' }}>
-    {renderPanel(variationaTitle, variationaImage)}
+    {renderPanel(firstTitle, firstImage)}
     <IconWrapper>
       <CompareArrowsIcon fontSize="large" />
     </IconWrapper>
-    {renderPanel(variationbTitle, variationbImage)}
+    {renderPanel(secondTitle, secondImage)}
   </Row>
 );

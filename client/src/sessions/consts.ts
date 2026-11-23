@@ -96,8 +96,8 @@ export const COLUMN_FILTERS: Partial<Record<SessionColumnId, ColumnFilter>> = {
 
 /** Image names in the sessions table, shown as `{sessionId} - {name}`. */
 export const SESSION_IMAGE_NAMES = {
-  a: 'variationa',
-  b: 'variationb',
+  variationa: 'variationa',
+  variationb: 'variationb',
 } as const;
 
 /** Shown in place of an image the session doesn't have. */

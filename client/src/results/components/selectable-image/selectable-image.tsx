@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { ActionableImageTile } from '@/shared/components/actionable-image-tile/actionable-image-tile';
 import { ImageLightbox } from '@/shared/components/image-gallery/image-lightbox/image-lightbox';
+import type { ImageDownloadFormat } from '@/shared/constants';
 import { downloadFile } from '@/shared/utils/download-file';
 
 import type { SelectedImage } from '../../types';
@@ -25,7 +26,8 @@ export const SelectableImage = ({
   const closeLightbox = () => setLightboxOpen(false);
   const toggle = () => onToggle(image);
 
-  const download = () => downloadFile(image.src, { fallbackName: image.label });
+  const download = (format?: ImageDownloadFormat) =>
+    downloadFile(image.src, { fallbackName: image.label, format });
 
   const galleryImage = { src: image.src, alt: image.label };
 

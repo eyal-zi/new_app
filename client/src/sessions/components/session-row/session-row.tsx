@@ -49,7 +49,7 @@ export const SessionRow = ({
       <TableCell>
         <SessionImage
           src={session.variationaFileUrl}
-          alt={`${session.id} - ${SESSION_IMAGE_NAMES.a}`}
+          alt={`${session.id} - ${SESSION_IMAGE_NAMES.variationa}`}
           onOpen={onOpenImage}
         />
       </TableCell>
@@ -60,7 +60,7 @@ export const SessionRow = ({
         ) : (
           <SessionImage
             src={session.variationbFileUrl}
-            alt={`${session.id} - ${SESSION_IMAGE_NAMES.b}`}
+            alt={`${session.id} - ${SESSION_IMAGE_NAMES.variationb}`}
             onOpen={onOpenImage}
           />
         )}
