@@ -8,20 +8,20 @@ import {
   getResultsPath,
   NO_IMAGE_LABEL,
   SESSION_IMAGE_NAMES,
-} from '../consts';
+} from '../../consts';
 import type {
   ImageOpener,
   Session,
   SessionAction,
   SessionActionHandler,
-} from '../types';
-import { formatDateTime } from '../utils/format';
-import { ProgressCell } from './progress-cell';
-import { RowOptions } from './row-options';
-import { SessionImage } from './session-image';
+} from '../../types';
+import { formatDateTime } from '../../utils/format';
+import { ProgressCell } from '../progress-cell/progress-cell';
+import { RowOptions } from '../row-options/row-options';
+import { SessionImage } from '../session-image/session-image';
+import { StatusTag } from '../status-tag/status-tag';
+import { TypeTag } from '../type-tag/type-tag';
 import { IdText } from './session-row.styles';
-import { StatusTag } from './status-tag';
-import { TypeTag } from './type-tag';
 
 export const SessionRow = ({
   session,

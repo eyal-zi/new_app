@@ -9,17 +9,17 @@ import {
 import type { ChangeEvent, MouseEvent } from 'react';
 
 import { TABLE_PAGE_SIZE_OPTIONS } from '@/shared/constants';
-import { EmptyState } from '@/shared/ui/empty-state';
+import { EmptyState } from '@/shared/ui/empty-state/empty-state';
 
-import { SESSION_COLUMNS } from '../consts';
+import { SESSION_COLUMNS } from '../../consts';
 import type {
   ImageOpener,
   Session,
   SessionActionHandler,
   SessionFilters,
-} from '../types';
-import { ColumnFilterCell } from './column-filter-cell';
-import { SessionRow } from './session-row';
+} from '../../types';
+import { ColumnFilterCell } from '../column-filter-cell/column-filter-cell';
+import { SessionRow } from '../session-row/session-row';
 import { FilterRow, FitTable, TablePanel } from './sessions-table.styles';
 
 type Column = (typeof SESSION_COLUMNS)[number];

@@ -1,7 +1,7 @@
 import { Stack, Typography } from '@mui/material';
 
 import { SignInStatus } from '@/core/auth/components/sign-in-status';
-import { LoadingState } from '@/shared/ui/states';
+import { LoadingState } from '@/shared/ui/states/states';
 
 import { AuthContainer } from './signing-in.styles';
 

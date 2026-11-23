@@ -1,10 +1,7 @@
 import { Paper, Table, TableRow } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-import {
-  TABLE_CELL_PADDING_PX,
-  TABLE_FONT_SIZE,
-} from './sessions-table.consts';
+import { TABLE_CELL_PADDING_PX, TABLE_FONT_SIZE } from './consts';
 
 export const TablePanel = styled(Paper)({ overflow: 'hidden' });
 

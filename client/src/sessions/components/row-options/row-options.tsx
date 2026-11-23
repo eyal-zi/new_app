@@ -8,8 +8,8 @@ import {
 } from '@mui/material';
 import { type MouseEvent, useState } from 'react';
 
-import { SESSION_ACTIONS } from '../consts';
-import type { SessionAction } from '../types';
+import { SESSION_ACTIONS } from '../../consts';
+import type { SessionAction } from '../../types';
 
 export const RowOptions = ({
   sessionId,

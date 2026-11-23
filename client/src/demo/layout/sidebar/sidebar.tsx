@@ -1,8 +1,11 @@
 import { List, useMediaQuery, useTheme } from '@mui/material';
 
+import {
+  SidebarItem,
+  type SidebarItemProps,
+} from '../sidebar-item/sidebar-item';
 import { SIDEBAR_ENTRIES } from './consts';
 import { MobileSidebarDrawer, SidebarDrawer } from './sidebar.styles';
-import { SidebarItem, type SidebarItemProps } from './sidebar-item';
 
 interface SidebarProps {
   open: boolean;

@@ -2,7 +2,7 @@ import { Typography } from '@mui/material';
 
 import { PERCENT } from '@/shared/constants';
 
-import { formatPercent } from '../utils/format';
+import { formatPercent } from '../../utils/format';
 import { ProgressBar, ProgressCellRoot } from './progress-cell.styles';
 
 /** `value` is a fraction from 0 to 1. */

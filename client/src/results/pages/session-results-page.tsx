@@ -17,7 +17,7 @@ import {
 } from '@/sessions/utils/get-session-type';
 import { isHttpUrl } from '@/sessions/utils/is-http-url';
 import { SESSION_TYPES } from '@/shared/session-type-constants';
-import { ErrorState, LoadingState } from '@/shared/ui/states';
+import { ErrorState, LoadingState } from '@/shared/ui/states/states';
 
 import { EvaluationResultsPage } from '../components/evaluation-results-page/evaluation-results-page';
 import { InferenceResultsPage } from '../components/inference-results-page/inference-results-page';

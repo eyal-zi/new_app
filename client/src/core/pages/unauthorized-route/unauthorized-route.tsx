@@ -4,8 +4,8 @@ import { useState } from 'react';
 
 import { selectSignedOut, useSession } from '@/lib/store';
 
-import { ensureSession } from '../auth/auth';
-import { SigningIn } from './signing-in';
+import { ensureSession } from '../../auth/auth';
+import { SigningIn } from '../signing-in/signing-in';
 import { AuthContainer } from './unauthorized-route.styles';
 
 export const UnauthorizedRoute = () => {

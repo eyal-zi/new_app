@@ -1,8 +1,8 @@
 import { MenuItem } from '@mui/material';
 import type { ChangeEvent } from 'react';
 
-import { FilterInput } from './column-filter-cell.styles';
-import { ALL_OPTION } from './select-filter.consts';
+import { FilterInput } from '../column-filter-cell/column-filter-cell.styles';
+import { ALL_OPTION } from './consts';
 
 export const SelectFilter = <T extends string>({
   value,

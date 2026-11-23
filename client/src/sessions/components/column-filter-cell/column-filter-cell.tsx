@@ -11,14 +11,11 @@ import {
   COLUMN_FILTERS,
   SESSION_STATUS_LABELS,
   SESSION_STATUSES,
-} from '../consts';
-import type { SessionColumnId, SessionFilters } from '../types';
-import {
-  FILTER_INPUT_SIZE,
-  SEARCH_MAX_LENGTH,
-} from './column-filter-cell.consts';
+} from '../../consts';
+import type { SessionColumnId, SessionFilters } from '../../types';
+import { SelectFilter } from '../select-filter/select-filter';
 import { FilterInput } from './column-filter-cell.styles';
-import { SelectFilter } from './select-filter';
+import { FILTER_INPUT_SIZE, SEARCH_MAX_LENGTH } from './consts';
 
 export const ColumnFilterCell = ({
   column,

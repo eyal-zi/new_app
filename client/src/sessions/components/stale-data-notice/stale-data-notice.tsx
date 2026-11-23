@@ -1,6 +1,6 @@
 import { Alert } from '@mui/material';
 
-import { formatTime } from '../utils/format';
+import { formatTime } from '../../utils/format';
 
 // Background refreshes fail silently, so say so when the table is out of date.
 export const StaleDataNotice = ({ updatedAt }: { updatedAt: number }) => (

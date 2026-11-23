@@ -8,7 +8,7 @@ import {
   SESSION_TYPES,
 } from '@/shared/session-type-constants';
 
-import type { SidebarItemProps } from './sidebar-item';
+import type { SidebarItemProps } from '../sidebar-item/sidebar-item';
 
 export const SIDEBAR_WIDTH = 240;
 

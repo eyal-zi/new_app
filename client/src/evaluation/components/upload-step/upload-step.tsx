@@ -6,7 +6,7 @@ import { ImageGallery } from '@/shared/components/image-gallery/image-gallery';
 import { StepHeader } from '@/shared/components/step-header/step-header';
 import { IMAGE_ACCEPT } from '@/shared/constants';
 import { useObjectUrls } from '@/shared/hooks/use-object-urls';
-import { ConfirmationDialog } from '@/shared/ui/confirmation-dialog';
+import { ConfirmationDialog } from '@/shared/ui/confirmation-dialog/confirmation-dialog';
 
 import {
   DROPZONE_DESCRIPTION,

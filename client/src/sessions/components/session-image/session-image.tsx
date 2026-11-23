@@ -1,6 +1,6 @@
 import { type SyntheticEvent, useState } from 'react';
 
-import type { ImageOpener, ViewedImage } from '../types';
+import type { ImageOpener, ViewedImage } from '../../types';
 import {
   PreviewImage,
   PreviewTooltip,

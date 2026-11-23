@@ -6,8 +6,8 @@ import { useEffect, useState } from 'react';
 
 import { queryClient } from '@/lib/query';
 import { selectAccessToken, selectSignedOut, useSession } from '@/lib/store';
-import { ColorModeToggle } from '@/shared/ui/color-mode-toggle';
-import { ConfirmationDialog } from '@/shared/ui/confirmation-dialog';
+import { ColorModeToggle } from '@/shared/ui/color-mode-toggle/color-mode-toggle';
+import { ConfirmationDialog } from '@/shared/ui/confirmation-dialog/confirmation-dialog';
 
 import {
   LayoutBody,
@@ -17,7 +17,7 @@ import {
   PageContent,
   PageTitle,
 } from './layout.styles';
-import { Sidebar } from './sidebar';
+import { Sidebar } from './sidebar/sidebar';
 
 export const Layout = () => {
   const [confirm, setConfirm] = useState(false);
