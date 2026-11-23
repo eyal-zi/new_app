@@ -1,7 +1,7 @@
 import { useListInferenceStatistics } from '@/api/generated/api';
 import { ChoiceGroup } from '@/shared/components/choice-group/choice-group';
 import { StepHeader } from '@/shared/components/step-header/step-header';
-import { ErrorState, LoadingState } from '@/shared/ui/states';
+import { ErrorState, LoadingState } from '@/shared/ui/states/states';
 
 import { SELECT_STATISTICS_TITLE } from './consts';
 import {

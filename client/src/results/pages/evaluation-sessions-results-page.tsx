@@ -6,9 +6,9 @@ import { useState } from 'react';
 
 import { getGetSessionQueryKey, useDeleteSession } from '@/api/generated/api';
 import { SessionType } from '@/api/generated/model';
-import { ErrorState } from '@/shared/ui/states';
+import { ErrorState } from '@/shared/ui/states/states';
 
-import { EvaluationResultsPage } from '../components/evaluation-results-page';
+import { EvaluationResultsPage } from '../components/evaluation-results-page/evaluation-results-page';
 import {
   NO_SESSIONS_MESSAGE,
   SESSION_CANCELED_MESSAGE,

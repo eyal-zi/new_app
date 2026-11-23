@@ -4,11 +4,11 @@ import { useState } from 'react';
 
 import { useDeleteSession } from '@/api/generated/api';
 import { ImageLightbox } from '@/shared/components/image-gallery/image-lightbox/image-lightbox';
-import { ConfirmationDialog } from '@/shared/ui/confirmation-dialog';
-import { ErrorState, LoadingState } from '@/shared/ui/states';
+import { ConfirmationDialog } from '@/shared/ui/confirmation-dialog/confirmation-dialog';
+import { ErrorState, LoadingState } from '@/shared/ui/states/states';
 
-import { SessionsTable } from '../components/sessions-table';
-import { StaleDataNotice } from '../components/stale-data-notice';
+import { SessionsTable } from '../components/sessions-table/sessions-table';
+import { StaleDataNotice } from '../components/stale-data-notice/stale-data-notice';
 import { SESSION_ACTIONS } from '../consts';
 import { useSessionsTable } from '../hooks/use-sessions-table';
 import type {

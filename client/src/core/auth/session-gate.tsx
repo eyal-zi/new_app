@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { selectSignedOut, useSession } from '@/lib/store';
 
-import { SigningIn } from '../pages/signing-in';
+import { SigningIn } from '../pages/signing-in/signing-in';
 import { ensureSession } from './auth';
 
 const selectAuthenticated = ({
