@@ -47,16 +47,16 @@ const renderPanel = (title: string, image?: CompareImage) => (
 );
 
 export const CompareRow = ({
-  firstTitle: variationaTitle,
-  secondTitle: variationbTitle,
-  firstImage: variationaImage,
-  secondImage: variationbImage,
+  firstTitle,
+  secondTitle,
+  firstImage,
+  secondImage,
 }: CompareRowProps) => (
   <Row direction={{ xs: 'column', sm: 'row' }}>
-    {renderPanel(variationaTitle, variationaImage)}
+    {renderPanel(firstTitle, firstImage)}
     <IconWrapper>
       <CompareArrowsIcon fontSize="large" />
     </IconWrapper>
-    {renderPanel(variationbTitle, variationbImage)}
+    {renderPanel(secondTitle, secondImage)}
   </Row>
 );

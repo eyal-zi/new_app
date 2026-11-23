@@ -15,13 +15,13 @@ export const TRAINING_STEPS_LABELS: Partial<StepsLabels> = {
 export const UPLOAD_TITLE = 'Upload files';
 export const UPLOAD_SUBTITLE = 'Add a JPEG and a PNG to continue.';
 
-export const VARIATIONA_IMAGE_PICKER: ImagePickerConfig = {
+export const VARIATIONA_FILE_PICKER: ImagePickerConfig = {
   label: 'Variationa File',
   description: 'JPEG only',
   accept: JPEG_ACCEPT,
 };
 
-export const VARIATIONB_IMAGE_PICKER: ImagePickerConfig = {
+export const VARIATIONB_FILE_PICKER: ImagePickerConfig = {
   label: 'Variationb File',
   description: 'PNG only',
   accept: PNG_ACCEPT,
