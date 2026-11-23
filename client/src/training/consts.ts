@@ -1,6 +1,6 @@
 import { type ImagePickerConfig } from '@/shared/components/image-pickers-step/image-pickers-step';
 import { type StepsLabels } from '@/shared/components/steps/types';
-import { JPEG_ACCEPT, PNG_ACCEPT } from '@/shared/constants';
+import { DRAFT_VIEW_KEYS, JPEG_ACCEPT, PNG_ACCEPT } from '@/shared/constants';
 import { createDraftScope } from '@/shared/hooks/use-draft';
 
 export const TRAINING_STEPS = {
@@ -44,4 +44,5 @@ export const TRAINING_DRAFT_SCOPE = createDraftScope<TrainingDraft>(
     variationbFile: null,
     requiredType: null,
   },
+  DRAFT_VIEW_KEYS,
 );

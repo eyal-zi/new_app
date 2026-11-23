@@ -1,4 +1,5 @@
 import { type StepsLabels } from '@/shared/components/steps/types';
+import { DRAFT_VIEW_KEYS } from '@/shared/constants';
 import { createDraftScope } from '@/shared/hooks/use-draft';
 
 export const EVALUATION_STEPS = {
@@ -25,4 +26,5 @@ export const EVALUATION_DRAFT_SCOPE = createDraftScope<EvaluationDraft>(
     step: 0,
     images: [],
   },
+  DRAFT_VIEW_KEYS,
 );

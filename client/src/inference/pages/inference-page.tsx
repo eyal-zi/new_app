@@ -12,7 +12,12 @@ import { DISCARD_SESSION_CONFIRMATION } from '@/shared/components/steps/consts';
 import { Steps } from '@/shared/components/steps/steps';
 import type { StepItem } from '@/shared/components/steps/types';
 import { UPLOAD_REQUEST_TIMEOUT_MS } from '@/shared/constants';
-import { clearDraft, clearDraftIf, useDraft } from '@/shared/hooks/use-draft';
+import {
+  clearDraft,
+  clearDraftIfUnedited,
+  getDraftRevision,
+  useDraft,
+} from '@/shared/hooks/use-draft';
 import { useIsMountedRef } from '@/shared/hooks/use-is-mounted-ref';
 import { useSessionOwner } from '@/shared/hooks/use-session-owner';
 import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
@@ -60,6 +65,7 @@ export const InferencePage = () => {
     }
 
     setIsSubmitting(true);
+    const submittedRevision = getDraftRevision(INFERENCE_DRAFT_SCOPE);
 
     try {
       const { session_id } = await mutateAsync({
@@ -82,13 +88,9 @@ export const InferencePage = () => {
       } finally {
         // The session exists, so there is nothing left to come back to. Cleared
         // only after leaving, so the form doesn't blank out under the user, and
-        // only if it is still the submitted draft, not a newer one.
-        clearDraftIf(
-          INFERENCE_DRAFT_SCOPE,
-          (current) =>
-            current.variationaFile === variationaFile &&
-            current.variationbFile === variationbFile,
-        );
+        // only if the data wasn't edited since Finish: an edit, even one undone
+        // later, starts a new session that is kept.
+        clearDraftIfUnedited(INFERENCE_DRAFT_SCOPE, submittedRevision);
       }
     } catch {
       // Already reported by the query client; stay here so the user can retry.

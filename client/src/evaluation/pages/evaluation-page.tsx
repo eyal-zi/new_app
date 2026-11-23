@@ -13,7 +13,12 @@ import {
   MAX_CONCURRENT_UPLOADS,
   UPLOAD_REQUEST_TIMEOUT_MS,
 } from '@/shared/constants';
-import { clearDraft, clearDraftIf, useDraft } from '@/shared/hooks/use-draft';
+import {
+  clearDraft,
+  clearDraftIfUnedited,
+  getDraftRevision,
+  useDraft,
+} from '@/shared/hooks/use-draft';
 import { useIsMountedRef } from '@/shared/hooks/use-is-mounted-ref';
 import { useSessionOwner } from '@/shared/hooks/use-session-owner';
 import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
@@ -51,6 +56,7 @@ export const EvaluationPage = () => {
     }
 
     setIsSubmitting(true);
+    const submittedRevision = getDraftRevision(EVALUATION_DRAFT_SCOPE);
 
     try {
       const results = await mapWithConcurrency(
@@ -83,13 +89,9 @@ export const EvaluationPage = () => {
         } finally {
           // Sessions exist, so there is nothing left to come back to. Cleared
           // only after leaving, so the form doesn't blank out under the user,
-          // and only if it is still the submitted draft, not a newer one.
-          clearDraftIf(
-            EVALUATION_DRAFT_SCOPE,
-            (current) =>
-              current.images.length === images.length &&
-              current.images.every((image, index) => image === images[index]),
-          );
+          // and only if the data wasn't edited since Finish: an edit, even one
+          // undone later, starts a new session that is kept.
+          clearDraftIfUnedited(EVALUATION_DRAFT_SCOPE, submittedRevision);
         }
       }
     } finally {

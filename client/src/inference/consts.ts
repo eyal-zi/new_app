@@ -1,6 +1,10 @@
 import { type ImagePickerConfig } from '@/shared/components/image-pickers-step/image-pickers-step';
 import { type StepsLabels } from '@/shared/components/steps/types';
-import { IMAGE_ACCEPT, IMAGE_ACCEPT_DESCRIPTION } from '@/shared/constants';
+import {
+  DRAFT_VIEW_KEYS,
+  IMAGE_ACCEPT,
+  IMAGE_ACCEPT_DESCRIPTION,
+} from '@/shared/constants';
 import { createDraftScope } from '@/shared/hooks/use-draft';
 
 export const INFERENCE_STEPS = {
@@ -47,4 +51,5 @@ export const INFERENCE_DRAFT_SCOPE = createDraftScope<InferenceDraft>(
     variationbFile: null,
     statistics: [],
   },
+  DRAFT_VIEW_KEYS,
 );
