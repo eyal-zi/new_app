@@ -12,6 +12,7 @@ import {
   MAX_CONCURRENT_UPLOADS,
   UPLOAD_REQUEST_TIMEOUT_MS,
 } from '@/shared/constants';
+import { clearDraft, useDraft } from '@/shared/hooks/use-draft';
 import { useIsMountedRef } from '@/shared/hooks/use-is-mounted-ref';
 import { useSessionOwner } from '@/shared/hooks/use-session-owner';
 import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
@@ -20,14 +21,19 @@ import { mapWithConcurrency } from '@/shared/utils/map-with-concurrency';
 import { EvaluationSummaryStep } from '../components/summary-step/summary-step';
 import { UploadStep } from '../components/upload-step/upload-step';
 import {
+  EMPTY_EVALUATION_DRAFT,
+  EVALUATION_DRAFT_SCOPE,
   EVALUATION_STEPS,
   EVALUATION_STEPS_LABELS,
   getPartialFailureMessage,
 } from '../consts';
 
 export const EvaluationPage = () => {
-  // Held here, not in the step, so the files survive moving between steps.
-  const [images, setImages] = useState<File[]>([]);
+  // Held in a draft, not in the step, so it survives moving between steps and pages.
+  const [{ step, images }, updateDraft] = useDraft(
+    EVALUATION_DRAFT_SCOPE,
+    EMPTY_EVALUATION_DRAFT,
+  );
   const owner = useSessionOwner();
   const navigate = useNavigate();
   // One flag for the whole batch: `isPending` only follows the last request.
@@ -69,21 +75,34 @@ export const EvaluationPage = () => {
         });
       }
 
-      if (ids.length > 0 && isMountedRef.current) {
-        await navigate({
-          to: EVALUATION_RESULTS_ROUTE_PATH,
-          search: { [SESSION_IDS_PARAM]: ids },
-        });
+      if (ids.length > 0) {
+        // Sessions exist now, so there is nothing left to come back to.
+        clearDraft(EVALUATION_DRAFT_SCOPE);
+
+        if (isMountedRef.current) {
+          await navigate({
+            to: EVALUATION_RESULTS_ROUTE_PATH,
+            search: { [SESSION_IDS_PARAM]: ids },
+          });
+        }
       }
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  // Back to a blank session on the first step.
+  const cancel = () => clearDraft(EVALUATION_DRAFT_SCOPE);
+
   const steps: StepItem[] = [
     {
       ...EVALUATION_STEPS.upload,
-      content: <UploadStep images={images} onImagesChange={setImages} />,
+      content: (
+        <UploadStep
+          images={images}
+          onImagesChange={(value) => updateDraft({ images: value })}
+        />
+      ),
       isComplete: images.length > 0,
     },
     {
@@ -97,7 +116,10 @@ export const EvaluationPage = () => {
     <PageLayout title={SESSION_TYPE_LABELS.evaluation}>
       <Steps
         steps={steps}
+        activeStep={step}
+        onStepChange={(value) => updateDraft({ step: value })}
         onFinish={finish}
+        onCancel={cancel}
         isFinishing={isSubmitting}
         labels={EVALUATION_STEPS_LABELS}
       />

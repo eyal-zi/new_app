@@ -1,5 +1,4 @@
 import { useNavigate } from '@tanstack/react-router';
-import { useState } from 'react';
 
 import { useCreateInferenceSession } from '@/api/generated/api';
 import { SessionType } from '@/api/generated/model';
@@ -11,12 +10,15 @@ import type { Selection } from '@/shared/components/selection-list/types';
 import { Steps } from '@/shared/components/steps/steps';
 import type { StepItem } from '@/shared/components/steps/types';
 import { UPLOAD_REQUEST_TIMEOUT_MS } from '@/shared/constants';
+import { clearDraft, useDraft } from '@/shared/hooks/use-draft';
 import { useIsMountedRef } from '@/shared/hooks/use-is-mounted-ref';
 import { useSessionOwner } from '@/shared/hooks/use-session-owner';
 import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
 
 import { SelectStatisticsStep } from '../components/select-statistics-step/select-statistics-step';
 import {
+  EMPTY_INFERENCE_DRAFT,
+  INFERENCE_DRAFT_SCOPE,
   INFERENCE_STEPS,
   INFERENCE_STEPS_LABELS,
   MIN_STATISTICS,
@@ -27,10 +29,9 @@ import {
 } from '../consts';
 
 export const InferencePage = () => {
-  // Held here, not in the step, so the files survive moving between steps.
-  const [variationaFile, setVariationaFile] = useState<File | null>(null);
-  const [variationbFile, setVariationbFile] = useState<File | null>(null);
-  const [statistics, setStatistics] = useState<string[]>([]);
+  // Held in a draft, not in the step, so it survives moving between steps and pages.
+  const [{ step, variationaFile, variationbFile, statistics }, updateDraft] =
+    useDraft(INFERENCE_DRAFT_SCOPE, EMPTY_INFERENCE_DRAFT);
 
   const owner = useSessionOwner();
   const navigate = useNavigate();
@@ -45,7 +46,9 @@ export const InferencePage = () => {
   }));
 
   const removeStatistic = (id: string) =>
-    setStatistics((current) => current.filter((value) => value !== id));
+    updateDraft((current) => ({
+      statistics: current.statistics.filter((value) => value !== id),
+    }));
 
   const finish = async () => {
     if (!owner || !variationaFile || !variationbFile || isPending) {
@@ -62,6 +65,9 @@ export const InferencePage = () => {
         },
       });
 
+      // The session exists now, so there is nothing left to come back to.
+      clearDraft(INFERENCE_DRAFT_SCOPE);
+
       // The upload can outlive the page; don't pull the user back once they left.
       if (isMountedRef.current) {
         await navigate({
@@ -74,6 +80,9 @@ export const InferencePage = () => {
     }
   };
 
+  // Back to a blank session on the first step.
+  const cancel = () => clearDraft(INFERENCE_DRAFT_SCOPE);
+
   const steps: StepItem[] = [
     {
       ...INFERENCE_STEPS.upload,
@@ -85,12 +94,12 @@ export const InferencePage = () => {
             {
               ...VARIATIONA_FILE_PICKER,
               value: variationaFile,
-              onChange: setVariationaFile,
+              onChange: (file) => updateDraft({ variationaFile: file }),
             },
             {
               ...VARIATIONB_FILE_PICKER,
               value: variationbFile,
-              onChange: setVariationbFile,
+              onChange: (file) => updateDraft({ variationbFile: file }),
             },
           ]}
         />
@@ -102,7 +111,7 @@ export const InferencePage = () => {
       content: (
         <SelectStatisticsStep
           statistics={statistics}
-          onStatisticsChange={setStatistics}
+          onStatisticsChange={(value) => updateDraft({ statistics: value })}
         />
       ),
       isComplete: statistics.length > 0,
@@ -129,7 +138,10 @@ export const InferencePage = () => {
     <PageLayout title={SESSION_TYPE_LABELS.inference}>
       <Steps
         steps={steps}
+        activeStep={step}
+        onStepChange={(value) => updateDraft({ step: value })}
         onFinish={finish}
+        onCancel={cancel}
         isFinishing={isPending}
         labels={INFERENCE_STEPS_LABELS}
       />

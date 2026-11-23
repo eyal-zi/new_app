@@ -1,5 +1,4 @@
 import { useNavigate } from '@tanstack/react-router';
-import { useState } from 'react';
 
 import { useCreateTrainingSession } from '@/api/generated/api';
 import { SessionType } from '@/api/generated/model';
@@ -11,6 +10,7 @@ import type { Selection } from '@/shared/components/selection-list/types';
 import { Steps } from '@/shared/components/steps/steps';
 import type { StepItem } from '@/shared/components/steps/types';
 import { UPLOAD_REQUEST_TIMEOUT_MS } from '@/shared/constants';
+import { clearDraft, useDraft } from '@/shared/hooks/use-draft';
 import { useIsMountedRef } from '@/shared/hooks/use-is-mounted-ref';
 import { useSessionOwner } from '@/shared/hooks/use-session-owner';
 import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
@@ -18,6 +18,8 @@ import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
 import { DEFAULT_TYPE_OPTION } from '../components/select-type-step/consts';
 import { SelectTypeStep } from '../components/select-type-step/select-type-step';
 import {
+  EMPTY_TRAINING_DRAFT,
+  TRAINING_DRAFT_SCOPE,
   TRAINING_STEPS,
   TRAINING_STEPS_LABELS,
   UPLOAD_SUBTITLE,
@@ -27,10 +29,9 @@ import {
 } from '../consts';
 
 export const TrainingPage = () => {
-  // Held here, not in the step, so the files survive moving between steps.
-  const [variationaFile, setVariationaFile] = useState<File | null>(null);
-  const [variationbFile, setVariationbFile] = useState<File | null>(null);
-  const [requiredType, setRequiredType] = useState<string | null>(null);
+  // Held in a draft, not in the step, so it survives moving between steps and pages.
+  const [{ step, variationaFile, variationbFile, requiredType }, updateDraft] =
+    useDraft(TRAINING_DRAFT_SCOPE, EMPTY_TRAINING_DRAFT);
 
   const owner = useSessionOwner();
   const navigate = useNavigate();
@@ -70,6 +71,9 @@ export const TrainingPage = () => {
         },
       });
 
+      // The session exists now, so there is nothing left to come back to.
+      clearDraft(TRAINING_DRAFT_SCOPE);
+
       // The upload can outlive the page; don't pull the user back once they left.
       if (isMountedRef.current) {
         await navigate({
@@ -82,6 +86,9 @@ export const TrainingPage = () => {
     }
   };
 
+  // Back to a blank session on the first step.
+  const cancel = () => clearDraft(TRAINING_DRAFT_SCOPE);
+
   const steps: StepItem[] = [
     {
       ...TRAINING_STEPS.upload,
@@ -93,12 +100,12 @@ export const TrainingPage = () => {
             {
               ...VARIATIONA_FILE_PICKER,
               value: variationaFile,
-              onChange: setVariationaFile,
+              onChange: (file) => updateDraft({ variationaFile: file }),
             },
             {
               ...VARIATIONB_FILE_PICKER,
               value: variationbFile,
-              onChange: setVariationbFile,
+              onChange: (file) => updateDraft({ variationbFile: file }),
             },
           ]}
         />
@@ -110,7 +117,7 @@ export const TrainingPage = () => {
       content: (
         <SelectTypeStep
           requiredType={requiredType}
-          onRequiredTypeChange={setRequiredType}
+          onRequiredTypeChange={(value) => updateDraft({ requiredType: value })}
         />
       ),
       isComplete: requiredType !== null,
@@ -134,7 +141,10 @@ export const TrainingPage = () => {
     <PageLayout title={SESSION_TYPE_LABELS.training}>
       <Steps
         steps={steps}
+        activeStep={step}
+        onStepChange={(value) => updateDraft({ step: value })}
         onFinish={finish}
+        onCancel={cancel}
         isFinishing={isPending}
         labels={TRAINING_STEPS_LABELS}
       />

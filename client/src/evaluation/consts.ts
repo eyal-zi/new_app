@@ -11,3 +11,16 @@ export const getPartialFailureMessage = (failed: number, total: number) =>
 export const EVALUATION_STEPS_LABELS: Partial<StepsLabels> = {
   finish: 'Evaluate',
 };
+
+/** Where this page's unfinished session is remembered while the app is open. */
+export const EVALUATION_DRAFT_SCOPE = 'evaluation-draft';
+
+export type EvaluationDraft = {
+  step: number;
+  images: File[];
+};
+
+export const EMPTY_EVALUATION_DRAFT: EvaluationDraft = {
+  step: 0,
+  images: [],
+};

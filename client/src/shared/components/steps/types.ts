@@ -24,6 +24,7 @@ export type StepStatus = 'active' | 'completed' | 'upcoming' | 'locked';
 
 export type StepsLabels = {
   back: string;
+  cancel: string;
   next: string;
   finish: string;
   optional: string;

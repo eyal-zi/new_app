@@ -2,6 +2,7 @@ import { type StepsLabels } from './types';
 
 export const DEFAULT_STEPS_LABELS: StepsLabels = {
   back: 'Back',
+  cancel: 'Cancel',
   next: 'Next',
   finish: 'Finish',
   optional: 'Optional',

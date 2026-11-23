@@ -29,3 +29,20 @@ export const VARIATIONB_FILE_PICKER: ImagePickerConfig = {
 
 /** The summary step lets statistics be removed only above this count. */
 export const MIN_STATISTICS = 1;
+
+/** Where this page's unfinished session is remembered while the app is open. */
+export const INFERENCE_DRAFT_SCOPE = 'inference-draft';
+
+export type InferenceDraft = {
+  step: number;
+  variationaFile: File | null;
+  variationbFile: File | null;
+  statistics: string[];
+};
+
+export const EMPTY_INFERENCE_DRAFT: InferenceDraft = {
+  step: 0,
+  variationaFile: null,
+  variationbFile: null,
+  statistics: [],
+};

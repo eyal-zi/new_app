@@ -26,3 +26,20 @@ export const VARIATIONB_FILE_PICKER: ImagePickerConfig = {
   description: 'PNG only',
   accept: PNG_ACCEPT,
 };
+
+/** Where this page's unfinished session is remembered while the app is open. */
+export const TRAINING_DRAFT_SCOPE = 'training-draft';
+
+export type TrainingDraft = {
+  step: number;
+  variationaFile: File | null;
+  variationbFile: File | null;
+  requiredType: string | null;
+};
+
+export const EMPTY_TRAINING_DRAFT: TrainingDraft = {
+  step: 0,
+  variationaFile: null,
+  variationbFile: null,
+  requiredType: null,
+};
