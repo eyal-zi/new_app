@@ -1,4 +1,5 @@
 import { useNavigate } from '@tanstack/react-router';
+import { useState } from 'react';
 
 import { useCreateTrainingSession } from '@/api/generated/api';
 import { SessionType } from '@/api/generated/model';
@@ -7,10 +8,11 @@ import { CompareSummaryStep } from '@/shared/components/compare-summary-step/com
 import { ImagePickersStep } from '@/shared/components/image-pickers-step/image-pickers-step';
 import { PageLayout } from '@/shared/components/page-layout/page-layout';
 import type { Selection } from '@/shared/components/selection-list/types';
+import { DISCARD_SESSION_CONFIRMATION } from '@/shared/components/steps/consts';
 import { Steps } from '@/shared/components/steps/steps';
 import type { StepItem } from '@/shared/components/steps/types';
 import { UPLOAD_REQUEST_TIMEOUT_MS } from '@/shared/constants';
-import { clearDraft, useDraft } from '@/shared/hooks/use-draft';
+import { clearDraft, clearDraftIf, useDraft } from '@/shared/hooks/use-draft';
 import { useIsMountedRef } from '@/shared/hooks/use-is-mounted-ref';
 import { useSessionOwner } from '@/shared/hooks/use-session-owner';
 import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
@@ -18,7 +20,6 @@ import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
 import { DEFAULT_TYPE_OPTION } from '../components/select-type-step/consts';
 import { SelectTypeStep } from '../components/select-type-step/select-type-step';
 import {
-  EMPTY_TRAINING_DRAFT,
   TRAINING_DRAFT_SCOPE,
   TRAINING_STEPS,
   TRAINING_STEPS_LABELS,
@@ -31,12 +32,15 @@ import {
 export const TrainingPage = () => {
   // Held in a draft, not in the step, so it survives moving between steps and pages.
   const [{ step, variationaFile, variationbFile, requiredType }, updateDraft] =
-    useDraft(TRAINING_DRAFT_SCOPE, EMPTY_TRAINING_DRAFT);
+    useDraft(TRAINING_DRAFT_SCOPE);
 
   const owner = useSessionOwner();
   const navigate = useNavigate();
   const isMountedRef = useIsMountedRef();
-  const { mutateAsync, isPending } = useCreateTrainingSession({
+  // Spans the upload and the navigation, so Finish stays locked until the page
+  // is left: `isPending` alone drops as soon as the upload is done.
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { mutateAsync } = useCreateTrainingSession({
     request: { timeout: UPLOAD_REQUEST_TIMEOUT_MS },
   });
 
@@ -53,9 +57,11 @@ export const TrainingPage = () => {
     : [];
 
   const finish = async () => {
-    if (!owner || !variationaFile || !variationbFile || isPending) {
+    if (!owner || !variationaFile || !variationbFile || isSubmitting) {
       return;
     }
+
+    setIsSubmitting(true);
 
     try {
       const { session_id } = await mutateAsync({
@@ -71,20 +77,34 @@ export const TrainingPage = () => {
         },
       });
 
-      // The session exists now, so there is nothing left to come back to.
-      clearDraft(TRAINING_DRAFT_SCOPE);
-
-      // The upload can outlive the page; don't pull the user back once they left.
-      if (isMountedRef.current) {
-        await navigate({
-          to: RESULTS_ROUTE_PATH,
-          params: { type: SessionType.training, sessionId: session_id },
-        });
+      try {
+        // The upload can outlive the page; don't pull the user back once they left.
+        if (isMountedRef.current) {
+          await navigate({
+            to: RESULTS_ROUTE_PATH,
+            params: { type: SessionType.training, sessionId: session_id },
+          });
+        }
+      } finally {
+        // The session exists, so there is nothing left to come back to. Cleared
+        // only after leaving, so the form doesn't blank out under the user, and
+        // only if it is still the submitted draft, not a newer one.
+        clearDraftIf(
+          TRAINING_DRAFT_SCOPE,
+          (current) =>
+            current.variationaFile === variationaFile &&
+            current.variationbFile === variationbFile,
+        );
       }
     } catch {
       // Already reported by the query client; stay here so the user can retry.
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  const hasDraft =
+    step > 0 || !!variationaFile || !!variationbFile || requiredType !== null;
 
   // Back to a blank session on the first step.
   const cancel = () => clearDraft(TRAINING_DRAFT_SCOPE);
@@ -145,7 +165,9 @@ export const TrainingPage = () => {
         onStepChange={(value) => updateDraft({ step: value })}
         onFinish={finish}
         onCancel={cancel}
-        isFinishing={isPending}
+        canCancel={hasDraft}
+        cancelConfirmation={DISCARD_SESSION_CONFIRMATION}
+        isFinishing={isSubmitting}
         labels={TRAINING_STEPS_LABELS}
       />
     </PageLayout>

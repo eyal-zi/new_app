@@ -9,7 +9,11 @@ import {
   StepsStepper,
 } from './steps.styles';
 import { StepsActions } from './steps-actions/steps-actions';
-import { type StepItem, type StepsLabels } from './types';
+import {
+  type CancelConfirmation,
+  type StepItem,
+  type StepsLabels,
+} from './types';
 import { resolveLabels } from './utils/resolve-labels';
 
 export type StepsProps = {
@@ -31,6 +35,10 @@ export type StepsProps = {
   onFinish: () => void;
   /** Called when the user clicks cancel. Omit to hide the cancel button. */
   onCancel?: () => void;
+  /** Whether cancel does anything right now. Defaults to `true`. */
+  canCancel?: boolean;
+  /** Asks the user to confirm before `onCancel` runs. Omit to cancel at once. */
+  cancelConfirmation?: CancelConfirmation;
   /**
    * Shows a loading state on the finish button and locks navigation, e.g.
    * while submitting. Also what prevents `onFinish` from firing twice.
@@ -46,6 +54,8 @@ export const Steps = ({
   onStepChange,
   onFinish,
   onCancel,
+  canCancel = true,
+  cancelConfirmation,
   isFinishing = false,
   labels,
 }: StepsProps) => {
@@ -114,6 +124,8 @@ export const Steps = ({
         labels={resolvedLabels}
         onBack={navigation.goBack}
         onCancel={onCancel}
+        canCancel={canCancel}
+        cancelConfirmation={cancelConfirmation}
         onNext={navigation.goNext}
         onFinish={onFinish}
       />

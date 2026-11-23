@@ -6,13 +6,14 @@ import { useCreateEvaluationSession } from '@/api/generated/api';
 import { SESSION_IDS_PARAM } from '@/results/consts';
 import { EVALUATION_RESULTS_ROUTE_PATH } from '@/sessions/consts';
 import { PageLayout } from '@/shared/components/page-layout/page-layout';
+import { DISCARD_SESSION_CONFIRMATION } from '@/shared/components/steps/consts';
 import { Steps } from '@/shared/components/steps/steps';
 import type { StepItem } from '@/shared/components/steps/types';
 import {
   MAX_CONCURRENT_UPLOADS,
   UPLOAD_REQUEST_TIMEOUT_MS,
 } from '@/shared/constants';
-import { clearDraft, useDraft } from '@/shared/hooks/use-draft';
+import { clearDraft, clearDraftIf, useDraft } from '@/shared/hooks/use-draft';
 import { useIsMountedRef } from '@/shared/hooks/use-is-mounted-ref';
 import { useSessionOwner } from '@/shared/hooks/use-session-owner';
 import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
@@ -21,7 +22,6 @@ import { mapWithConcurrency } from '@/shared/utils/map-with-concurrency';
 import { EvaluationSummaryStep } from '../components/summary-step/summary-step';
 import { UploadStep } from '../components/upload-step/upload-step';
 import {
-  EMPTY_EVALUATION_DRAFT,
   EVALUATION_DRAFT_SCOPE,
   EVALUATION_STEPS,
   EVALUATION_STEPS_LABELS,
@@ -30,10 +30,7 @@ import {
 
 export const EvaluationPage = () => {
   // Held in a draft, not in the step, so it survives moving between steps and pages.
-  const [{ step, images }, updateDraft] = useDraft(
-    EVALUATION_DRAFT_SCOPE,
-    EMPTY_EVALUATION_DRAFT,
-  );
+  const [{ step, images }, updateDraft] = useDraft(EVALUATION_DRAFT_SCOPE);
   const owner = useSessionOwner();
   const navigate = useNavigate();
   // One flag for the whole batch: `isPending` only follows the last request.
@@ -76,20 +73,31 @@ export const EvaluationPage = () => {
       }
 
       if (ids.length > 0) {
-        // Sessions exist now, so there is nothing left to come back to.
-        clearDraft(EVALUATION_DRAFT_SCOPE);
-
-        if (isMountedRef.current) {
-          await navigate({
-            to: EVALUATION_RESULTS_ROUTE_PATH,
-            search: { [SESSION_IDS_PARAM]: ids },
-          });
+        try {
+          if (isMountedRef.current) {
+            await navigate({
+              to: EVALUATION_RESULTS_ROUTE_PATH,
+              search: { [SESSION_IDS_PARAM]: ids },
+            });
+          }
+        } finally {
+          // Sessions exist, so there is nothing left to come back to. Cleared
+          // only after leaving, so the form doesn't blank out under the user,
+          // and only if it is still the submitted draft, not a newer one.
+          clearDraftIf(
+            EVALUATION_DRAFT_SCOPE,
+            (current) =>
+              current.images.length === images.length &&
+              current.images.every((image, index) => image === images[index]),
+          );
         }
       }
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const hasDraft = step > 0 || images.length > 0;
 
   // Back to a blank session on the first step.
   const cancel = () => clearDraft(EVALUATION_DRAFT_SCOPE);
@@ -120,6 +128,8 @@ export const EvaluationPage = () => {
         onStepChange={(value) => updateDraft({ step: value })}
         onFinish={finish}
         onCancel={cancel}
+        canCancel={hasDraft}
+        cancelConfirmation={DISCARD_SESSION_CONFIRMATION}
         isFinishing={isSubmitting}
         labels={EVALUATION_STEPS_LABELS}
       />

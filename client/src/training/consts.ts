@@ -1,6 +1,7 @@
 import { type ImagePickerConfig } from '@/shared/components/image-pickers-step/image-pickers-step';
 import { type StepsLabels } from '@/shared/components/steps/types';
 import { JPEG_ACCEPT, PNG_ACCEPT } from '@/shared/constants';
+import { createDraftScope } from '@/shared/hooks/use-draft';
 
 export const TRAINING_STEPS = {
   upload: { id: 'upload', label: 'Upload' },
@@ -27,9 +28,6 @@ export const VARIATIONB_FILE_PICKER: ImagePickerConfig = {
   accept: PNG_ACCEPT,
 };
 
-/** Where this page's unfinished session is remembered while the app is open. */
-export const TRAINING_DRAFT_SCOPE = 'training-draft';
-
 export type TrainingDraft = {
   step: number;
   variationaFile: File | null;
@@ -37,9 +35,13 @@ export type TrainingDraft = {
   requiredType: string | null;
 };
 
-export const EMPTY_TRAINING_DRAFT: TrainingDraft = {
-  step: 0,
-  variationaFile: null,
-  variationbFile: null,
-  requiredType: null,
-};
+/** Where this page's unfinished session is remembered while the app is open. */
+export const TRAINING_DRAFT_SCOPE = createDraftScope<TrainingDraft>(
+  'training-draft',
+  {
+    step: 0,
+    variationaFile: null,
+    variationbFile: null,
+    requiredType: null,
+  },
+);

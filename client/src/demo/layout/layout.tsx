@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 
 import { queryClient } from '@/lib/query';
 import { selectAccessToken, selectSignedOut, useSession } from '@/lib/store';
+import { clearAllDrafts } from '@/shared/hooks/use-draft';
 import { ColorModeToggle } from '@/shared/ui/color-mode-toggle';
 import { ConfirmationDialog } from '@/shared/ui/confirmation-dialog';
 
@@ -50,6 +51,8 @@ export const Layout = () => {
     await queryClient.cancelQueries();
     useSession.getState().signOut();
     queryClient.clear();
+    // Unfinished sessions belong to the user who signed out.
+    clearAllDrafts();
     await navigate({ to: '/unauthorized', replace: true });
   };
 

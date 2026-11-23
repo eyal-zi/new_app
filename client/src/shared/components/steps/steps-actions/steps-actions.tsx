@@ -2,8 +2,11 @@ import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import { Button } from '@mui/material';
+import { useState } from 'react';
 
-import { type StepsLabels } from '../types';
+import { ConfirmationDialog } from '@/shared/ui/confirmation-dialog';
+
+import { type CancelConfirmation, type StepsLabels } from '../types';
 import {
   ActionsBar,
   PrimaryActionButton,
@@ -19,6 +22,8 @@ export type StepsActionsProps = {
   onBack: () => void;
   /** Omit to hide the cancel button. */
   onCancel?: () => void;
+  canCancel: boolean;
+  cancelConfirmation?: CancelConfirmation;
   onNext: () => void;
   onFinish: () => void;
 };
@@ -31,9 +36,28 @@ export const StepsActions = ({
   labels,
   onBack,
   onCancel,
+  canCancel,
+  cancelConfirmation,
   onNext,
   onFinish,
 }: StepsActionsProps) => {
+  const [confirmingCancel, setConfirmingCancel] = useState(false);
+
+  const closeConfirmation = () => setConfirmingCancel(false);
+
+  const requestCancel = () => {
+    if (cancelConfirmation) {
+      setConfirmingCancel(true);
+    } else {
+      onCancel?.();
+    }
+  };
+
+  const confirmCancel = () => {
+    closeConfirmation();
+    onCancel?.();
+  };
+
   return (
     <ActionsBar>
       <SecondaryActions>
@@ -45,7 +69,11 @@ export const StepsActions = ({
           {labels.back}
         </Button>
         {onCancel && (
-          <Button color="inherit" onClick={onCancel} disabled={isFinishing}>
+          <Button
+            color="inherit"
+            onClick={requestCancel}
+            disabled={!canCancel || isFinishing}
+          >
             {labels.cancel}
           </Button>
         )}
@@ -61,6 +89,15 @@ export const StepsActions = ({
       >
         {isLastStep ? labels.finish : labels.next}
       </PrimaryActionButton>
+      {cancelConfirmation && (
+        <ConfirmationDialog
+          open={confirmingCancel}
+          title={cancelConfirmation.title}
+          description={cancelConfirmation.description}
+          onCancel={closeConfirmation}
+          onConfirm={confirmCancel}
+        />
+      )}
     </ActionsBar>
   );
 };

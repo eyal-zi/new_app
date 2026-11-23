@@ -1,6 +1,7 @@
 import { type ImagePickerConfig } from '@/shared/components/image-pickers-step/image-pickers-step';
 import { type StepsLabels } from '@/shared/components/steps/types';
 import { IMAGE_ACCEPT, IMAGE_ACCEPT_DESCRIPTION } from '@/shared/constants';
+import { createDraftScope } from '@/shared/hooks/use-draft';
 
 export const INFERENCE_STEPS = {
   upload: { id: 'upload', label: 'Upload' },
@@ -30,9 +31,6 @@ export const VARIATIONB_FILE_PICKER: ImagePickerConfig = {
 /** The summary step lets statistics be removed only above this count. */
 export const MIN_STATISTICS = 1;
 
-/** Where this page's unfinished session is remembered while the app is open. */
-export const INFERENCE_DRAFT_SCOPE = 'inference-draft';
-
 export type InferenceDraft = {
   step: number;
   variationaFile: File | null;
@@ -40,9 +38,13 @@ export type InferenceDraft = {
   statistics: string[];
 };
 
-export const EMPTY_INFERENCE_DRAFT: InferenceDraft = {
-  step: 0,
-  variationaFile: null,
-  variationbFile: null,
-  statistics: [],
-};
+/** Where this page's unfinished session is remembered while the app is open. */
+export const INFERENCE_DRAFT_SCOPE = createDraftScope<InferenceDraft>(
+  'inference-draft',
+  {
+    step: 0,
+    variationaFile: null,
+    variationbFile: null,
+    statistics: [],
+  },
+);
