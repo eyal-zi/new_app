@@ -1,13 +1,13 @@
-import DownloadIcon from '@mui/icons-material/Download';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
 import { IconButton } from '@mui/material';
-import { useState } from 'react';
 import { useControls } from 'react-zoom-pan-pinch';
 
+import { type ImageDownloadFormat } from '@/shared/constants';
 import { downloadFile } from '@/shared/utils/download-file';
 
+import { DownloadButton } from '../../../download-button/download-button';
 import { type GalleryImage } from '../../types';
 import {
   CONTROLS_GROUP_LABEL,
@@ -25,21 +25,13 @@ type LightboxControlsProps = {
 /** Must be rendered inside a `TransformWrapper`. */
 export const LightboxControls = ({ image }: LightboxControlsProps) => {
   const { zoomIn, zoomOut, resetTransform } = useControls();
-  const [isDownloading, setIsDownloading] = useState(false);
 
   const handleZoomIn = () => void zoomIn();
   const handleZoomOut = () => void zoomOut();
   const handleReset = () => void resetTransform();
 
-  const handleDownload = async () => {
-    setIsDownloading(true);
-
-    try {
-      await downloadFile(image.src, { fallbackName: image.alt });
-    } finally {
-      setIsDownloading(false);
-    }
-  };
+  const handleDownload = (format?: ImageDownloadFormat) =>
+    downloadFile(image.src, { fallbackName: image.alt, format });
 
   return (
     <ControlsGroup role="group" aria-label={CONTROLS_GROUP_LABEL}>
@@ -52,13 +44,7 @@ export const LightboxControls = ({ image }: LightboxControlsProps) => {
       <IconButton aria-label={ZOOM_IN_LABEL} onClick={handleZoomIn}>
         <ZoomInIcon />
       </IconButton>
-      <IconButton
-        aria-label={DOWNLOAD_LABEL}
-        onClick={() => void handleDownload()}
-        disabled={isDownloading}
-      >
-        <DownloadIcon />
-      </IconButton>
+      <DownloadButton label={DOWNLOAD_LABEL} onDownload={handleDownload} />
     </ControlsGroup>
   );
 };
