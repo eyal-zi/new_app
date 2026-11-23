@@ -155,14 +155,17 @@ export class SessionsService {
         allowed: ANY_IMAGE,
       },
     ]);
-    const created = await this.createOrCleanUp([variationaFileUrl, variationbFileUrl], {
-      type: 'inference',
-      owner: body.session_owner,
-      variationaFileUrl: variationaFileUrl as string,
-      variationbFileUrl: variationbFileUrl as string,
-      progress: INITIAL_PROGRESS,
-      statistics: body.statistics,
-    });
+    const created = await this.createOrCleanUp(
+      [variationaFileUrl, variationbFileUrl],
+      {
+        type: 'inference',
+        owner: body.session_owner,
+        variationaFileUrl: variationaFileUrl as string,
+        variationbFileUrl: variationbFileUrl as string,
+        progress: INITIAL_PROGRESS,
+        statistics: body.statistics,
+      },
+    );
 
     this.scheduleMockCompletion(created);
 
@@ -187,16 +190,19 @@ export class SessionsService {
       },
     ]);
     const id = randomUUID();
-    const created = await this.createOrCleanUp([variationaFileUrl, variationbFileUrl], {
-      id,
-      type: 'training',
-      owner: body.session_owner,
-      variationaFileUrl: variationaFileUrl as string,
-      variationbFileUrl: variationbFileUrl as string,
-      progress: INITIAL_PROGRESS,
-      trainingType: body.training_type ?? null,
-      s8Link: `${S8_TRAINING_LINK_BASE_URL}/${id}`,
-    });
+    const created = await this.createOrCleanUp(
+      [variationaFileUrl, variationbFileUrl],
+      {
+        id,
+        type: 'training',
+        owner: body.session_owner,
+        variationaFileUrl: variationaFileUrl as string,
+        variationbFileUrl: variationbFileUrl as string,
+        progress: INITIAL_PROGRESS,
+        trainingType: body.training_type ?? null,
+        s8Link: `${S8_TRAINING_LINK_BASE_URL}/${id}`,
+      },
+    );
 
     this.scheduleMockCompletion(created);
 

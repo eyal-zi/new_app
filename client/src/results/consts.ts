@@ -65,7 +65,7 @@ export const INFERENCE_RESULTS_SUBTITLE =
   'Expand a selection to compare its images. Ctrl/Cmd + click an image, or use its checkbox, to select it.';
 export const EVALUATION_RESULTS_TITLE = 'Evaluation results';
 export const EVALUATION_RESULTS_SUBTITLE =
-  'Compare variationa image and the evaluated image for each session.';
+  'Compare Variationa and the evaluated image for each session.';
 
 export const getCompareTitle = (count: number) => `Comparing ${count} images`;
 export const getSelectedCountLabel = (count: number) => `${count} selected`;

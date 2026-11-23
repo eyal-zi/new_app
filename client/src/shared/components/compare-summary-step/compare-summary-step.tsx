@@ -46,10 +46,10 @@ export const CompareSummaryStep = ({
     <Stack spacing={3}>
       <StepHeader title={SUMMARY_TITLE} />
       <CompareRow
-        variationaTitle={variationaTitle}
-        variationbTitle={variationbTitle}
-        variationaImage={toCompareImage(variationaImage, variationaSrc)}
-        variationbImage={toCompareImage(variationbImage, variationbSrc)}
+        firstTitle={variationaTitle}
+        secondTitle={variationbTitle}
+        firstImage={toCompareImage(variationaImage, variationaSrc)}
+        secondImage={toCompareImage(variationbImage, variationbSrc)}
       />
       <SelectionList
         selections={selections}
