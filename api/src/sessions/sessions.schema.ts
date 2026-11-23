@@ -32,8 +32,8 @@ export const sessions = pgTable(
     id: uuid('id').primaryKey().defaultRandom(),
     type: varchar('type', { length: 32 }).notNull(),
     owner: varchar('owner', { length: MAX_OWNER_LENGTH }).notNull(),
-    imageAUrl: text('image_a_url').notNull(),
-    imageBUrl: text('image_b_url').notNull(),
+    variationaFileUrl: text('variationa_file_url').notNull(),
+    variationbFileUrl: text('variationb_file_url').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true })
       .notNull()
       .defaultNow(),

@@ -11,8 +11,8 @@ import type { TrainingSessionDtoVariationbInfo } from './trainingSessionDtoVaria
 export interface TrainingSessionDto {
   session_id: string;
   session_owner: string;
-  image_a_url: string;
-  image_b_url: string;
+  variationa_file_url: string;
+  variationb_file_url: string;
   /** Naive ISO-8601 timestamp in UTC (no timezone designator) */
   creation_time: string;
   /** Naive ISO-8601 timestamp in UTC (no timezone designator) */

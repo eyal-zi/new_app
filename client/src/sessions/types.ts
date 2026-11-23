@@ -14,8 +14,8 @@ export interface Session {
   id: string;
   type: SessionType;
   owner: string;
-  imageAUrl: string;
-  imageBUrl: string;
+  variationaFileUrl: string;
+  variationbFileUrl: string;
   createdAt: Date;
   updatedAt: Date;
   progress: number | null;

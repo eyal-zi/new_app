@@ -18,18 +18,18 @@ import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
 import { DEFAULT_TYPE_OPTION } from '../components/select-type-step/consts';
 import { SelectTypeStep } from '../components/select-type-step/select-type-step';
 import {
-  FIRST_IMAGE_PICKER,
-  SECOND_IMAGE_PICKER,
   TRAINING_STEPS,
   TRAINING_STEPS_LABELS,
   UPLOAD_SUBTITLE,
   UPLOAD_TITLE,
+  VARIATIONA_FILE_PICKER,
+  VARIATIONB_FILE_PICKER,
 } from '../consts';
 
 export const TrainingPage = () => {
   // Held here, not in the step, so the files survive moving between steps.
-  const [firstImage, setFirstImage] = useState<File | null>(null);
-  const [secondImage, setSecondImage] = useState<File | null>(null);
+  const [variationaFile, setVariationaFile] = useState<File | null>(null);
+  const [variationbFile, setVariationbFile] = useState<File | null>(null);
   const [requiredType, setRequiredType] = useState<string | null>(null);
 
   const owner = useSessionOwner();
@@ -52,7 +52,7 @@ export const TrainingPage = () => {
     : [];
 
   const finish = async () => {
-    if (!owner || !firstImage || !secondImage || isPending) {
+    if (!owner || !variationaFile || !variationbFile || isPending) {
       return;
     }
 
@@ -65,8 +65,8 @@ export const TrainingPage = () => {
             requiredType === DEFAULT_TYPE_OPTION.value
               ? undefined
               : requiredType,
-          variationa_file: firstImage,
-          variationb_file: secondImage,
+          variationa_file: variationaFile,
+          variationb_file: variationbFile,
         },
       });
 
@@ -91,19 +91,19 @@ export const TrainingPage = () => {
           subtitle={UPLOAD_SUBTITLE}
           pickers={[
             {
-              ...FIRST_IMAGE_PICKER,
-              value: firstImage,
-              onChange: setFirstImage,
+              ...VARIATIONA_FILE_PICKER,
+              value: variationaFile,
+              onChange: setVariationaFile,
             },
             {
-              ...SECOND_IMAGE_PICKER,
-              value: secondImage,
-              onChange: setSecondImage,
+              ...VARIATIONB_FILE_PICKER,
+              value: variationbFile,
+              onChange: setVariationbFile,
             },
           ]}
         />
       ),
-      isComplete: !!firstImage && !!secondImage,
+      isComplete: !!variationaFile && !!variationbFile,
     },
     {
       ...TRAINING_STEPS.selectType,
@@ -119,10 +119,10 @@ export const TrainingPage = () => {
       ...TRAINING_STEPS.summary,
       content: (
         <CompareSummaryStep
-          firstTitle={FIRST_IMAGE_PICKER.label}
-          secondTitle={SECOND_IMAGE_PICKER.label}
-          firstImage={firstImage}
-          secondImage={secondImage}
+          firstTitle={VARIATIONA_FILE_PICKER.label}
+          secondTitle={VARIATIONB_FILE_PICKER.label}
+          firstImage={variationaFile}
+          secondImage={variationbFile}
           selections={selections}
         />
       ),

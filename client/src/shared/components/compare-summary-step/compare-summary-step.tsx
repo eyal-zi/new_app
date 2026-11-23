@@ -39,8 +39,8 @@ export const CompareSummaryStep = ({
   onRemoveSelection,
   removeDisabledReason,
 }: CompareSummaryStepProps) => {
-  const firstSrc = useObjectUrl(firstImage);
-  const secondSrc = useObjectUrl(secondImage);
+  const variationaSrc = useObjectUrl(firstImage);
+  const variationbSrc = useObjectUrl(secondImage);
 
   return (
     <Stack spacing={3}>
@@ -48,8 +48,8 @@ export const CompareSummaryStep = ({
       <CompareRow
         firstTitle={firstTitle}
         secondTitle={secondTitle}
-        imageA={toCompareImage(firstImage, firstSrc)}
-        imageB={toCompareImage(secondImage, secondSrc)}
+        firstImage={toCompareImage(firstImage, variationaSrc)}
+        secondImage={toCompareImage(secondImage, variationbSrc)}
       />
       <SelectionList
         selections={selections}

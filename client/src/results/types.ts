@@ -6,11 +6,15 @@ export type ResultSet =
       id: string;
       title: string;
       status: 'ready';
-      imageAUrl: string;
+      variationaFileUrl: string;
       evaluatedImageUrl: string;
     };
 
-export type ResultImage = { id: 'a' | 'evaluated'; src: string; alt: string };
+export type ResultImage = {
+  id: 'variationa' | 'evaluated';
+  src: string;
+  alt: string;
+};
 
 /**
  * A grid cell: an image when the statistic type is `file`, a 0-1 score when it
