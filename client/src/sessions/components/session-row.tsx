@@ -48,19 +48,19 @@ export const SessionRow = ({
       <TableCell>{session.owner}</TableCell>
       <TableCell>
         <SessionImage
-          src={session.imageAUrl}
-          alt={`${session.id} - ${SESSION_IMAGE_NAMES.a}`}
+          src={session.variationaFileUrl}
+          alt={`${session.id} - ${SESSION_IMAGE_NAMES.variationa}`}
           onOpen={onOpenImage}
         />
       </TableCell>
       <TableCell>
-        {/* Evaluation sessions have a single image; the API sends an empty image B. */}
+        {/* Evaluation sessions have a single image; the API sends an empty variationb image. */}
         {session.type === SessionType.evaluation ? (
           NO_IMAGE_LABEL
         ) : (
           <SessionImage
-            src={session.imageBUrl}
-            alt={`${session.id} - ${SESSION_IMAGE_NAMES.b}`}
+            src={session.variationbFileUrl}
+            alt={`${session.id} - ${SESSION_IMAGE_NAMES.variationb}`}
             onOpen={onOpenImage}
           />
         )}

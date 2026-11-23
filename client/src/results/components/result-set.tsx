@@ -63,9 +63,9 @@ export const ResultSet = ({ set, onCancel, cancelingIds }: ResultSetProps) => {
 
   const images: ResultImage[] = [
     {
-      id: 'a',
-      src: set.imageAUrl,
-      alt: RESULT_IMAGE_LABELS.a,
+      id: 'variationa',
+      src: set.variationaFileUrl,
+      alt: RESULT_IMAGE_LABELS.variationa,
     },
     {
       id: 'evaluated',

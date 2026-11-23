@@ -16,7 +16,7 @@ type EvaluationResultsPageProps = {
   cancelingIds?: ReadonlySet<string>;
 };
 
-/** Presents one gallery per evaluation session: image A and its evaluated image. */
+/** Presents one gallery per evaluation session: variationa image and its evaluated image. */
 export const EvaluationResultsPage = ({
   sets,
   onCancelSet,

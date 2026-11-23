@@ -5,7 +5,7 @@ import type { ResultSet } from '../types';
 import { isTerminalStatus } from './is-terminal-status';
 
 /**
- * One result set per evaluation session, titled by its session id: image A
+ * One result set per evaluation session, titled by its session id: variationa image
  * next to the evaluated image. It is `active` until the session reaches a
  * terminal status. Returns null if the session completed without an
  * evaluated image. Callers filter out failed and canceled sessions before
@@ -31,7 +31,7 @@ export const toResultSet = (dto: EvaluationSessionDto): ResultSet | null => {
   return {
     ...base,
     status: 'ready',
-    imageAUrl: dto.image_a_url,
+    variationaFileUrl: dto.variationa_file_url,
     evaluatedImageUrl: dto.evaluated_image_url,
   };
 };

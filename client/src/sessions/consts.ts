@@ -77,8 +77,8 @@ export const SESSION_COLUMNS = [
   { id: 'id', label: 'ID' },
   { id: 'type', label: 'Type' },
   { id: 'owner', label: 'Owner' },
-  { id: 'imageA', label: 'Image A' },
-  { id: 'imageB', label: 'Image B' },
+  { id: 'variationaFile', label: 'Variationa' },
+  { id: 'variationbFile', label: 'Variationb' },
   { id: 'createdAt', label: 'Created' },
   { id: 'updatedAt', label: 'Last update' },
   { id: 'progress', label: 'Progress' },
@@ -96,8 +96,8 @@ export const COLUMN_FILTERS: Partial<Record<SessionColumnId, ColumnFilter>> = {
 
 /** Image names in the sessions table, shown as `{sessionId} - {name}`. */
 export const SESSION_IMAGE_NAMES = {
-  a: 'variationa',
-  b: 'variationb',
+  variationa: 'variationa',
+  variationb: 'variationb',
 } as const;
 
 /** Shown in place of an image the session doesn't have. */
