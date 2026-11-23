@@ -9,14 +9,12 @@ import { assertNever } from '@/shared/utils/assert-never';
 
 import {
   COLUMN_FILTERS,
+  SEARCH_MAX_LENGTH,
   SESSION_STATUS_LABELS,
   SESSION_STATUSES,
 } from '../consts';
 import type { SessionColumnId, SessionFilters } from '../types';
-import {
-  FILTER_INPUT_SIZE,
-  SEARCH_MAX_LENGTH,
-} from './column-filter-cell.consts';
+import { FILTER_INPUT_SIZE } from './column-filter-cell.consts';
 import { FilterInput } from './column-filter-cell.styles';
 import { SelectFilter } from './select-filter';
 

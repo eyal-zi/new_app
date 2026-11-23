@@ -45,30 +45,23 @@ export const useSessionsTable = () => {
   const debouncedSearch = useDebouncedValue(searchFilters, SEARCH_DEBOUNCE_MS);
   const debouncedInfo = useDebouncedValue(infoFilter, SEARCH_DEBOUNCE_MS);
 
-  // Go back to the first page when the filters the server sees change, not
-  // while the user is still typing.
-  const [applied, setApplied] = useState({
-    debouncedSearch,
-    debouncedInfo,
-    type,
-    status,
-  });
-
-  if (
-    applied.debouncedSearch !== debouncedSearch ||
-    applied.debouncedInfo !== debouncedInfo ||
-    applied.type !== type ||
-    applied.status !== status
-  ) {
-    setApplied({ debouncedSearch, debouncedInfo, type, status });
-    setPage(0);
-  }
-
   const searchValues: SessionSearchValuesDto = {
     ...getActiveSearchFilters(debouncedSearch),
     ...getInfoSearchValues(debouncedInfo),
     ...(status && { status }),
   };
+
+  // Go back to the first page when the filters the server sees change, not
+  // while the user is still typing. Compared by value, so edits that leave
+  // the query as it was (e.g. a blank filter's dropdown) keep the page.
+  const appliedFilters = JSON.stringify({ searchValues, type });
+  const [applied, setApplied] = useState(appliedFilters);
+
+  if (applied !== appliedFilters) {
+    setApplied(appliedFilters);
+    setPage(0);
+  }
+
   const queryOptions = {
     placeholderData: keepPreviousData,
     refetchInterval: REFETCH_INTERVAL_MS,

@@ -13,6 +13,9 @@ import type {
   SessionSearchField,
 } from './types';
 
+// Keep in sync with MAX_SEARCH_LENGTH in api/src/sessions/sessions.constants.ts.
+export const SEARCH_MAX_LENGTH = 200;
+
 export const SESSIONS_PATH = '/sessions';
 export const RESULTS_ROUTE_PATH =
   `${SESSIONS_PATH}/$type/$sessionId/results` as const;

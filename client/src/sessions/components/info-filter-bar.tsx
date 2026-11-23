@@ -2,14 +2,20 @@ import { MenuItem } from '@mui/material';
 import type { ChangeEvent } from 'react';
 
 import { useGetFilterSchema } from '@/api/generated/api';
+import { ErrorState } from '@/shared/ui/states';
 
-import { INFO_FILTER_VARIATIONS } from '../consts';
+import { INFO_FILTER_VARIATIONS, SEARCH_MAX_LENGTH } from '../consts';
 import type { InfoFilter, InfoVariationId } from '../types';
-import { SEARCH_MAX_LENGTH } from './column-filter-cell.consts';
-import { Bar, BarSelect, BarValue } from './info-filter-bar.styles';
+import {
+  Bar,
+  BarSelect,
+  BarSkeleton,
+  BarValue,
+} from './info-filter-bar.styles';
 
 // Filters the sessions by one property of a variation's info. The properties
-// come from the API, so new ones show up without client changes.
+// come from the API, so new ones show up without client changes (on the next
+// refetch of the schema).
 export const InfoFilterBar = ({
   filter,
   onChange,
@@ -17,11 +23,22 @@ export const InfoFilterBar = ({
   filter: InfoFilter;
   onChange: (filter: InfoFilter) => void;
 }) => {
-  const { data: properties } = useGetFilterSchema({
-    query: { staleTime: Infinity },
-  });
+  const { data: properties, isError, refetch } = useGetFilterSchema();
 
-  const first = properties?.[0];
+  // Holds the bar's place while loading, so the table doesn't jump when the
+  // properties arrive.
+  if (!properties) {
+    return isError ? (
+      <ErrorState
+        message="Unable to load the info filters"
+        retry={() => void refetch()}
+      />
+    ) : (
+      <BarSkeleton variant="rounded" />
+    );
+  }
+
+  const first = properties[0];
 
   if (!first) {
     return null;
@@ -30,11 +47,17 @@ export const InfoFilterBar = ({
   const property =
     properties.find(({ name }) => name === filter.property) ?? first;
 
+  // The filter holds one variation, property and text, so changing what it
+  // targets clears the text instead of silently re-pointing it.
   const changeVariation = (event: ChangeEvent<HTMLInputElement>) =>
-    onChange({ ...filter, variation: event.target.value as InfoVariationId });
+    onChange({
+      ...filter,
+      variation: event.target.value as InfoVariationId,
+      value: '',
+    });
 
   const changeProperty = (event: ChangeEvent<HTMLInputElement>) =>
-    onChange({ ...filter, property: event.target.value });
+    onChange({ ...filter, property: event.target.value, value: '' });
 
   // Pins the shown property, so what the user sees is what gets filtered.
   const changeValue = (event: ChangeEvent<HTMLInputElement>) =>

@@ -68,6 +68,8 @@ export type SessionFilterDefinition = {
  * The extra, adjustable filters of the sessions table. They describe both the
  * properties a session's `variationa_info` / `variationb_info` may hold and
  * the properties `search_values` may filter by. Add an entry to add a filter.
+ * Only `string` filters are supported for now: values are validated as strings
+ * and matched as a case-insensitive substring.
  */
 export const SESSION_INFO_FILTERS: readonly SessionFilterDefinition[] = [
   { name: 'banana', type: 'string', title: 'Banana' },

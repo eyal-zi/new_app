@@ -1,7 +1,8 @@
-import { Paper, TextField } from '@mui/material';
+import { Paper, Skeleton, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 import {
+  INFO_FILTER_BAR_HEIGHT_PX,
   INFO_FILTER_SELECT_MIN_WIDTH_PX,
   INFO_FILTER_VALUE_MIN_WIDTH_PX,
 } from './info-filter-bar.consts';
@@ -20,4 +21,8 @@ export const BarSelect = styled(TextField)({
 export const BarValue = styled(TextField)({
   flex: 1,
   minWidth: INFO_FILTER_VALUE_MIN_WIDTH_PX,
+});
+
+export const BarSkeleton = styled(Skeleton)({
+  height: INFO_FILTER_BAR_HEIGHT_PX,
 });
