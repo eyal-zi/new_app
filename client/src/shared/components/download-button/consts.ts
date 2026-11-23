@@ -1,0 +1,1 @@
+export const DOWNLOADING_PROGRESS_SIZE = 20;
