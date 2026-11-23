@@ -17,13 +17,13 @@ import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
 
 import { SelectStatisticsStep } from '../components/select-statistics-step/select-statistics-step';
 import {
-  VARIATIONA_IMAGE_PICKER,
   INFERENCE_STEPS,
   INFERENCE_STEPS_LABELS,
   MIN_STATISTICS,
-  VARIATIONB_IMAGE_PICKER,
   UPLOAD_SUBTITLE,
   UPLOAD_TITLE,
+  VARIATIONA_IMAGE_PICKER,
+  VARIATIONB_IMAGE_PICKER,
 } from '../consts';
 
 export const InferencePage = () => {

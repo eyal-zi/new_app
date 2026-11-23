@@ -18,12 +18,12 @@ import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
 import { DEFAULT_TYPE_OPTION } from '../components/select-type-step/consts';
 import { SelectTypeStep } from '../components/select-type-step/select-type-step';
 import {
-  VARIATIONA_IMAGE_PICKER,
-  VARIATIONB_IMAGE_PICKER,
   TRAINING_STEPS,
   TRAINING_STEPS_LABELS,
   UPLOAD_SUBTITLE,
   UPLOAD_TITLE,
+  VARIATIONA_IMAGE_PICKER,
+  VARIATIONB_IMAGE_PICKER,
 } from '../consts';
 
 export const TrainingPage = () => {
