@@ -7,8 +7,8 @@ import {
   SCORE_DECIMALS,
   SCORE_RING_SIZE,
   SCORE_RING_THICKNESS,
-} from '../consts';
-import { clampScore, getScoreColor } from '../utils/get-score-color';
+} from '../../consts';
+import { clampScore, getScoreColor } from '../../utils/get-score-color';
 import {
   RingLabel,
   RingTrack,

@@ -4,7 +4,7 @@ import { ActionableImageTile } from '@/shared/components/actionable-image-tile/a
 import { ImageLightbox } from '@/shared/components/image-gallery/image-lightbox/image-lightbox';
 import { downloadFile } from '@/shared/utils/download-file';
 
-import type { SelectedImage } from '../types';
+import type { SelectedImage } from '../../types';
 import { SelectableImageFrame } from './selectable-image.styles';
 
 type SelectableImageProps = {

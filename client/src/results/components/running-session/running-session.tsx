@@ -1,7 +1,7 @@
 import { Button } from '@mui/material';
 
-import { CANCEL_SESSION_LABEL } from '../consts';
-import { ResultsProgress } from './results-progress';
+import { CANCEL_SESSION_LABEL } from '../../consts';
+import { ResultsProgress } from '../results-progress/results-progress';
 import { RunningSessionRoot } from './running-session.styles';
 
 type RunningSessionProps = {

@@ -1,7 +1,7 @@
 import { LinearProgress } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-import { PROGRESS_MAX_WIDTH } from '../consts';
+import { PROGRESS_MAX_WIDTH } from '../../consts';
 
 export const ResultsProgressRoot = styled('div')(({ theme }) => ({
   display: 'flex',

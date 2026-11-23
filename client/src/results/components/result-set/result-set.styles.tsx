@@ -1,7 +1,7 @@
 import { Button, Skeleton } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-import { RESULT_COLUMNS, SKELETON_TILE_HEIGHT } from '../consts';
+import { RESULT_COLUMNS, SKELETON_TILE_HEIGHT } from '../../consts';
 
 export const ResultSetRoot = styled('section')(({ theme }) => ({
   display: 'flex',

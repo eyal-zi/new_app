@@ -8,8 +8,8 @@ import {
   RESULT_COLUMNS,
   RESULT_IMAGE_LABELS,
   SKELETON_TILE_COUNT,
-} from '../consts';
-import type { ResultImage, ResultSet as ResultSetData } from '../types';
+} from '../../consts';
+import type { ResultImage, ResultSet as ResultSetData } from '../../types';
 import {
   CancelButton,
   ResultSetRoot,

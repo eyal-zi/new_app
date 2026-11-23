@@ -4,7 +4,7 @@ import { styled } from '@mui/material/styles';
 import {
   SELECTABLE_IMAGE_ASPECT_RATIO,
   SELECTION_GRID_ROW_TITLE_WIDTH,
-} from '../consts';
+} from '../../consts';
 
 export const GridRoot = styled('div', {
   shouldForwardProp: (prop) => prop !== 'columns',

@@ -40,9 +40,9 @@ export const PaneStage = styled('div')({
     justifyContent: 'center',
   },
   '& img': {
-    maxWidth: '100%',
-    maxHeight: '100%',
-    objectFit: 'contain',
+    width: '100%',
+    height: '100%',
+    objectFit: 'fill',
     userSelect: 'none',
   },
 });

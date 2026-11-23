@@ -1,9 +1,9 @@
 import { Fragment } from 'react';
 
-import { EMPTY_CELL_LABEL } from '../consts';
-import type { GridCell, SelectedImage, SelectionGridRow } from '../types';
-import { ScoreCell } from './score-cell';
-import { SelectableImage } from './selectable-image';
+import { EMPTY_CELL_LABEL } from '../../consts';
+import type { GridCell, SelectedImage, SelectionGridRow } from '../../types';
+import { ScoreCell } from '../score-cell/score-cell';
+import { SelectableImage } from '../selectable-image/selectable-image';
 import {
   ColumnTitle,
   EmptyCell,

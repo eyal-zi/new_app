@@ -1,8 +1,8 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AccordionDetails, AccordionSummary, Typography } from '@mui/material';
 
-import type { ResultSelection, SelectedImage } from '../types';
-import { SelectionGrid } from './selection-grid';
+import type { ResultSelection, SelectedImage } from '../../types';
+import { SelectionGrid } from '../selection-grid/selection-grid';
 import { SelectionAccordion } from './selection-item.styles';
 
 type SelectionItemProps = {

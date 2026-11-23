@@ -1,15 +1,15 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { IconButton, Typography } from '@mui/material';
 
-import { COMPARE_CLOSE_LABEL, getCompareTitle } from '../consts';
-import type { SelectedImage } from '../types';
-import { getCompareColumns } from '../utils/get-compare-columns';
+import { COMPARE_CLOSE_LABEL, getCompareTitle } from '../../consts';
+import type { SelectedImage } from '../../types';
+import { getCompareColumns } from '../../utils/get-compare-columns';
+import { ComparePane } from '../compare-pane/compare-pane';
 import {
   CompareDialogRoot,
   CompareGrid,
   CompareHeader,
 } from './compare-dialog.styles';
-import { ComparePane } from './compare-pane';
 
 type CompareDialogProps = {
   open: boolean;

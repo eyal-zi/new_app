@@ -7,7 +7,7 @@ import {
   COMPARE_MIN_IMAGES,
   getSelectedCountLabel,
   SELECTION_BAR_ELEVATION,
-} from '../consts';
+} from '../../consts';
 import { SelectionBarRoot } from './selection-bar.styles';
 
 type SelectionBarProps = {

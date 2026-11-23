@@ -7,7 +7,7 @@ import {
 } from '@/shared/components/image-gallery/image-lightbox/consts';
 import { LightboxControls } from '@/shared/components/image-gallery/image-lightbox/lightbox-controls/lightbox-controls';
 
-import type { SelectedImage } from '../types';
+import type { SelectedImage } from '../../types';
 import { PaneHeader, PaneRoot, PaneStage } from './compare-pane.styles';
 
 /** Each pane owns its own transform, so zoom and pan are independent. */

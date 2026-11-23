@@ -5,7 +5,7 @@ import {
   SCORE_RING_SIZE,
   SCORE_RING_TRACK_OPACITY,
   SELECTABLE_IMAGE_ASPECT_RATIO,
-} from '../consts';
+} from '../../consts';
 
 export const ScoreFrame = styled('div')({
   aspectRatio: SELECTABLE_IMAGE_ASPECT_RATIO,
