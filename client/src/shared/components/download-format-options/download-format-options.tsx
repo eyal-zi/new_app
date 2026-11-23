@@ -11,12 +11,15 @@ import { FormatButton, FormatOptions } from './download-format-options.styles';
 type DownloadFormatOptionsProps = {
   /** Accessible name of the group. */
   label: string;
+  /** Disables the buttons, e.g. while a download is running. */
+  disabled?: boolean;
   onSelect: (event: MouseEvent, format: ImageDownloadFormat) => void;
 };
 
-/** SVG / PNG / JPEG buttons, meant as the content of a download button's tooltip. */
+/** One button per `IMAGE_DOWNLOAD_FORMATS` entry, meant as the content of a download button's tooltip. */
 export const DownloadFormatOptions = ({
   label,
+  disabled,
   onSelect,
 }: DownloadFormatOptionsProps) => (
   <FormatOptions role="group" aria-label={label}>
@@ -25,6 +28,7 @@ export const DownloadFormatOptions = ({
       <FormatButton
         key={format}
         size="small"
+        disabled={disabled}
         onClick={(event) => onSelect(event, format)}
       >
         {formatLabel}

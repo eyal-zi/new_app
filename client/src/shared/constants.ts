@@ -29,8 +29,11 @@ export const AUTH_POPUP_REOPEN_MS = 1000;
 export const DEFAULT_DOWNLOAD_FILE_NAME = 'download';
 
 /** The image types the app accepts for upload. */
-export const JPEG_ACCEPT: Accept = { 'image/jpeg': ['.jpg', '.jpeg'] };
-export const PNG_ACCEPT: Accept = { 'image/png': ['.png'] };
+export const JPEG_MIME_TYPE = 'image/jpeg';
+export const PNG_MIME_TYPE = 'image/png';
+export const SVG_MIME_TYPE = 'image/svg+xml';
+export const JPEG_ACCEPT: Accept = { [JPEG_MIME_TYPE]: ['.jpg', '.jpeg'] };
+export const PNG_ACCEPT: Accept = { [PNG_MIME_TYPE]: ['.png'] };
 export const IMAGE_ACCEPT: Accept = { ...JPEG_ACCEPT, ...PNG_ACCEPT };
 export const IMAGE_ACCEPT_DESCRIPTION = 'JPEG or PNG';
 
@@ -52,10 +55,27 @@ export const SUMMARY_TITLE = 'Summary';
 export const PERCENT = 100;
 
 export const IMAGE_DOWNLOAD_FORMATS = [
-  { format: 'svg', label: 'SVG', mimeType: 'image/svg+xml' },
-  { format: 'png', label: 'PNG', mimeType: 'image/png' },
-  { format: 'jpeg', label: 'JPEG', mimeType: 'image/jpeg' },
+  { format: 'svg', label: 'SVG' },
+  { format: 'png', label: 'PNG' },
+  { format: 'jpeg', label: 'JPEG' },
 ] as const;
 
 export type ImageDownloadFormat =
   (typeof IMAGE_DOWNLOAD_FORMATS)[number]['format'];
+
+export const IMAGE_DOWNLOAD_MIME_TYPES: Record<ImageDownloadFormat, string> = {
+  svg: SVG_MIME_TYPE,
+  png: PNG_MIME_TYPE,
+  jpeg: JPEG_MIME_TYPE,
+};
+
+/** Image extensions that a download format replaces rather than appends to. */
+export const IMAGE_FILE_EXTENSION = /\.(svg|png|jpe?g|gif|webp|bmp|avif)$/i;
+
+export const IMAGE_LOAD_ERROR = 'Failed to load image';
+export const IMAGE_ENCODE_ERROR = 'Failed to encode image';
+export const CANVAS_UNSUPPORTED_ERROR = 'Canvas is not supported';
+export const CONVERSION_FAILED_MESSAGE =
+  'Could not convert the image, downloading the original instead.';
+export const FORMAT_UNAVAILABLE_MESSAGE =
+  'Could not fetch the image to convert it, opening the original instead.';

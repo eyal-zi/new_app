@@ -1,5 +1,10 @@
+import { enqueueSnackbar } from 'notistack';
+
 import {
+  CONVERSION_FAILED_MESSAGE,
   DEFAULT_DOWNLOAD_FILE_NAME,
+  FORMAT_UNAVAILABLE_MESSAGE,
+  IMAGE_FILE_EXTENSION,
   type ImageDownloadFormat,
 } from '@/shared/constants';
 
@@ -10,7 +15,7 @@ export type DownloadFileOptions = {
   fileName?: string;
   /** Used when there's no `fileName` and the URL has no file name. */
   fallbackName?: string;
-  /** Converts the image to this format first; its extension replaces any existing one. */
+  /** Converts the image to this format first; its extension replaces an existing image extension. */
   format?: ImageDownloadFormat;
 };
 
@@ -22,7 +27,6 @@ const toFileName = (text: string) =>
   text.replace(NON_FILE_NAME_CHARS, '-').replace(EDGE_SEPARATORS, '');
 
 const hasExtension = (name: string) => name.includes('.');
-const EXTENSION = /\.[^.]+$/;
 
 const getUrlFileName = (url: string) => {
   const lastSegment = new URL(url, window.location.href).pathname
@@ -34,8 +38,11 @@ const getUrlFileName = (url: string) => {
     : undefined;
 };
 
+const getExtension = (mimeType: string) =>
+  mimeType.split('/')[1]?.split(/[+;]/)[0];
+
 const withExtension = (name: string, mimeType: string) => {
-  const extension = mimeType.split('/')[1]?.split(/[+;]/)[0];
+  const extension = getExtension(mimeType);
 
   return hasExtension(name) || !extension ? name : `${name}.${extension}`;
 };
@@ -50,9 +57,16 @@ const resolveFileName = (
     getUrlFileName(url) ??
     (fallbackName && toFileName(fallbackName)) ??
     DEFAULT_DOWNLOAD_FILE_NAME;
-  const baseName = format ? name.replace(EXTENSION, '') : name;
 
-  return withExtension(baseName || DEFAULT_DOWNLOAD_FILE_NAME, mimeType);
+  if (format) {
+    // Only an image extension is swapped, so `model.v2` or `Epoch 1.5` keep their dots.
+    const baseName = name.replace(IMAGE_FILE_EXTENSION, '');
+    const extension = getExtension(mimeType);
+
+    return `${baseName || DEFAULT_DOWNLOAD_FILE_NAME}${extension ? `.${extension}` : ''}`;
+  }
+
+  return withExtension(name, mimeType);
 };
 
 /** Saves an in-memory file, e.g. a generated CSV. */
@@ -80,7 +94,8 @@ const fetchBlob = async (url: string) => {
 /**
  * Downloads the file at `url`. Fetches it as a blob because browsers ignore
  * `download` on cross-origin links; if the file can't be fetched (e.g. the
- * host doesn't allow CORS), opens the URL in a new tab instead.
+ * host doesn't allow CORS), opens the URL in a new tab instead. A failed
+ * format conversion falls back to the original file. Both warn the user.
  */
 export const downloadFile = async (
   url: string,
@@ -88,13 +103,26 @@ export const downloadFile = async (
 ) => {
   const blob = await fetchBlob(url);
 
+  const { format } = options;
+
   if (!blob) {
+    if (format) {
+      enqueueSnackbar(FORMAT_UNAVAILABLE_MESSAGE, { variant: 'warning' });
+    }
+
     window.open(url, '_blank', 'noopener');
     return;
   }
 
-  const { format } = options;
-  const file = format ? await convertImageBlob(blob, format) : blob;
+  let file = blob;
+
+  if (format) {
+    try {
+      file = await convertImageBlob(blob, format);
+    } catch {
+      enqueueSnackbar(CONVERSION_FAILED_MESSAGE, { variant: 'warning' });
+    }
+  }
 
   downloadBlob(file, resolveFileName(url, file.type, options));
 };

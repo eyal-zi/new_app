@@ -1,10 +1,10 @@
 import {
-  IMAGE_DOWNLOAD_FORMATS,
+  CANVAS_UNSUPPORTED_ERROR,
+  IMAGE_DOWNLOAD_MIME_TYPES,
+  IMAGE_ENCODE_ERROR,
+  IMAGE_LOAD_ERROR,
   type ImageDownloadFormat,
 } from '@/shared/constants';
-
-const getMimeType = (format: ImageDownloadFormat) =>
-  IMAGE_DOWNLOAD_FORMATS.find((option) => option.format === format)!.mimeType;
 
 const readAsDataUrl = (blob: Blob) =>
   new Promise<string>((resolve, reject) => {
@@ -20,14 +20,14 @@ const loadImage = (src: string) =>
     const image = new Image();
 
     image.onload = () => resolve(image);
-    image.onerror = () => reject(new Error('Failed to load image'));
+    image.onerror = () => reject(new Error(IMAGE_LOAD_ERROR));
     image.src = src;
   });
 
 const toCanvasBlob = (canvas: HTMLCanvasElement, mimeType: string) =>
   new Promise<Blob>((resolve, reject) => {
     canvas.toBlob(
-      (blob) => (blob ? resolve(blob) : reject(new Error('Encoding failed'))),
+      (blob) => (blob ? resolve(blob) : reject(new Error(IMAGE_ENCODE_ERROR))),
       mimeType,
     );
   });
@@ -37,7 +37,7 @@ const toSvgBlob = (dataUrl: string, width: number, height: number) =>
     [
       `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><image width="${width}" height="${height}" xlink:href="${dataUrl}"/></svg>`,
     ],
-    { type: getMimeType('svg') },
+    { type: IMAGE_DOWNLOAD_MIME_TYPES.svg },
   );
 
 /**
@@ -48,7 +48,7 @@ export const convertImageBlob = async (
   blob: Blob,
   format: ImageDownloadFormat,
 ) => {
-  const mimeType = getMimeType(format);
+  const mimeType = IMAGE_DOWNLOAD_MIME_TYPES[format];
 
   if (blob.type === mimeType) {
     return blob;
@@ -68,7 +68,11 @@ export const convertImageBlob = async (
   canvas.width = width;
   canvas.height = height;
 
-  const context = canvas.getContext('2d')!;
+  const context = canvas.getContext('2d');
+
+  if (!context) {
+    throw new Error(CANVAS_UNSUPPORTED_ERROR);
+  }
 
   context.drawImage(image, 0, 0);
 

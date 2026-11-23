@@ -1,15 +1,13 @@
-import DownloadIcon from '@mui/icons-material/Download';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
-import { IconButton, Tooltip } from '@mui/material';
-import { useState } from 'react';
+import { IconButton } from '@mui/material';
 import { useControls } from 'react-zoom-pan-pinch';
 
 import { type ImageDownloadFormat } from '@/shared/constants';
 import { downloadFile } from '@/shared/utils/download-file';
 
-import { DownloadFormatOptions } from '../../../download-format-options/download-format-options';
+import { DownloadButton } from '../../../download-button/download-button';
 import { type GalleryImage } from '../../types';
 import {
   CONTROLS_GROUP_LABEL,
@@ -27,25 +25,13 @@ type LightboxControlsProps = {
 /** Must be rendered inside a `TransformWrapper`. */
 export const LightboxControls = ({ image }: LightboxControlsProps) => {
   const { zoomIn, zoomOut, resetTransform } = useControls();
-  const [isDownloading, setIsDownloading] = useState(false);
 
   const handleZoomIn = () => void zoomIn();
   const handleZoomOut = () => void zoomOut();
   const handleReset = () => void resetTransform();
 
-  const handleDownload = async (format?: ImageDownloadFormat) => {
-    if (isDownloading) {
-      return;
-    }
-
-    setIsDownloading(true);
-
-    try {
-      await downloadFile(image.src, { fallbackName: image.alt, format });
-    } finally {
-      setIsDownloading(false);
-    }
-  };
+  const handleDownload = (format?: ImageDownloadFormat) =>
+    downloadFile(image.src, { fallbackName: image.alt, format });
 
   return (
     <ControlsGroup role="group" aria-label={CONTROLS_GROUP_LABEL}>
@@ -58,22 +44,7 @@ export const LightboxControls = ({ image }: LightboxControlsProps) => {
       <IconButton aria-label={ZOOM_IN_LABEL} onClick={handleZoomIn}>
         <ZoomInIcon />
       </IconButton>
-      <Tooltip
-        title={
-          <DownloadFormatOptions
-            label={DOWNLOAD_LABEL}
-            onSelect={(_event, format) => void handleDownload(format)}
-          />
-        }
-      >
-        <IconButton
-          aria-label={DOWNLOAD_LABEL}
-          aria-busy={isDownloading}
-          onClick={() => void handleDownload()}
-        >
-          <DownloadIcon />
-        </IconButton>
-      </Tooltip>
+      <DownloadButton label={DOWNLOAD_LABEL} onDownload={handleDownload} />
     </ControlsGroup>
   );
 };
