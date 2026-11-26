@@ -2,17 +2,27 @@ import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import { Button } from '@mui/material';
+import { useState } from 'react';
 
+import { ConfirmationDialog } from '@/shared/ui/confirmation-dialog';
+
+import { CANCEL_CONFIRMATION } from '../consts';
 import { type StepsLabels } from '../types';
-import { ActionsBar, PrimaryActionButton } from './steps-actions.styles';
+import {
+  ActionsBar,
+  PrimaryActionButton,
+  SecondaryActions,
+} from './steps-actions.styles';
 
 export type StepsActionsProps = {
   isFirstStep: boolean;
   isLastStep: boolean;
   canProceed: boolean;
   isFinishing: boolean;
-  labels: Pick<StepsLabels, 'back' | 'next' | 'finish'>;
+  labels: Pick<StepsLabels, 'back' | 'cancel' | 'next' | 'finish'>;
   onBack: () => void;
+  onCancel: () => void;
+  canCancel: boolean;
   onNext: () => void;
   onFinish: () => void;
 };
@@ -24,18 +34,40 @@ export const StepsActions = ({
   isFinishing,
   labels,
   onBack,
+  onCancel,
+  canCancel,
   onNext,
   onFinish,
 }: StepsActionsProps) => {
+  const [isConfirmingCancel, setIsConfirmingCancel] = useState(false);
+
+  const closeConfirmation = () => setIsConfirmingCancel(false);
+
+  const openConfirmation = () => setIsConfirmingCancel(true);
+
+  const confirmCancel = () => {
+    closeConfirmation();
+    onCancel();
+  };
+
   return (
     <ActionsBar>
-      <Button
-        onClick={onBack}
-        disabled={isFirstStep || isFinishing}
-        startIcon={<ArrowBackRoundedIcon />}
-      >
-        {labels.back}
-      </Button>
+      <SecondaryActions>
+        <Button
+          onClick={onBack}
+          disabled={isFirstStep || isFinishing}
+          startIcon={<ArrowBackRoundedIcon />}
+        >
+          {labels.back}
+        </Button>
+        <Button
+          color="inherit"
+          onClick={openConfirmation}
+          disabled={!canCancel || isFinishing}
+        >
+          {labels.cancel}
+        </Button>
+      </SecondaryActions>
       <PrimaryActionButton
         variant="contained"
         onClick={isLastStep ? onFinish : onNext}
@@ -47,6 +79,12 @@ export const StepsActions = ({
       >
         {isLastStep ? labels.finish : labels.next}
       </PrimaryActionButton>
+      <ConfirmationDialog
+        open={isConfirmingCancel}
+        {...CANCEL_CONFIRMATION}
+        onCancel={closeConfirmation}
+        onConfirm={confirmCancel}
+      />
     </ActionsBar>
   );
 };

@@ -14,6 +14,8 @@ export const ConfirmationDialog = ({
   onCancel,
   onConfirm,
   busy = false,
+  cancelLabel = 'Cancel',
+  confirmLabel = 'Confirm',
 }: {
   open: boolean;
   title: string;
@@ -21,6 +23,8 @@ export const ConfirmationDialog = ({
   onCancel: () => void;
   onConfirm: () => void;
   busy?: boolean;
+  cancelLabel?: string;
+  confirmLabel?: string;
 }) => {
   return (
     <Dialog
@@ -34,10 +38,10 @@ export const ConfirmationDialog = ({
       </DialogContent>
       <DialogActions>
         <Button onClick={onCancel} disabled={busy}>
-          Cancel
+          {cancelLabel}
         </Button>
         <Button variant="contained" onClick={onConfirm} disabled={busy}>
-          Confirm
+          {confirmLabel}
         </Button>
       </DialogActions>
     </Dialog>

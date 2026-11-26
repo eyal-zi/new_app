@@ -27,4 +27,11 @@ const primaryActionStyles = ({ theme }: { theme: Theme }): CSSObject => {
   };
 };
 
+const secondaryActionsStyles = ({ theme }: { theme: Theme }): CSSObject => ({
+  display: 'flex',
+  gap: theme.spacing(1),
+});
+
+export const SecondaryActions = styled(Box)(secondaryActionsStyles);
+
 export const PrimaryActionButton = styled(Button)(primaryActionStyles);

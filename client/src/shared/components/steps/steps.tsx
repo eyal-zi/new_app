@@ -29,6 +29,10 @@ export type StepsProps = {
    * guarded against repeated clicks: set `isFinishing` while handling it.
    */
   onFinish: () => void;
+  /** Called once the user clicks cancel and confirms. */
+  onCancel: () => void;
+  /** Whether there is anything to cancel right now. */
+  canCancel: boolean;
   /**
    * Shows a loading state on the finish button and locks navigation, e.g.
    * while submitting. Also what prevents `onFinish` from firing twice.
@@ -43,6 +47,8 @@ export const Steps = ({
   defaultActiveStep,
   onStepChange,
   onFinish,
+  onCancel,
+  canCancel,
   isFinishing = false,
   labels,
 }: StepsProps) => {
@@ -110,6 +116,8 @@ export const Steps = ({
         isFinishing={isFinishing}
         labels={resolvedLabels}
         onBack={navigation.goBack}
+        onCancel={onCancel}
+        canCancel={canCancel}
         onNext={navigation.goNext}
         onFinish={onFinish}
       />

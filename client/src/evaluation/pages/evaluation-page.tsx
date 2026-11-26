@@ -3,6 +3,7 @@ import { enqueueSnackbar } from 'notistack';
 import { useState } from 'react';
 
 import { useCreateEvaluationSession } from '@/api/generated/api';
+import { SessionType } from '@/api/generated/model';
 import { SESSION_IDS_PARAM } from '@/results/consts';
 import { EVALUATION_RESULTS_ROUTE_PATH } from '@/sessions/consts';
 import { PageLayout } from '@/shared/components/page-layout/page-layout';
@@ -12,6 +13,11 @@ import {
   MAX_CONCURRENT_UPLOADS,
   UPLOAD_REQUEST_TIMEOUT_MS,
 } from '@/shared/constants';
+import {
+  deleteDraft,
+  useBlockLeavingWhileSending,
+  useDraft,
+} from '@/shared/hooks/use-draft';
 import { useIsMountedRef } from '@/shared/hooks/use-is-mounted-ref';
 import { useSessionOwner } from '@/shared/hooks/use-session-owner';
 import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
@@ -26,8 +32,11 @@ import {
 } from '../consts';
 
 export const EvaluationPage = () => {
-  // Held here, not in the step, so the files survive moving between steps.
-  const [images, setImages] = useState<File[]>([]);
+  // Held in a draft, not in the step, so it survives moving between steps and pages.
+  const [{ step, images }, updateDraft, resetDraft] = useDraft<{
+    step: number;
+    images: File[];
+  }>(SessionType.evaluation, { step: 0, images: [] });
   const owner = useSessionOwner();
   const navigate = useNavigate();
   // One flag for the whole batch: `isPending` only follows the last request.
@@ -37,6 +46,7 @@ export const EvaluationPage = () => {
   });
   // The batch can outlive the page; don't pull the user back once they left.
   const isMountedRef = useIsMountedRef();
+  useBlockLeavingWhileSending(isSubmitting);
 
   // A session evaluates a single image, so each image gets its own session.
   // Each failure is reported by the query client; the sessions that were
@@ -73,17 +83,27 @@ export const EvaluationPage = () => {
         await navigate({
           to: EVALUATION_RESULTS_ROUTE_PATH,
           search: { [SESSION_IDS_PARAM]: ids },
+          // Still submitting at this point, so the blocker would stop it.
+          ignoreBlocker: true,
         });
+        deleteDraft(SessionType.evaluation);
       }
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const hasDraft = step > 0 || images.length > 0;
+
   const steps: StepItem[] = [
     {
       ...EVALUATION_STEPS.upload,
-      content: <UploadStep images={images} onImagesChange={setImages} />,
+      content: (
+        <UploadStep
+          images={images}
+          onImagesChange={(value) => updateDraft({ images: value })}
+        />
+      ),
       isComplete: images.length > 0,
     },
     {
@@ -97,7 +117,11 @@ export const EvaluationPage = () => {
     <PageLayout title={SESSION_TYPE_LABELS.evaluation}>
       <Steps
         steps={steps}
+        activeStep={step}
+        onStepChange={(value) => updateDraft({ step: value })}
         onFinish={finish}
+        onCancel={resetDraft}
+        canCancel={hasDraft}
         isFinishing={isSubmitting}
         labels={EVALUATION_STEPS_LABELS}
       />
