@@ -22,12 +22,6 @@ export type StepItem = {
 /** Visual state of a step in the stepper header. */
 export type StepStatus = 'active' | 'completed' | 'upcoming' | 'locked';
 
-/** Text of the dialog asking the user to confirm cancelling. */
-export type CancelConfirmation = {
-  title: string;
-  description: string;
-};
-
 export type StepsLabels = {
   back: string;
   cancel: string;

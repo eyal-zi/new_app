@@ -6,7 +6,8 @@ import { useState } from 'react';
 
 import { ConfirmationDialog } from '@/shared/ui/confirmation-dialog';
 
-import { type CancelConfirmation, type StepsLabels } from '../types';
+import { CANCEL_CONFIRMATION } from '../consts';
+import { type StepsLabels } from '../types';
 import {
   ActionsBar,
   PrimaryActionButton,
@@ -20,10 +21,8 @@ export type StepsActionsProps = {
   isFinishing: boolean;
   labels: Pick<StepsLabels, 'back' | 'cancel' | 'next' | 'finish'>;
   onBack: () => void;
-  /** Omit to hide the cancel button. */
-  onCancel?: () => void;
+  onCancel: () => void;
   canCancel: boolean;
-  cancelConfirmation?: CancelConfirmation;
   onNext: () => void;
   onFinish: () => void;
 };
@@ -37,7 +36,6 @@ export const StepsActions = ({
   onBack,
   onCancel,
   canCancel,
-  cancelConfirmation,
   onNext,
   onFinish,
 }: StepsActionsProps) => {
@@ -45,17 +43,11 @@ export const StepsActions = ({
 
   const closeConfirmation = () => setConfirmingCancel(false);
 
-  const requestCancel = () => {
-    if (cancelConfirmation) {
-      setConfirmingCancel(true);
-    } else {
-      onCancel?.();
-    }
-  };
+  const openConfirmation = () => setConfirmingCancel(true);
 
   const confirmCancel = () => {
     closeConfirmation();
-    onCancel?.();
+    onCancel();
   };
 
   return (
@@ -68,15 +60,13 @@ export const StepsActions = ({
         >
           {labels.back}
         </Button>
-        {onCancel && (
-          <Button
-            color="inherit"
-            onClick={requestCancel}
-            disabled={!canCancel || isFinishing}
-          >
-            {labels.cancel}
-          </Button>
-        )}
+        <Button
+          color="inherit"
+          onClick={openConfirmation}
+          disabled={!canCancel || isFinishing}
+        >
+          {labels.cancel}
+        </Button>
       </SecondaryActions>
       <PrimaryActionButton
         variant="contained"
@@ -89,15 +79,12 @@ export const StepsActions = ({
       >
         {isLastStep ? labels.finish : labels.next}
       </PrimaryActionButton>
-      {cancelConfirmation && (
-        <ConfirmationDialog
-          open={confirmingCancel}
-          title={cancelConfirmation.title}
-          description={cancelConfirmation.description}
-          onCancel={closeConfirmation}
-          onConfirm={confirmCancel}
-        />
-      )}
+      <ConfirmationDialog
+        open={confirmingCancel}
+        {...CANCEL_CONFIRMATION}
+        onCancel={closeConfirmation}
+        onConfirm={confirmCancel}
+      />
     </ActionsBar>
   );
 };

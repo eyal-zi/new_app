@@ -1,24 +1,19 @@
-import { useNavigate } from '@tanstack/react-router';
+import { useBlocker, useNavigate } from '@tanstack/react-router';
 import { enqueueSnackbar } from 'notistack';
 import { useState } from 'react';
 
 import { useCreateEvaluationSession } from '@/api/generated/api';
+import { SessionType } from '@/api/generated/model';
 import { SESSION_IDS_PARAM } from '@/results/consts';
 import { EVALUATION_RESULTS_ROUTE_PATH } from '@/sessions/consts';
 import { PageLayout } from '@/shared/components/page-layout/page-layout';
-import { DISCARD_SESSION_CONFIRMATION } from '@/shared/components/steps/consts';
 import { Steps } from '@/shared/components/steps/steps';
 import type { StepItem } from '@/shared/components/steps/types';
 import {
   MAX_CONCURRENT_UPLOADS,
   UPLOAD_REQUEST_TIMEOUT_MS,
 } from '@/shared/constants';
-import {
-  clearDraft,
-  clearDraftIfUnedited,
-  getDraftRevision,
-  useDraft,
-} from '@/shared/hooks/use-draft';
+import { deleteDraft, useDraft } from '@/shared/hooks/use-draft';
 import { useIsMountedRef } from '@/shared/hooks/use-is-mounted-ref';
 import { useSessionOwner } from '@/shared/hooks/use-session-owner';
 import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
@@ -27,7 +22,6 @@ import { mapWithConcurrency } from '@/shared/utils/map-with-concurrency';
 import { EvaluationSummaryStep } from '../components/summary-step/summary-step';
 import { UploadStep } from '../components/upload-step/upload-step';
 import {
-  EVALUATION_DRAFT_SCOPE,
   EVALUATION_STEPS,
   EVALUATION_STEPS_LABELS,
   getPartialFailureMessage,
@@ -35,7 +29,10 @@ import {
 
 export const EvaluationPage = () => {
   // Held in a draft, not in the step, so it survives moving between steps and pages.
-  const [{ step, images }, updateDraft] = useDraft(EVALUATION_DRAFT_SCOPE);
+  const [{ step, images }, updateDraft, resetDraft] = useDraft<{
+    step: number;
+    images: File[];
+  }>(SessionType.evaluation, { step: 0, images: [] });
   const owner = useSessionOwner();
   const navigate = useNavigate();
   // One flag for the whole batch: `isPending` only follows the last request.
@@ -45,6 +42,9 @@ export const EvaluationPage = () => {
   });
   // The batch can outlive the page; don't pull the user back once they left.
   const isMountedRef = useIsMountedRef();
+  // No leaving while sending, so the draft can't change under the request. A
+  // refresh stays allowed (drafts are meant to be lost then).
+  useBlocker({ shouldBlockFn: () => isSubmitting, enableBeforeUnload: false });
 
   // A session evaluates a single image, so each image gets its own session.
   // Each failure is reported by the query client; the sessions that were
@@ -56,7 +56,6 @@ export const EvaluationPage = () => {
     }
 
     setIsSubmitting(true);
-    const submittedRevision = getDraftRevision(EVALUATION_DRAFT_SCOPE);
 
     try {
       const results = await mapWithConcurrency(
@@ -78,21 +77,16 @@ export const EvaluationPage = () => {
         });
       }
 
-      if (ids.length > 0) {
-        try {
-          if (isMountedRef.current) {
-            await navigate({
-              to: EVALUATION_RESULTS_ROUTE_PATH,
-              search: { [SESSION_IDS_PARAM]: ids },
-            });
-          }
-        } finally {
-          // Sessions exist, so there is nothing left to come back to. Cleared
-          // only after leaving, so the form doesn't blank out under the user,
-          // and only if the data wasn't edited since Finish: an edit, even one
-          // undone later, starts a new session that is kept.
-          clearDraftIfUnedited(EVALUATION_DRAFT_SCOPE, submittedRevision);
-        }
+      if (ids.length > 0 && isMountedRef.current) {
+        await navigate({
+          to: EVALUATION_RESULTS_ROUTE_PATH,
+          search: { [SESSION_IDS_PARAM]: ids },
+          // Still submitting at this point, so the blocker would stop it.
+          ignoreBlocker: true,
+        });
+        // Cleared after leaving, so the form doesn't blank out under the user.
+        // `navigate` is assumed to succeed.
+        deleteDraft(SessionType.evaluation);
       }
     } finally {
       setIsSubmitting(false);
@@ -100,9 +94,6 @@ export const EvaluationPage = () => {
   };
 
   const hasDraft = step > 0 || images.length > 0;
-
-  // Back to a blank session on the first step.
-  const cancel = () => clearDraft(EVALUATION_DRAFT_SCOPE);
 
   const steps: StepItem[] = [
     {
@@ -129,9 +120,8 @@ export const EvaluationPage = () => {
         activeStep={step}
         onStepChange={(value) => updateDraft({ step: value })}
         onFinish={finish}
-        onCancel={cancel}
+        onCancel={resetDraft}
         canCancel={hasDraft}
-        cancelConfirmation={DISCARD_SESSION_CONFIRMATION}
         isFinishing={isSubmitting}
         labels={EVALUATION_STEPS_LABELS}
       />

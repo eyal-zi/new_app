@@ -17,9 +17,6 @@ export const MAX_SNACKBARS = 3;
 
 export const SESSION_STORAGE_KEY = 'session';
 
-/** Draft keys that are only about the view, so changing them isn't an edit. */
-export const DRAFT_VIEW_KEYS = ['step'] as const;
-
 export const DEFAULT_TABLE_PAGE_SIZE = 5;
 export const TABLE_PAGE_SIZE_OPTIONS = [DEFAULT_TABLE_PAGE_SIZE, 10, 20];
 

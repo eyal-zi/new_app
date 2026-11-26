@@ -1,4 +1,4 @@
-import { type CancelConfirmation, type StepsLabels } from './types';
+import { type StepsLabels } from './types';
 
 export const DEFAULT_STEPS_LABELS: StepsLabels = {
   back: 'Back',
@@ -8,7 +8,7 @@ export const DEFAULT_STEPS_LABELS: StepsLabels = {
   optional: 'Optional',
 };
 
-export const DISCARD_SESSION_CONFIRMATION: CancelConfirmation = {
+export const CANCEL_CONFIRMATION = {
   title: 'Discard this session?',
   description: 'The files and choices you made will be lost.',
 };

@@ -1,5 +1,4 @@
-import { useNavigate } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useBlocker, useNavigate } from '@tanstack/react-router';
 
 import { useCreateInferenceSession } from '@/api/generated/api';
 import { SessionType } from '@/api/generated/model';
@@ -8,23 +7,16 @@ import { CompareSummaryStep } from '@/shared/components/compare-summary-step/com
 import { ImagePickersStep } from '@/shared/components/image-pickers-step/image-pickers-step';
 import { PageLayout } from '@/shared/components/page-layout/page-layout';
 import type { Selection } from '@/shared/components/selection-list/types';
-import { DISCARD_SESSION_CONFIRMATION } from '@/shared/components/steps/consts';
 import { Steps } from '@/shared/components/steps/steps';
 import type { StepItem } from '@/shared/components/steps/types';
 import { UPLOAD_REQUEST_TIMEOUT_MS } from '@/shared/constants';
-import {
-  clearDraft,
-  clearDraftIfUnedited,
-  getDraftRevision,
-  useDraft,
-} from '@/shared/hooks/use-draft';
+import { deleteDraft, useDraft } from '@/shared/hooks/use-draft';
 import { useIsMountedRef } from '@/shared/hooks/use-is-mounted-ref';
 import { useSessionOwner } from '@/shared/hooks/use-session-owner';
 import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
 
 import { SelectStatisticsStep } from '../components/select-statistics-step/select-statistics-step';
 import {
-  INFERENCE_DRAFT_SCOPE,
   INFERENCE_STEPS,
   INFERENCE_STEPS_LABELS,
   MIN_STATISTICS,
@@ -36,18 +28,28 @@ import {
 
 export const InferencePage = () => {
   // Held in a draft, not in the step, so it survives moving between steps and pages.
-  const [{ step, variationaFile, variationbFile, statistics }, updateDraft] =
-    useDraft(INFERENCE_DRAFT_SCOPE);
+  const [draft, updateDraft, resetDraft] = useDraft<{
+    step: number;
+    variationaFile: File | null;
+    variationbFile: File | null;
+    statistics: string[];
+  }>(SessionType.inference, {
+    step: 0,
+    variationaFile: null,
+    variationbFile: null,
+    statistics: [],
+  });
+  const { step, variationaFile, variationbFile, statistics } = draft;
 
   const owner = useSessionOwner();
   const navigate = useNavigate();
   const isMountedRef = useIsMountedRef();
-  // Spans the upload and the navigation, so Finish stays locked until the page
-  // is left: `isPending` alone drops as soon as the upload is done.
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { mutateAsync } = useCreateInferenceSession({
+  const { mutateAsync, isPending } = useCreateInferenceSession({
     request: { timeout: UPLOAD_REQUEST_TIMEOUT_MS },
   });
+  // No leaving while sending, so the draft can't change under the request. A
+  // refresh stays allowed (drafts are meant to be lost then).
+  useBlocker({ shouldBlockFn: () => isPending, enableBeforeUnload: false });
 
   const selections: Selection[] = statistics.map((statistic) => ({
     id: statistic,
@@ -55,17 +57,12 @@ export const InferencePage = () => {
   }));
 
   const removeStatistic = (id: string) =>
-    updateDraft((current) => ({
-      statistics: current.statistics.filter((value) => value !== id),
-    }));
+    updateDraft({ statistics: statistics.filter((value) => value !== id) });
 
   const finish = async () => {
-    if (!owner || !variationaFile || !variationbFile || isSubmitting) {
+    if (!owner || !variationaFile || !variationbFile || isPending) {
       return;
     }
-
-    setIsSubmitting(true);
-    const submittedRevision = getDraftRevision(INFERENCE_DRAFT_SCOPE);
 
     try {
       const { session_id } = await mutateAsync({
@@ -77,33 +74,26 @@ export const InferencePage = () => {
         },
       });
 
-      try {
-        // The upload can outlive the page; don't pull the user back once they left.
-        if (isMountedRef.current) {
-          await navigate({
-            to: RESULTS_ROUTE_PATH,
-            params: { type: SessionType.inference, sessionId: session_id },
-          });
-        }
-      } finally {
-        // The session exists, so there is nothing left to come back to. Cleared
-        // only after leaving, so the form doesn't blank out under the user, and
-        // only if the data wasn't edited since Finish: an edit, even one undone
-        // later, starts a new session that is kept.
-        clearDraftIfUnedited(INFERENCE_DRAFT_SCOPE, submittedRevision);
+      // The upload can outlive the page; don't pull the user back once they left.
+      if (isMountedRef.current) {
+        await navigate({
+          to: RESULTS_ROUTE_PATH,
+          params: { type: SessionType.inference, sessionId: session_id },
+          // The blocker may still see the request as pending.
+          ignoreBlocker: true,
+        });
       }
+
+      // Cleared after leaving, so the form doesn't blank out under the user.
+      // `navigate` is assumed to succeed.
+      deleteDraft(SessionType.inference);
     } catch {
       // Already reported by the query client; stay here so the user can retry.
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   const hasDraft =
     step > 0 || !!variationaFile || !!variationbFile || statistics.length > 0;
-
-  // Back to a blank session on the first step.
-  const cancel = () => clearDraft(INFERENCE_DRAFT_SCOPE);
 
   const steps: StepItem[] = [
     {
@@ -147,8 +137,11 @@ export const InferencePage = () => {
           firstImage={variationaFile}
           secondImage={variationbFile}
           selections={selections}
+          // Read-only while sending: the draft can't be edited then.
           onRemoveSelection={
-            statistics.length > MIN_STATISTICS ? removeStatistic : undefined
+            !isPending && statistics.length > MIN_STATISTICS
+              ? removeStatistic
+              : undefined
           }
         />
       ),
@@ -163,10 +156,9 @@ export const InferencePage = () => {
         activeStep={step}
         onStepChange={(value) => updateDraft({ step: value })}
         onFinish={finish}
-        onCancel={cancel}
+        onCancel={resetDraft}
         canCancel={hasDraft}
-        cancelConfirmation={DISCARD_SESSION_CONFIRMATION}
-        isFinishing={isSubmitting}
+        isFinishing={isPending}
         labels={INFERENCE_STEPS_LABELS}
       />
     </PageLayout>
