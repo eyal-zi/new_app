@@ -4,9 +4,7 @@ import { DeleteIcon } from '@/assets/icons/delete-icon';
 
 import type {
   ColumnFilter,
-  InfoFilter,
-  InfoSearchField,
-  InfoVariationId,
+  InfoVariationConfig,
   SessionAction,
   SessionActionConfig,
   SessionColumnId,
@@ -109,13 +107,7 @@ export const SESSION_IMAGE_NAMES = {
 /** Shown in place of an image the session doesn't have. */
 export const NO_IMAGE_LABEL = '—';
 
-export const INFO_FILTER_VARIATIONS: readonly {
-  id: InfoVariationId;
-  label: string;
-  field: InfoSearchField;
-}[] = [
-  { id: 'a', label: 'Variation A', field: 'variationa_info' },
-  { id: 'b', label: 'Variation B', field: 'variationb_info' },
+export const INFO_FILTER_VARIATIONS: readonly InfoVariationConfig[] = [
+  { label: 'Variation A', field: 'variationa_info' },
+  { label: 'Variation B', field: 'variationb_info' },
 ];
-
-export const DEFAULT_INFO_FILTER: InfoFilter = { variation: 'a', value: '' };

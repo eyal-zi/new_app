@@ -48,7 +48,10 @@ export type SessionActionHandler = (
 ) => void;
 
 // The search fields that hold variation info filters, set from the info filter bar.
-export type InfoSearchField = 'variationa_info' | 'variationb_info';
+export type InfoSearchField = keyof Pick<
+  SessionSearchValuesDto,
+  'variationa_info' | 'variationb_info'
+>;
 
 // Status has its own dropdown and the info fields have their own bar, so none
 // of them is a free-text column search field.
@@ -64,14 +67,18 @@ export interface SessionFilters extends SessionSearchFilters {
   status?: SessionStatus;
 }
 
-export type InfoVariationId = 'a' | 'b';
+// A variation the info filter bar can target.
+export interface InfoVariationConfig {
+  label: string;
+  field: InfoSearchField;
+}
 
 // One property of one variation's info to filter the sessions by.
 export interface InfoFilter {
-  variation: InfoVariationId;
+  field: InfoSearchField;
   // Unset until the user picks one; the bar then shows the first property.
   property?: string;
-  value: string;
+  text: string;
 }
 
 export type SessionColumnId = (typeof SESSION_COLUMNS)[number]['id'];

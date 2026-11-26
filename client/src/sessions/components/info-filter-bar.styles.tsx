@@ -1,28 +1,39 @@
 import { Paper, Skeleton, TextField } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { styled, type Theme } from '@mui/material/styles';
 
 import {
-  INFO_FILTER_BAR_HEIGHT_PX,
-  INFO_FILTER_SELECT_MIN_WIDTH_PX,
-  INFO_FILTER_VALUE_MIN_WIDTH_PX,
+  INFO_FILTER_FIELD_HEIGHT,
+  INFO_FILTER_SELECT_MIN_WIDTH,
+  INFO_FILTER_VALUE_MIN_WIDTH,
 } from './info-filter-bar.consts';
 
-export const Bar = styled(Paper)(({ theme }) => ({
+// Shared by each field and its loading skeleton, so both wrap alike.
+const selectStyles = ({ theme }: { theme: Theme }) => ({
+  minWidth: theme.spacing(INFO_FILTER_SELECT_MIN_WIDTH),
+});
+
+const valueStyles = ({ theme }: { theme: Theme }) => ({
+  flex: 1,
+  minWidth: theme.spacing(INFO_FILTER_VALUE_MIN_WIDTH),
+});
+
+export const InfoFilterPanel = styled(Paper)(({ theme }) => ({
   display: 'flex',
   flexWrap: 'wrap',
   gap: theme.spacing(2),
   padding: theme.spacing(2),
 }));
 
-export const BarSelect = styled(TextField)({
-  minWidth: INFO_FILTER_SELECT_MIN_WIDTH_PX,
-});
+export const InfoFilterSelect = styled(TextField)(selectStyles);
 
-export const BarValue = styled(TextField)({
-  flex: 1,
-  minWidth: INFO_FILTER_VALUE_MIN_WIDTH_PX,
-});
+export const InfoFilterValue = styled(TextField)(valueStyles);
 
-export const BarSkeleton = styled(Skeleton)({
-  height: INFO_FILTER_BAR_HEIGHT_PX,
-});
+export const InfoFilterSelectSkeleton = styled(Skeleton)(
+  selectStyles,
+  ({ theme }) => ({ height: theme.spacing(INFO_FILTER_FIELD_HEIGHT) }),
+);
+
+export const InfoFilterValueSkeleton = styled(Skeleton)(
+  valueStyles,
+  ({ theme }) => ({ height: theme.spacing(INFO_FILTER_FIELD_HEIGHT) }),
+);

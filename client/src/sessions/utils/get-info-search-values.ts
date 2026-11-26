@@ -1,17 +1,17 @@
-import { INFO_FILTER_VARIATIONS } from '../consts';
-import type { InfoFilter } from '../types';
+import type { SessionSearchValuesDto } from '@/api/generated/model';
+
+import type { InfoFilter, InfoSearchField } from '../types';
 
 // The search values for the info filter; none while it has no property or its
 // text is blank.
 export const getInfoSearchValues = ({
-  variation,
+  field,
   property,
-  value,
-}: InfoFilter) => {
-  const text = value.trim();
-  const config = INFO_FILTER_VARIATIONS.find(({ id }) => id === variation);
+  text,
+}: InfoFilter): Pick<SessionSearchValuesDto, InfoSearchField> => {
+  const trimmedText = text.trim();
 
-  return config && property && text
-    ? { [config.field]: { [property]: text } }
+  return property && trimmedText
+    ? { [field]: { [property]: trimmedText } }
     : {};
 };

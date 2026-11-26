@@ -5,12 +5,13 @@ import { useGetFilterSchema } from '@/api/generated/api';
 import { ErrorState } from '@/shared/ui/states';
 
 import { INFO_FILTER_VARIATIONS, SEARCH_MAX_LENGTH } from '../consts';
-import type { InfoFilter, InfoVariationId } from '../types';
+import type { InfoFilter, InfoSearchField } from '../types';
 import {
-  Bar,
-  BarSelect,
-  BarSkeleton,
-  BarValue,
+  InfoFilterPanel,
+  InfoFilterSelect,
+  InfoFilterSelectSkeleton,
+  InfoFilterValue,
+  InfoFilterValueSkeleton,
 } from './info-filter-bar.styles';
 
 // Filters the sessions by one property of a variation's info. The properties
@@ -25,60 +26,66 @@ export const InfoFilterBar = ({
 }) => {
   const { data: properties, isError, refetch } = useGetFilterSchema();
 
-  // Holds the bar's place while loading, so the table doesn't jump when the
-  // properties arrive.
-  if (!properties) {
-    return isError ? (
+  if (isError && !properties) {
+    return (
       <ErrorState
         message="Unable to load the info filters"
         retry={() => void refetch()}
       />
-    ) : (
-      <BarSkeleton variant="rounded" />
     );
   }
 
-  const first = properties[0];
-
-  if (!first) {
-    return null;
+  // Holds the bar's place while loading, so the table doesn't jump when the
+  // properties arrive. Laid out like the real fields, so it wraps with them.
+  if (!properties) {
+    return (
+      <InfoFilterPanel>
+        <InfoFilterSelectSkeleton variant="rounded" />
+        <InfoFilterSelectSkeleton variant="rounded" />
+        <InfoFilterValueSkeleton variant="rounded" />
+      </InfoFilterPanel>
+    );
   }
 
   const property =
-    properties.find(({ name }) => name === filter.property) ?? first;
+    properties.find(({ name }) => name === filter.property) ?? properties[0];
+
+  if (!property) {
+    return null;
+  }
 
   // The filter holds one variation, property and text, so changing what it
   // targets clears the text instead of silently re-pointing it.
   const changeVariation = (event: ChangeEvent<HTMLInputElement>) =>
     onChange({
       ...filter,
-      variation: event.target.value as InfoVariationId,
-      value: '',
+      field: event.target.value as InfoSearchField,
+      text: '',
     });
 
   const changeProperty = (event: ChangeEvent<HTMLInputElement>) =>
-    onChange({ ...filter, property: event.target.value, value: '' });
+    onChange({ ...filter, property: event.target.value, text: '' });
 
   // Pins the shown property, so what the user sees is what gets filtered.
-  const changeValue = (event: ChangeEvent<HTMLInputElement>) =>
-    onChange({ ...filter, property: property.name, value: event.target.value });
+  const changeText = (event: ChangeEvent<HTMLInputElement>) =>
+    onChange({ ...filter, property: property.name, text: event.target.value });
 
   return (
-    <Bar>
-      <BarSelect
+    <InfoFilterPanel>
+      <InfoFilterSelect
         select
         size="small"
         label="Variation"
-        value={filter.variation}
+        value={filter.field}
         onChange={changeVariation}
       >
-        {INFO_FILTER_VARIATIONS.map(({ id, label }) => (
-          <MenuItem key={id} value={id}>
+        {INFO_FILTER_VARIATIONS.map(({ field, label }) => (
+          <MenuItem key={field} value={field}>
             {label}
           </MenuItem>
         ))}
-      </BarSelect>
-      <BarSelect
+      </InfoFilterSelect>
+      <InfoFilterSelect
         select
         size="small"
         label="Property"
@@ -90,15 +97,15 @@ export const InfoFilterBar = ({
             {title}
           </MenuItem>
         ))}
-      </BarSelect>
-      <BarValue
+      </InfoFilterSelect>
+      <InfoFilterValue
         size="small"
         label={property.title}
         placeholder="Filter"
-        value={filter.value}
-        onChange={changeValue}
+        value={filter.text}
+        onChange={changeText}
         slotProps={{ htmlInput: { maxLength: SEARCH_MAX_LENGTH } }}
       />
-    </Bar>
+    </InfoFilterPanel>
   );
 };

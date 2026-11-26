@@ -18,6 +18,7 @@ import type {
   SessionActionHandler,
   ViewedImage,
 } from '../types';
+import { SessionsContent } from './sessions-page.styles';
 
 export const SessionsPage = () => {
   const table = useSessionsTable();
@@ -83,7 +84,7 @@ export const SessionsPage = () => {
           Browse, search and manage all sessions.
         </Typography>
       </Box>
-      <Stack spacing={2}>
+      <SessionsContent>
         <InfoFilterBar
           filter={table.infoFilter}
           onChange={table.setInfoFilter}
@@ -109,7 +110,7 @@ export const SessionsPage = () => {
             onOpenImage={openImage}
           />
         )}
-      </Stack>
+      </SessionsContent>
       {pending && (
         <ConfirmationDialog
           open={dialogOpen}
