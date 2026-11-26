@@ -47,10 +47,17 @@ export type SessionActionHandler = (
   action: SessionAction,
 ) => void;
 
-// Status has its own dropdown, so it is not a free-text search field.
+// The search fields that hold variation info filters, set from the info filter bar.
+export type InfoSearchField = keyof Pick<
+  SessionSearchValuesDto,
+  'variationa_info' | 'variationb_info'
+>;
+
+// Status has its own dropdown and the info fields have their own bar, so none
+// of them is a free-text column search field.
 export type SessionSearchField = Exclude<
   keyof SessionSearchValuesDto,
-  'status'
+  'status' | InfoSearchField
 >;
 
 export type SessionSearchFilters = Partial<Record<SessionSearchField, string>>;
@@ -58,6 +65,20 @@ export type SessionSearchFilters = Partial<Record<SessionSearchField, string>>;
 export interface SessionFilters extends SessionSearchFilters {
   type?: SessionType;
   status?: SessionStatus;
+}
+
+// A variation the info filter bar can target.
+export interface InfoVariationConfig {
+  label: string;
+  field: InfoSearchField;
+}
+
+// One property of one variation's info to filter the sessions by.
+export interface InfoFilter {
+  field: InfoSearchField;
+  // Unset until the user picks one; the bar then shows the first property.
+  property?: string;
+  text: string;
 }
 
 export type SessionColumnId = (typeof SESSION_COLUMNS)[number]['id'];

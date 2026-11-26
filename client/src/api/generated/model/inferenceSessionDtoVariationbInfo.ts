@@ -6,6 +6,7 @@
  */
 
 /**
+ * Values by property name, as listed by the filter schema (banana, strawberry), or null
  * @nullable
  */
-export type InferenceSessionDtoVariationbInfo = { [key: string]: unknown } | null;
+export type InferenceSessionDtoVariationbInfo = {[key: string]: string} | null;

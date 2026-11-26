@@ -53,6 +53,66 @@
         ]
       }
     },
+    "/api/inference/statistics": {
+      "get": {
+        "operationId": "listInferenceStatistics",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List the statistics an inference can compute",
+        "tags": [
+          "inference"
+        ]
+      }
+    },
+    "/api/training/types": {
+      "get": {
+        "operationId": "listTrainingTypes",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List the types a training can be run with",
+        "tags": [
+          "training"
+        ]
+      }
+    },
     "/api/inference": {
       "post": {
         "operationId": "createInferenceSession",
@@ -432,6 +492,37 @@
         "x-query": true
       }
     },
+    "/api/sessions/filter-schema": {
+      "get": {
+        "description": "Each entry is a property of variationa_info / variationb_info that search_values can filter by",
+        "operationId": "getFilterSchema",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SessionFilterSchemaDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get the extra filters available in the sessions table",
+        "tags": [
+          "sessions"
+        ]
+      }
+    },
     "/api/{type}/{sessionId}": {
       "get": {
         "operationId": "getSession",
@@ -538,66 +629,6 @@
         "summary": "Delete a session",
         "tags": [
           "sessions"
-        ]
-      }
-    },
-    "/api/inference/statistics": {
-      "get": {
-        "operationId": "listInferenceStatistics",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "List the statistics an inference can compute",
-        "tags": [
-          "inference"
-        ]
-      }
-    },
-    "/api/training/types": {
-      "get": {
-        "operationId": "listTrainingTypes",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "List the types a training can be run with",
-        "tags": [
-          "training"
         ]
       }
     }
@@ -784,11 +815,19 @@
           },
           "variationa_info": {
             "type": "object",
-            "nullable": true
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true,
+            "description": "Values by property name, as listed by the filter schema (banana, strawberry), or null"
           },
           "variationb_info": {
             "type": "object",
-            "nullable": true
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true,
+            "description": "Values by property name, as listed by the filter schema (banana, strawberry), or null"
           },
           "recommendations": {
             "description": "One recommendation per requested statistic.",
@@ -869,11 +908,19 @@
           },
           "variationa_info": {
             "type": "object",
-            "nullable": true
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true,
+            "description": "Values by property name, as listed by the filter schema (banana, strawberry), or null"
           },
           "variationb_info": {
             "type": "object",
-            "nullable": true
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true,
+            "description": "Values by property name, as listed by the filter schema (banana, strawberry), or null"
           },
           "training_type": {
             "type": "string",
@@ -948,11 +995,19 @@
           },
           "variationa_info": {
             "type": "object",
-            "nullable": true
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true,
+            "description": "Values by property name, as listed by the filter schema (banana, strawberry), or null"
           },
           "variationb_info": {
             "type": "object",
-            "nullable": true
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true,
+            "description": "Values by property name, as listed by the filter schema (banana, strawberry), or null"
           },
           "evaluated_image_url": {
             "type": "string",
@@ -1134,6 +1189,20 @@
             "type": "string",
             "description": "Case-insensitive text to look for in the session status",
             "maxLength": 200
+          },
+          "variationa_info": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Filters on variationa_info, by property name (banana, strawberry); see the filter schema endpoint for the types"
+          },
+          "variationb_info": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Filters on variationb_info, by property name (banana, strawberry); see the filter schema endpoint for the types"
           }
         }
       },
@@ -1156,6 +1225,39 @@
           "training",
           "inference",
           "evaluation"
+        ]
+      },
+      "SessionFilterType": {
+        "type": "string",
+        "enum": [
+          "string"
+        ],
+        "description": "Type of the value. Strings match case-insensitively by substring"
+      },
+      "SessionFilterSchemaDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Key of the property inside variationa_info / variationb_info, and in the same-named search_values objects"
+          },
+          "type": {
+            "description": "Type of the value. Strings match case-insensitively by substring",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SessionFilterType"
+              }
+            ]
+          },
+          "title": {
+            "type": "string",
+            "description": "Label for the filter in the sessions table"
+          }
+        },
+        "required": [
+          "name",
+          "type",
+          "title"
         ]
       }
     }

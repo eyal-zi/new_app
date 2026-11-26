@@ -4,6 +4,8 @@
  * API
  * OpenAPI spec version: 1.0
  */
+import type { SessionSearchValuesDtoVariationaInfo } from './sessionSearchValuesDtoVariationaInfo';
+import type { SessionSearchValuesDtoVariationbInfo } from './sessionSearchValuesDtoVariationbInfo';
 
 export interface SessionSearchValuesDto {
   /**
@@ -21,4 +23,8 @@ export interface SessionSearchValuesDto {
      * @maxLength 200
      */
   status?: string;
+  /** Filters on variationa_info, by property name (banana, strawberry); see the filter schema endpoint for the types */
+  variationa_info?: SessionSearchValuesDtoVariationaInfo;
+  /** Filters on variationb_info, by property name (banana, strawberry); see the filter schema endpoint for the types */
+  variationb_info?: SessionSearchValuesDtoVariationbInfo;
 }

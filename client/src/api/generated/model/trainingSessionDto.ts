@@ -28,9 +28,15 @@ export interface TrainingSessionDto {
   notes: string;
   /** @nullable */
   logs: string | null;
-  /** @nullable */
+  /**
+     * Values by property name, as listed by the filter schema (banana, strawberry), or null
+     * @nullable
+     */
   variationa_info: TrainingSessionDtoVariationaInfo;
-  /** @nullable */
+  /**
+     * Values by property name, as listed by the filter schema (banana, strawberry), or null
+     * @nullable
+     */
   variationb_info: TrainingSessionDtoVariationbInfo;
   /** @nullable */
   training_type: string | null;

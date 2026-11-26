@@ -34,6 +34,8 @@ const IMAGE_SIZES_PX: readonly (readonly [number, number])[] = [
 ];
 const TRAINING_TYPES = ['fine_tune', 'full', 'lora'];
 const STATISTICS = ['tomato', 'pineapple', 'mango', 'banana', 'cucumber'];
+const BANANA_VALUES = ['green', 'ripe', 'spotted', 'brown'];
+const STRAWBERRY_VALUES = ['small', 'medium', 'large', 'wild'];
 const PROGRESS_DECIMALS = 2;
 const NULL_VARIATION_INFO_CHANCE = 0.3;
 const NULL_TRAINING_TYPE_CHANCE = 0.2;
@@ -88,10 +90,11 @@ const imageUrl = (seed: string) => {
   return `https://picsum.photos/seed/${seed}/${width}/${height}`;
 };
 
-const variationInfo = (name: string) =>
+// Keys must match SESSION_INFO_FILTERS.
+const variationInfo = () =>
   random() < NULL_VARIATION_INFO_CHANCE
     ? null
-    : { name, model_version: `v${between(1, 5)}`, seed: between(0, 9999) };
+    : { banana: pick(BANANA_VALUES), strawberry: pick(STRAWBERRY_VALUES) };
 
 // Results exist only for completed sessions, built by the same generator the
 // mock worker uses, so seeded and freshly created sessions look alike.
@@ -145,8 +148,8 @@ const createMockSession = (index: number) => {
     status,
     notes: '',
     logs: status === 'failed' ? 'Session failed unexpectedly' : null,
-    variationaInfo: variationInfo('variation a'),
-    variationbInfo: variationInfo('variation b'),
+    variationaInfo: variationInfo(),
+    variationbInfo: variationInfo(),
     ...createTypeSpecificFields(type, id, status),
   };
 };

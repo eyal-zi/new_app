@@ -17,6 +17,7 @@ import {
   INITIAL_PROGRESS,
   MOCK_PROCESSING_DELAY_MS,
   S8_TRAINING_LINK_BASE_URL,
+  SESSION_INFO_FILTERS,
   SESSION_TYPES,
   UPLOAD_FIELDS,
 } from './sessions.constants.js';
@@ -30,6 +31,7 @@ import type {
   InferenceSessionDto,
   SessionDetailsDto,
   SessionDto,
+  SessionFilterSchemaDto,
   SessionSearchValuesDto,
 } from './sessions.dto.js';
 import { buildMockResults } from './sessions.mock.js';
@@ -255,6 +257,10 @@ export class SessionsService {
     }
 
     return toSessionDetailsDto(item);
+  }
+
+  getFilterSchema(): SessionFilterSchemaDto[] {
+    return SESSION_INFO_FILTERS.map((filter) => ({ ...filter }));
   }
 
   count(searchValues?: SessionSearchValuesDto, type?: SessionTypeValue) {

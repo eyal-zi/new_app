@@ -1,4 +1,4 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { hashKey, keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import {
@@ -16,10 +16,16 @@ import type {
 import { DEFAULT_TABLE_PAGE_SIZE } from '@/shared/constants';
 import { useDebouncedValue } from '@/shared/hooks/use-debounced-value';
 
-import type { SessionFilters, SessionSearchFilters } from '../types';
+import type {
+  InfoFilter,
+  SessionFilters,
+  SessionSearchFilters,
+} from '../types';
 import { getActiveSearchFilters } from '../utils/get-active-search-filters';
+import { getInfoSearchValues } from '../utils/get-info-search-values';
 import { mapSessions } from '../utils/map-session';
 import {
+  DEFAULT_INFO_FILTER,
   REFETCH_INTERVAL_MS,
   SEARCH_DEBOUNCE_MS,
 } from './use-sessions-table.consts';
@@ -32,28 +38,31 @@ export const useSessionsTable = () => {
   const [searchFilters, setSearchFilters] = useState<SessionSearchFilters>({});
   const [type, setType] = useState<SessionType>();
   const [status, setStatus] = useState<SessionStatus>();
+  const [infoFilter, setInfoFilter] = useState<InfoFilter>(DEFAULT_INFO_FILTER);
 
-  // Only the typed text is debounced; the type and status dropdowns apply at
-  // once.
+  // The column text filters and the whole info filter are debounced, while the
+  // type and status dropdowns apply at once. The info filter's dropdowns wait
+  // with its text, so old text is never sent against a newly picked target.
   const debouncedSearch = useDebouncedValue(searchFilters, SEARCH_DEBOUNCE_MS);
-
-  // Go back to the first page when the filters the server sees change, not
-  // while the user is still typing.
-  const [applied, setApplied] = useState({ debouncedSearch, type, status });
-
-  if (
-    applied.debouncedSearch !== debouncedSearch ||
-    applied.type !== type ||
-    applied.status !== status
-  ) {
-    setApplied({ debouncedSearch, type, status });
-    setPage(0);
-  }
+  const debouncedInfo = useDebouncedValue(infoFilter, SEARCH_DEBOUNCE_MS);
 
   const searchValues: SessionSearchValuesDto = {
     ...getActiveSearchFilters(debouncedSearch),
+    ...getInfoSearchValues(debouncedInfo),
     ...(status && { status }),
   };
+
+  // Go back to the first page when the filters the server sees change, not
+  // while the user is still typing. Compared by value, so edits that leave
+  // the query as it was (e.g. a blank filter's dropdown) keep the page.
+  const filtersKey = hashKey([searchValues, type]);
+  const [appliedFiltersKey, setAppliedFiltersKey] = useState(filtersKey);
+
+  if (appliedFiltersKey !== filtersKey) {
+    setAppliedFiltersKey(filtersKey);
+    setPage(0);
+  }
+
   const queryOptions = {
     placeholderData: keepPreviousData,
     refetchInterval: REFETCH_INTERVAL_MS,
@@ -139,6 +148,8 @@ export const useSessionsTable = () => {
     page,
     pageSize,
     filters: { ...searchFilters, type, status },
+    infoFilter,
+    setInfoFilter,
     refetch,
     setPage,
     changeFilters,

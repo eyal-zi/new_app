@@ -29,9 +29,15 @@ export interface InferenceSessionDto {
   notes: string;
   /** @nullable */
   logs: string | null;
-  /** @nullable */
+  /**
+     * Values by property name, as listed by the filter schema (banana, strawberry), or null
+     * @nullable
+     */
   variationa_info: InferenceSessionDtoVariationaInfo;
-  /** @nullable */
+  /**
+     * Values by property name, as listed by the filter schema (banana, strawberry), or null
+     * @nullable
+     */
   variationb_info: InferenceSessionDtoVariationbInfo;
   /** One recommendation per requested statistic. */
   recommendations: RecommendationsDto[];

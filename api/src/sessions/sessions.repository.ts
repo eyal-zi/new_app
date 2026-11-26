@@ -16,6 +16,7 @@ import type {
   GroupSessionsQueryDto,
   SessionSearchValuesDto,
 } from './sessions.dto.js';
+import type { SessionInfo } from './sessions.schema.js';
 import { sessions } from './sessions.schema.js';
 
 const escapeLike = (value: string) => value.replace(/[\\%_]/g, '\\$&');
@@ -25,18 +26,33 @@ export class SessionsRepository {
   constructor(private readonly database: Database) {}
 
   private where(searchValues?: SessionSearchValuesDto, type?: string) {
-    const { session_id, session_owner, status } = searchValues ?? {};
+    const {
+      session_id,
+      session_owner,
+      status,
+      variationa_info,
+      variationb_info,
+    } = searchValues ?? {};
 
     const contains = (column: SQL, value?: string) => {
       const text = value?.trim();
       return text ? ilike(column, `%${escapeLike(text)}%`) : undefined;
     };
 
+    // Searched like the other text filters.
+    // Sessions without info (null) never match an info filter.
+    const infoMatches = (column: SQL, filters?: SessionInfo) =>
+      Object.entries(filters ?? {}).map(([name, value]) =>
+        contains(sql`${column} ->> ${name}`, value),
+      );
+
     return and(
       type ? eq(sessions.type, type) : undefined,
       contains(sql`${sessions.id}::text`, session_id),
       contains(sql`${sessions.owner}`, session_owner),
       contains(sql`${sessions.status}`, status),
+      ...infoMatches(sql`${sessions.variationaInfo}`, variationa_info),
+      ...infoMatches(sql`${sessions.variationbInfo}`, variationb_info),
     );
   }
 

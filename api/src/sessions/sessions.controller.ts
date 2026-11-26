@@ -48,6 +48,7 @@ import {
   GroupSessionsQueryDto,
   InferenceSessionDto,
   SESSION_DETAILS_SCHEMA,
+  SessionFilterSchemaDto,
   SessionParamDto,
   SessionSearchValuesDto,
   SessionTypeParamDto,
@@ -187,6 +188,18 @@ export class SessionsController {
     @Body() searchValues: SessionSearchValuesDto,
   ) {
     return this.sessions.count(searchValues, type);
+  }
+
+  // Declared before `:type/:sessionId`, which would otherwise match this path.
+  @Get('sessions/filter-schema')
+  @ApiOperation({
+    summary: 'Get the extra filters available in the sessions table',
+    description:
+      'Each entry is a property of variationa_info / variationb_info that search_values can filter by',
+  })
+  @ApiOkResponse({ type: [SessionFilterSchemaDto] })
+  getFilterSchema() {
+    return this.sessions.getFilterSchema();
   }
 
   @Get(':type/:sessionId')

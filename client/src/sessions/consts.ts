@@ -4,11 +4,15 @@ import { DeleteIcon } from '@/assets/icons/delete-icon';
 
 import type {
   ColumnFilter,
+  InfoVariationConfig,
   SessionAction,
   SessionActionConfig,
   SessionColumnId,
   SessionSearchField,
 } from './types';
+
+// Keep in sync with MAX_SEARCH_LENGTH in api/src/sessions/sessions.constants.ts.
+export const SEARCH_MAX_LENGTH = 200;
 
 export const SESSIONS_PATH = '/sessions';
 export const RESULTS_ROUTE_PATH =
@@ -102,3 +106,8 @@ export const SESSION_IMAGE_NAMES = {
 
 /** Shown in place of an image the session doesn't have. */
 export const NO_IMAGE_LABEL = '—';
+
+export const INFO_FILTER_VARIATIONS: readonly InfoVariationConfig[] = [
+  { label: 'Variation A', field: 'variationa_info' },
+  { label: 'Variation B', field: 'variationb_info' },
+];

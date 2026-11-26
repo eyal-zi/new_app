@@ -11,7 +11,8 @@ import {
 
 import { MAX_OWNER_LENGTH } from './sessions.constants.js';
 
-export type SessionInfo = Record<string, unknown>;
+/** Keys are the `name`s of SESSION_INFO_FILTERS. */
+export type SessionInfo = Record<string, string>;
 export type SessionRecommendationResult = {
   variationa: string | number | null;
   variationb: string | number | null;
