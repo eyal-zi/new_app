@@ -1,4 +1,4 @@
-import { useBlocker, useNavigate } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 
 import { useCreateInferenceSession } from '@/api/generated/api';
 import { SessionType } from '@/api/generated/model';
@@ -10,7 +10,11 @@ import type { Selection } from '@/shared/components/selection-list/types';
 import { Steps } from '@/shared/components/steps/steps';
 import type { StepItem } from '@/shared/components/steps/types';
 import { UPLOAD_REQUEST_TIMEOUT_MS } from '@/shared/constants';
-import { deleteDraft, useDraft } from '@/shared/hooks/use-draft';
+import {
+  deleteDraft,
+  useBlockLeavingWhileSending,
+  useDraft,
+} from '@/shared/hooks/use-draft';
 import { useIsMountedRef } from '@/shared/hooks/use-is-mounted-ref';
 import { useSessionOwner } from '@/shared/hooks/use-session-owner';
 import { SESSION_TYPE_LABELS } from '@/shared/session-type-constants';
@@ -47,9 +51,7 @@ export const InferencePage = () => {
   const { mutateAsync, isPending } = useCreateInferenceSession({
     request: { timeout: UPLOAD_REQUEST_TIMEOUT_MS },
   });
-  // No leaving while sending, so the draft can't change under the request. A
-  // refresh stays allowed (drafts are meant to be lost then).
-  useBlocker({ shouldBlockFn: () => isPending, enableBeforeUnload: false });
+  useBlockLeavingWhileSending(isPending);
 
   const selections: Selection[] = statistics.map((statistic) => ({
     id: statistic,
@@ -84,8 +86,6 @@ export const InferencePage = () => {
         });
       }
 
-      // Cleared after leaving, so the form doesn't blank out under the user.
-      // `navigate` is assumed to succeed.
       deleteDraft(SessionType.inference);
     } catch {
       // Already reported by the query client; stay here so the user can retry.

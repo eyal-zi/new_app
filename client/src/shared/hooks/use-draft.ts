@@ -1,3 +1,4 @@
+import { useBlocker } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 
 import { type SessionType } from '@/api/generated/model';
@@ -9,15 +10,19 @@ import { type SessionType } from '@/api/generated/model';
  */
 const drafts = new Map<SessionType, object>();
 
-/** Forgets the saved draft, once its session was created. */
+/**
+ * Forgets the saved draft, once its session was created. Call it after
+ * navigating away, so the form doesn't blank out under the user. `navigate` is
+ * assumed to succeed.
+ */
 export const deleteDraft = (type: SessionType) => {
   drafts.delete(type);
 };
 
 /**
  * State that is restored when the page of `type` is opened again. It needs no
- * subscriptions, since only the open page edits its draft: pages block
- * navigation while sending, so a request can't finish after its page was left.
+ * subscriptions, since only the open page edits its draft: with
+ * `useBlockLeavingWhileSending`, a request can't finish after its page was left.
  */
 export const useDraft = <T extends object>(
   type: SessionType,
@@ -36,4 +41,13 @@ export const useDraft = <T extends object>(
   const resetDraft = () => setDraft(emptyDraft);
 
   return [draft, updateDraft, resetDraft] as const;
+};
+
+/**
+ * Blocks leaving the page while its draft is being sent, so the draft can't
+ * change under the request. A refresh stays allowed (drafts are meant to be
+ * lost then). The page's own redirect needs `ignoreBlocker`.
+ */
+export const useBlockLeavingWhileSending = (isSending: boolean) => {
+  useBlocker({ shouldBlockFn: () => isSending, enableBeforeUnload: false });
 };

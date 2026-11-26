@@ -39,11 +39,11 @@ export const StepsActions = ({
   onNext,
   onFinish,
 }: StepsActionsProps) => {
-  const [confirmingCancel, setConfirmingCancel] = useState(false);
+  const [isConfirmingCancel, setIsConfirmingCancel] = useState(false);
 
-  const closeConfirmation = () => setConfirmingCancel(false);
+  const closeConfirmation = () => setIsConfirmingCancel(false);
 
-  const openConfirmation = () => setConfirmingCancel(true);
+  const openConfirmation = () => setIsConfirmingCancel(true);
 
   const confirmCancel = () => {
     closeConfirmation();
@@ -80,7 +80,7 @@ export const StepsActions = ({
         {isLastStep ? labels.finish : labels.next}
       </PrimaryActionButton>
       <ConfirmationDialog
-        open={confirmingCancel}
+        open={isConfirmingCancel}
         {...CANCEL_CONFIRMATION}
         onCancel={closeConfirmation}
         onConfirm={confirmCancel}
